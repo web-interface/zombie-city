@@ -34,6 +34,12 @@ func launch(look_name: String, from_position: Vector2, velocity: Vector2, option
 	_projectiles.append(projectile)
 
 
+## 다음 밤으로 넘어갈 때 날아가던 것을 비운다
+func clear() -> void:
+	_projectiles.clear()
+	queue_redraw()
+
+
 func update(delta: float) -> void:
 	for projectile: Dictionary in _projectiles:
 		projectile["position"] = Vector2(projectile["position"]) + Vector2(projectile["velocity"]) * delta

@@ -1,17 +1,19 @@
 ## [파일] scripts/run/run.gd
-## [하는 일] 한 판(5분)의 지휘자: 각 부분을 준비해 RunContext 로 잇고, 한 순간(프레임)에 도는 순서를 한곳에서 정하고(문서 11 §5), 레벨 업·전직 창을 띄울 때를 고르고, 잠깐 멈춤·느린 화면 같은 손맛과 승패(탈출·쓰러짐·헬기 떠남)를 처리한다.
+## [하는 일] 한 판(밤마다 3분, 헬기를 타면 다음 밤)의 지휘자: 각 부분을 준비해 RunContext 로 잇고, 한 순간(프레임)에 도는 순서를 한곳에서 정하고(문서 11 §5), 레벨 업·전직 창을 띄울 때를 고르고, 연속 처치·정예 보상·손맛 연출과 승패(밤 생존 → 다음 밤, 쓰러짐·헬기 놓침·포기 → 판 끝)를 처리한다.
 ## [쓰는 곳] scenes/run.tscn 의 맨 위 노드. SceneRouter 가 이 장면을 열고, 판이 끝나면 SceneRouter.finish_run() 을 부른다.
-## [근거 문서] 11 §4·§5·§6, 02 §3 시간표·§9 승패, 13 조사 반영(멈춤·숨 돌리기·앱 나가면 멈춤)
+## [근거 문서] 11 §4·§5·§6, 14 §1 끝없는 밤·§4 중독 설계, 02 §9 승패, 13 조사 반영(멈춤·숨 돌리기·앱 나가면 멈춤)
 extends Node2D
 
-const END_DELAY_SECONDS := 1.6        # 쓰러지거나 탈출한 뒤 결과 화면까지 (연출 보여 줄 시간)
+const END_DELAY_SECONDS := 1.6        # 쓰러진 뒤 결과 화면까지 (연출 보여 줄 시간)
 const DEATH_SLOW_MOTION_SECONDS := 0.9
 const DEATH_SLOW_MOTION_SCALE := 0.3
 
 var context := RunContext.new()
 var _is_over: bool = false
-var _base_time_scale: float = 1.0
-var _time_effects: Array[Dictionary] = []   # 지금 걸려 있는 멈춤·느린 화면들 {scale}
+var _combo := KillCombo.new()
+var _time_effects := TimeEffects.new()
+var _night_flow := NightFlow.new()
+var _rewards := RunRewards.new()
 var _autoplay: Node = null
 
 @onready var _survivor: Survivor = $World/Survivor
@@ -20,6 +22,7 @@ var _autoplay: Node = null
 @onready var _extraction: Extraction = $World/Extraction
 @onready var _skill_runner: SkillRunner = $Systems/SkillRunner
 @onready var _spawner: ZombieSpawner = $Systems/ZombieSpawner
+@onready var _events: HordeEvents = $Systems/HordeEvents
 @onready var _level_up: LevelUp = $Systems/LevelUp
 @onready var _promotion: Promotion = $Systems/Promotion
 @onready var _boss_director: BossDirector = $Systems/BossDirector
@@ -28,7 +31,8 @@ var _autoplay: Node = null
 
 
 func _ready() -> void:
-	_base_time_scale = Engine.time_scale
+	add_child(_time_effects)
+	_combo.setup()
 	_build_context()
 	_survivor.setup(SceneRouter.selected_survivor_id)
 	var survivor_info := GameData.entry("survivors", _survivor.survivor_id)
@@ -37,10 +41,16 @@ func _ready() -> void:
 	_level_up.setup(context, _rack)
 	_promotion.setup(context, _skill_runner)
 	_spawner.setup(context)
-	_boss_director.setup(context)
+	_events.setup(context, _spawner)
+	_boss_director.setup(context, _spawner)
 	_recorder.setup(context)
 	_extraction.setup(context)
 	_hud.setup(context, _rack, _level_up, _promotion, _skill_runner, _extraction)
+	_hud.watch_bosses(_boss_director)
+	_rewards.setup(context, _hud)
+	add_child(_night_flow)
+	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo,
+		"night_systems": [_spawner, _events, _boss_director, _extraction]})
 	_connect_signals()
 	SoundPlayer.start_run_music()
 	_hud.start_first_run_hints(_skill_runner)
@@ -60,9 +70,11 @@ func _build_context() -> void:
 	context.shards = world.get_node("VaccineShards")
 	context.health_packs = world.get_node("HealthPacks")
 	context.area_effects = world.get_node("AreaEffects")
+	context.hazards = world.get_node("Hazards")
 	context.props = world.get_node("Props")
 	context.weapon_rack = _rack
 	context.camera = $Camera
+	context.night_cycle = NightCycle.new()
 	context.light_rules = GameData.rules("lighting")
 	context.juice_rules = GameData.rules("juice")
 	context.status_rules = GameData.rules("status_effects")
@@ -78,6 +90,7 @@ func _build_context() -> void:
 	context.shards.setup(context)
 	context.health_packs.setup(context)
 	context.area_effects.setup(context)
+	context.hazards.setup(context)
 	world.get_node("Shadows").setup(context)
 
 
@@ -87,15 +100,19 @@ func _connect_signals() -> void:
 	_level_up.level_changed.connect(_on_level_changed)
 	_level_up.card_applied.connect(_recorder.note_card)
 	_promotion.promoted.connect(_on_promoted)
-	_boss_director.boss_appeared.connect(_on_boss_appeared)
+	_boss_director.boss_appeared.connect(_on_alert_event)
 	_boss_director.boss_defeated.connect(_on_boss_defeated)
+	_boss_director.boss_enraged.connect(_on_alert_event)
+	_events.event_started.connect(_on_alert_event)
+	_combo.milestone_reached.connect(_rewards.on_combo_milestone)
 	_survivor.damaged.connect(_on_survivor_damaged)
 	_survivor.died.connect(_on_survivor_died)
 	_survivor.healed.connect(func(amount: float) -> void: context.effects.show_heal_number(_survivor.position, amount))
 	_hud.give_up_requested.connect(_end_run.bind("gave_up"))
+	_hud.next_night_requested.connect(_night_flow.start_next_night)
 	_extraction.landing_zone_revealed.connect(_on_landing_zone_revealed)
 	_extraction.helicopter_arrived.connect(_on_helicopter_arrived)
-	_extraction.extracted.connect(_end_run.bind("escaped"))
+	_extraction.extracted.connect(_on_night_survived)
 	_extraction.helicopter_left.connect(_on_helicopter_left)
 	_skill_runner.used.connect(func(_skill_id: String) -> void: _recorder.note_event())
 
@@ -107,14 +124,17 @@ func _physics_process(delta: float) -> void:
 		context.camera.follow(_survivor.position, delta, Vector2.ZERO)
 		return
 	context.elapsed_seconds += delta
+	context.run_seconds += delta
 	_survivor.move_step(delta, _read_move_input())                                   # 1·2 입력 → 생존자
 	_survivor.position = context.props.push_out(_survivor.position, 4.0)
 	if _wants_skill():
 		_skill_runner.try_use()
 	_skill_runner.update(delta)
-	_spawner.update(delta)                                                            # 3 좀비 나오기
-	_horde.update(delta)                                                              # 4 좀비 움직이기
+	_spawner.update(delta)                                                            # 3 좀비 나오기·이벤트
+	_events.update(delta)
+	_horde.update(delta)                                                              # 4 좀비 움직이기·특수 행동
 	_boss_director.update(delta)
+	context.hazards.update(delta)                                                     #   침·웅덩이·예고 원
 	_rack.update(delta)                                                               # 5 무기
 	context.projectiles.update(delta)                                                 # 6 투사체
 	context.area_effects.update(delta)
@@ -123,6 +143,7 @@ func _physics_process(delta: float) -> void:
 	_extraction.update(delta)                                                         # 9 규칙
 	_open_choice_panels_if_due()
 	context.lighting.update(delta)                                                    # 10 빛·그리기
+	_combo.update(delta)
 	_update_view(delta)
 	_recorder.sample(_horde.alive_count())
 	_update_music_danger()
@@ -145,7 +166,7 @@ func _wants_skill() -> bool:
 	return Input.is_key_pressed(KEY_SPACE) or _hud.consume_skill_press()
 
 
-## 전직을 먼저, 그다음 레벨 업 카드. 헬기 버티기 중이나 보스 돌진 중엔 미룬다 (흐름 끊지 않게 — 문서 13).
+## 전직을 먼저, 그다음 레벨 업 카드. 헬기 버티기 중이나 보스 공격 중엔 미룬다 (흐름 끊지 않게 — 문서 13).
 func _open_choice_panels_if_due() -> void:
 	if _is_over or get_tree().paused or _extraction.phase == "landed" or _boss_director.is_boss_attacking():
 		return
@@ -159,23 +180,29 @@ func _update_view(delta: float) -> void:
 	$World/Ground.update(context.camera.global_position, view_size)
 	context.props.update(context.camera.global_position)
 	_hud.update_display(context.elapsed_seconds, _horde.alive_count(), _recorder.kills)
+	_hud.update_run_status(context.night_cycle.night_name(), _combo.count, _combo.time_left_ratio())
 
 
+## 위험도에 따라 밤 곡의 층을 더하고, 보스(분노)·헬기 때는 그 곡으로 바꾼다 (사용자 "BGM 도 계속 바뀌게")
 func _update_music_danger() -> void:
-	var danger := 0
-	if _boss_director.alive_boss_count() > 0 or _horde.alive_count() > int(GameData.rules("music")["busy_horde_size"]):
-		danger = 1
+	var boss_alive := _boss_director.alive_boss_count() > 0
+	var danger := 1 if boss_alive or _horde.alive_count() > int(GameData.rules("music")["busy_horde_size"]) else 0
 	if _survivor.health_ratio() < Survivor.LOW_HEALTH_RATIO or _extraction.phase == "landed":
 		danger = 2
 	SoundPlayer.set_music_danger(danger)
+	var mode := "boss_rage" if _boss_director.is_any_boss_raging() else ("boss" if boss_alive else "night")
+	SoundPlayer.set_music_mode("extraction" if _extraction.phase in ["revealed", "landed"] else mode)
 
 
 func _on_zombie_died(zombie: Zombie) -> void:
-	_recorder.note_kill()
+	_recorder.note_kill(zombie)
+	_combo.note_kill()
 	context.shards.drop(zombie.position, zombie.shard_value)
 	context.health_packs.maybe_drop(zombie.position)
 	context.effects.burst(zombie.position, Color("6f9a52") if randf() < 0.5 else Color("a5c46a"), 5)
 	context.play_sound("zombie_die")
+	if zombie.is_elite:
+		_rewards.on_elite_killed(zombie)
 
 
 func _on_level_changed(new_level: int) -> void:
@@ -190,32 +217,34 @@ func _on_promoted(branch_id: String, stage: int) -> void:
 	_hud.show_banner("%s %s!" % [branch_name, "전직" if stage == 1 else "각성"], "promotion")
 
 
-func _on_boss_appeared(banner_text: String) -> void:
+## 보스 등장·포위·떼 돌진 같은 재난문자 알림
+func _on_alert_event(banner_text: String) -> void:
 	_recorder.note_event()
 	_hud.show_banner(banner_text, "alert")
 
 
-func _on_boss_defeated(seconds_to_kill: float) -> void:
+func _on_boss_defeated(seconds_to_kill: float, boss_name: String) -> void:
 	_recorder.note_boss_kill(seconds_to_kill)
 	_spawner.start_calm()
-	_hud.show_banner("도살자 처치! 카드 한 장 더", "good")
+	_hud.show_banner("%s 처치! 카드 한 장 더" % boss_name, "good")
 	context.play_sound("explosion")
 	_play_boss_kill_moment()
 
 
 ## 보스 처치 순간: 잠깐 멈췄다가 → 느린 화면 → 원래 빠르기 (차례대로)
 func _play_boss_kill_moment() -> void:
-	await _play_hit_stop(float(context.juice_rules["hit_stop_on_boss_kill_seconds"]), 0.0)
-	await _play_hit_stop(float(context.juice_rules["slow_motion_after_boss_kill_seconds"]), float(context.juice_rules["slow_motion_scale"]))
+	await _time_effects.play(float(context.juice_rules["hit_stop_on_boss_kill_seconds"]), 0.0)
+	await _time_effects.play(float(context.juice_rules["slow_motion_after_boss_kill_seconds"]), float(context.juice_rules["slow_motion_scale"]))
 	_level_up.grant_bonus_choice()   # 연출이 끝난 뒤에 카드 (창 뒤로 연출이 묻히지 않게 — 검수 지적)
 
 
 func _on_survivor_damaged(amount: float) -> void:
 	_recorder.note_survivor_damaged(_extraction.phase == "landed")
+	_combo.note_damage(amount)
 	# 이보다 큰 한 방이면 흔들림·잠깐 멈춤·아픈 소리 (계속 닿는 작은 피해와 구분)
 	if amount >= float(context.juice_rules["big_hit_damage"]):
 		context.shake("survivor_big_hit")
-		_play_hit_stop(float(context.juice_rules["hit_stop_on_survivor_big_hit_seconds"]), 0.0)
+		_time_effects.play(float(context.juice_rules["hit_stop_on_survivor_big_hit_seconds"]), 0.0)
 		context.play_sound("survivor_hurt")
 	else:
 		context.camera.add_trauma(float(context.juice_rules["trauma_survivor_contact_per_second"]) * get_physics_process_delta_time())
@@ -224,7 +253,7 @@ func _on_survivor_damaged(amount: float) -> void:
 func _on_survivor_died() -> void:
 	_hud.show_banner("물렸어요…", "alert")
 	context.play_sound("game_over")
-	_play_hit_stop(DEATH_SLOW_MOTION_SECONDS, DEATH_SLOW_MOTION_SCALE)   # 쓰러지는 순간을 느리게 보여 준다
+	_time_effects.play(DEATH_SLOW_MOTION_SECONDS, DEATH_SLOW_MOTION_SCALE)   # 쓰러지는 순간을 느리게 보여 준다
 	_end_run("died")
 
 
@@ -244,48 +273,24 @@ func _on_helicopter_left() -> void:
 	_end_run("helicopter_left")
 
 
-## end_reason: "escaped"(탈출) · "died"(쓰러짐) · "helicopter_left"(헬기 놓침) · "gave_up"(포기)
+## 헬기를 탔다 → '밤 생존' 창 (시험 봇이 정한 밤 수를 채웠으면 판 끝)
+func _on_night_survived() -> void:
+	if not _is_over and _night_flow.on_night_survived():
+		_end_run("test_night_limit")
+
+
+## end_reason: "died"(쓰러짐) · "helicopter_left"(헬기 놓침) · "gave_up"(포기) · "test_night_limit"(시험)
 func _end_run(end_reason: String) -> void:
 	if _is_over:
 		return
 	_is_over = true
 	_hud.on_run_over()
-	if end_reason == "escaped":
-		_hud.show_banner("구조 성공!", "good")
-	var result := _recorder.build_result(end_reason, _level_up.level, _promotion.branch_name())
+	var result := _recorder.build_result(end_reason, _level_up.level, _promotion.branch_name(), _combo.best)
 	var delay := 0.05 if SceneRouter.is_autoplay() else END_DELAY_SECONDS
 	await get_tree().create_timer(delay, true, false, true).timeout
 	_time_effects.clear()
-	Engine.time_scale = _base_time_scale
 	SoundPlayer.stop_music()
 	SceneRouter.finish_run(result)
-
-
-## 잠깐 멈춤(scale 0)이나 느린 화면(scale 0.3)을 seconds 동안. 실제 시간으로 잰다 (게임 시간은 멈춰 있으니까).
-## 여러 개가 겹치면 그중 가장 느린 것을 따르고, 하나가 끝나도 남은 것은 이어진다
-## (마지막 검수: 짧은 멈춤이 끝나며 1.0 으로 돌려 쓰러짐 느린 화면을 끊어 먹었음)
-func _play_hit_stop(seconds: float, speed_scale: float) -> void:
-	if SceneRouter.is_autoplay() or seconds <= 0.0:
-		return
-	var effect := {"scale": maxf(speed_scale, 0.01)}
-	_time_effects.append(effect)
-	_apply_slowest_time_effect()
-	await get_tree().create_timer(seconds, true, false, true).timeout
-	_time_effects.erase(effect)
-	_apply_slowest_time_effect()
-
-
-func _apply_slowest_time_effect() -> void:
-	var slowest := 1.0
-	for effect: Dictionary in _time_effects:
-		slowest = minf(slowest, float(effect["scale"]))
-	Engine.time_scale = _base_time_scale * slowest
-
-
-## 장면이 다른 길로 닫혀도 느린 화면이 다음 화면까지 남지 않게 (검수 지적 — 보험)
-func _exit_tree() -> void:
-	_time_effects.clear()
-	Engine.time_scale = _base_time_scale
 
 
 ## 앱을 나가거나 전화가 오면 바로 일시정지 (문서 12 §6, 13)

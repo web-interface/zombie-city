@@ -27,6 +27,19 @@ func positions() -> Array[Vector2]:
 	return _packs
 
 
+## 다음 밤으로 넘어갈 때 비운다
+func clear() -> void:
+	_packs.clear()
+	queue_redraw()
+
+
+## 정예처럼 꼭 떨구는 경우 (확률 없이)
+func drop_at(at_position: Vector2) -> void:
+	if _packs.size() >= int(_rules["max_on_field"]):
+		_packs.remove_at(_farthest_index())
+	_packs.append(at_position)
+
+
 func maybe_drop(at_position: Vector2) -> void:
 	if randf() >= float(_rules["drop_chance"]):
 		return

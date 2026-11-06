@@ -8,28 +8,85 @@
 | `bike.png` | 한 장 그림 'bike' (10×16) |
 | `boss_butcher.png` | 보스 도살자 (24×24, 1줄 걷기 4장 · 2줄 쓰러지기 3장) |
 | `boss_butcher_flash.png` | boss_butcher 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `boss_demolisher.png` | 보스 철거반장 (24×24, 1줄 걷기 4장 · 2줄 쓰러지기 3장) |
+| `boss_demolisher_flash.png` | boss_demolisher 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `boss_mother.png` | 보스 거대 감염체 (24×24, 1줄 걷기 4장 · 2줄 쓰러지기 3장) |
+| `boss_mother_flash.png` | boss_mother 의 하얀 실루엣 (맞았을 때 잠깐) |
 | `car.png` | 한 장 그림 'car' (12×20) |
+| `chest.png` | 보물 상자 — 16×16 두 칸 가로 (왼쪽 닫힘 · 오른쪽 열림) |
 | `cone.png` | 한 장 그림 'cone' (5×5) |
 | `drone_a.png` | 한 장 그림 'drone_a' (7×7) |
 | `drone_b.png` | 한 장 그림 'drone_b' (7×7) |
+| `drone_parcel.png` | 배달 드론 — 소포를 매단 드론 (9×10, 한 장) |
 | `helicopter.png` | 한 장 그림 'helicopter' (24×10) |
-| `icons/icon_ammo.png` | 한 장 그림 'icon_ammo' (10×10) |
-| `icons/icon_backpack.png` | 한 장 그림 'icon_backpack' (10×10) |
-| `icons/icon_extinguisher.png` | 한 장 그림 'icon_extinguisher' (10×10) |
-| `icons/icon_fire_axe.png` | 한 장 그림 'icon_fire_axe' (10×10) |
-| `icons/icon_first_aid.png` | 한 장 그림 'icon_first_aid' (10×10) |
-| `icons/icon_flashbang.png` | 한 장 그림 'icon_flashbang' (10×10) |
-| `icons/icon_hammer.png` | 한 장 그림 'icon_hammer' (10×10) |
-| `icons/icon_nail_gun.png` | 한 장 그림 'icon_nail_gun' (10×10) |
-| `icons/icon_pistol.png` | 한 장 그림 'icon_pistol' (10×10) |
-| `icons/icon_saw_drone.png` | 한 장 그림 'icon_saw_drone' (10×10) |
-| `icons/icon_shield_dash.png` | 한 장 그림 'icon_shield_dash' (10×10) |
-| `icons/icon_shotgun.png` | 한 장 그림 'icon_shotgun' (10×10) |
-| `icons/icon_sneakers.png` | 한 장 그림 'icon_sneakers' (10×10) |
-| `icons/icon_snipe.png` | 한 장 그림 'icon_snipe' (10×10) |
-| `icons/icon_sprint.png` | 한 장 그림 'icon_sprint' (10×10) |
-| `icons/icon_syringe_gun.png` | 한 장 그림 'icon_syringe_gun' (10×10) |
-| `icons/icon_vest.png` | 한 장 그림 'icon_vest' (10×10) |
+| `icons/icon_ammo.png` | 아이콘 'ammo' (10×10) |
+| `icons/icon_backpack.png` | 아이콘 'backpack' (10×10) |
+| `icons/icon_battery.png` | 아이콘 'battery' (10×10) |
+| `icons/icon_bomb.png` | 아이콘 'bomb' (10×10) |
+| `icons/icon_box_toss.png` | 아이콘 'box_toss' (10×10) |
+| `icons/icon_box_toss_evolved.png` | 진화 아이콘 'box_toss' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_coffee.png` | 아이콘 'coffee' (10×10) |
+| `icons/icon_defibrillator.png` | 아이콘 'defibrillator' (10×10) |
+| `icons/icon_defibrillator_evolved.png` | 진화 아이콘 'defibrillator' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_delivery_bag.png` | 아이콘 'delivery_bag' (10×10) |
+| `icons/icon_disinfectant.png` | 아이콘 'disinfectant' (10×10) |
+| `icons/icon_disinfectant_evolved.png` | 진화 아이콘 'disinfectant' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_duct_tape.png` | 아이콘 'duct_tape' (10×10) |
+| `icons/icon_energy_drink.png` | 아이콘 'energy_drink' (10×10) |
+| `icons/icon_extinguisher.png` | 아이콘 'extinguisher' (10×10) |
+| `icons/icon_fire_axe.png` | 아이콘 'fire_axe' (10×10) |
+| `icons/icon_fire_axe_evolved.png` | 진화 아이콘 'fire_axe' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_fire_hose.png` | 아이콘 'fire_hose' (10×10) |
+| `icons/icon_fire_hose_evolved.png` | 진화 아이콘 'fire_hose' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_first_aid.png` | 아이콘 'first_aid' (10×10) |
+| `icons/icon_flare.png` | 아이콘 'flare' (10×10) |
+| `icons/icon_flare_evolved.png` | 진화 아이콘 'flare' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_flashbang.png` | 아이콘 'flashbang' (10×10) |
+| `icons/icon_freeze.png` | 아이콘 'freeze' (10×10) |
+| `icons/icon_hammer.png` | 아이콘 'hammer' (10×10) |
+| `icons/icon_hidden_airstrike.png` | 아이콘 'hidden_airstrike' (10×10) |
+| `icons/icon_hidden_backdraft.png` | 아이콘 'hidden_backdraft' (10×10) |
+| `icons/icon_hidden_express.png` | 아이콘 'hidden_express' (10×10) |
+| `icons/icon_hidden_miracle.png` | 아이콘 'hidden_miracle' (10×10) |
+| `icons/icon_knee_pads.png` | 아이콘 'knee_pads' (10×10) |
+| `icons/icon_lucky_charm.png` | 아이콘 'lucky_charm' (10×10) |
+| `icons/icon_magnet.png` | 아이콘 'magnet' (10×10) |
+| `icons/icon_megaphone.png` | 아이콘 'megaphone' (10×10) |
+| `icons/icon_megaphone_evolved.png` | 진화 아이콘 'megaphone' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_molotov.png` | 아이콘 'molotov' (10×10) |
+| `icons/icon_molotov_evolved.png` | 진화 아이콘 'molotov' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_nail_gun.png` | 아이콘 'nail_gun' (10×10) |
+| `icons/icon_nail_gun_evolved.png` | 진화 아이콘 'nail_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_parcel_drone.png` | 아이콘 'parcel_drone' (10×10) |
+| `icons/icon_parcel_drone_evolved.png` | 진화 아이콘 'parcel_drone' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_pistol.png` | 아이콘 'pistol' (10×10) |
+| `icons/icon_pistol_evolved.png` | 진화 아이콘 'pistol' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_radio.png` | 아이콘 'radio' (10×10) |
+| `icons/icon_rescue_saw.png` | 아이콘 'rescue_saw' (10×10) |
+| `icons/icon_rescue_saw_evolved.png` | 진화 아이콘 'rescue_saw' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_research_notes.png` | 아이콘 'research_notes' (10×10) |
+| `icons/icon_saw_drone.png` | 아이콘 'saw_drone' (10×10) |
+| `icons/icon_saw_drone_evolved.png` | 진화 아이콘 'saw_drone' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_scalpel.png` | 아이콘 'scalpel' (10×10) |
+| `icons/icon_scalpel_evolved.png` | 진화 아이콘 'scalpel' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_shield_dash.png` | 아이콘 'shield_dash' (10×10) |
+| `icons/icon_shotgun.png` | 아이콘 'shotgun' (10×10) |
+| `icons/icon_shotgun_evolved.png` | 진화 아이콘 'shotgun' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_sneakers.png` | 아이콘 'sneakers' (10×10) |
+| `icons/icon_snipe.png` | 아이콘 'snipe' (10×10) |
+| `icons/icon_sprint.png` | 아이콘 'sprint' (10×10) |
+| `icons/icon_stethoscope.png` | 아이콘 'stethoscope' (10×10) |
+| `icons/icon_syringe_gun.png` | 아이콘 'syringe_gun' (10×10) |
+| `icons/icon_syringe_gun_evolved.png` | 진화 아이콘 'syringe_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_tape_gun.png` | 아이콘 'tape_gun' (10×10) |
+| `icons/icon_tape_gun_evolved.png` | 진화 아이콘 'tape_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_taser.png` | 아이콘 'taser' (10×10) |
+| `icons/icon_taser_evolved.png` | 진화 아이콘 'taser' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_tear_gas.png` | 아이콘 'tear_gas' (10×10) |
+| `icons/icon_tear_gas_evolved.png` | 진화 아이콘 'tear_gas' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_turnout_gear.png` | 아이콘 'turnout_gear' (10×10) |
+| `icons/icon_vest.png` | 아이콘 'vest' (10×10) |
+| `icons/icon_vitamins.png` | 아이콘 'vitamins' (10×10) |
 | `lamp.png` | 한 장 그림 'lamp' (5×5) |
 | `light_stepped.png` | 계단식 둥근 빛 (가로등·손전등·조명탄 빛에 씀) |
 | `shard_large.png` | 한 장 그림 'shard_large' (7×7) |
@@ -70,11 +127,23 @@
 | `tiles_downtown.png` | 도심 도로 바닥 타일 8칸: 아스팔트1, 아스팔트2, 아스팔트3, 아스팔트4, 금 간 아스팔트, 기름 얼룩, 맨홀, 인도 블록 |
 | `tire.png` | 한 장 그림 'tire' (6×6) |
 | `trash_bin.png` | 한 장 그림 'trash_bin' (8×10) |
-| `zombie_crawler.png` | 좀비 'crawler' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_bloater.png` | 부푼 좀비 'bloater' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_bloater_flash.png` | zombie_bloater 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `zombie_brute.png` | 덩치 좀비 'brute' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_brute_flash.png` | zombie_brute 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `zombie_crawler.png` | 기어다니는 좀비 'crawler' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
 | `zombie_crawler_flash.png` | zombie_crawler 의 하얀 실루엣 (맞았을 때 잠깐) |
-| `zombie_hazmat.png` | 좀비 'hazmat' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_hazmat.png` | 방호복 좀비 'hazmat' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
 | `zombie_hazmat_flash.png` | zombie_hazmat 의 하얀 실루엣 (맞았을 때 잠깐) |
-| `zombie_runner.png` | 좀비 'runner' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_hound.png` | 들개 좀비 'hound' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_hound_flash.png` | zombie_hound 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `zombie_riot.png` | 진압복 좀비 'riot' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_riot_flash.png` | zombie_riot 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `zombie_runner.png` | 달리는 좀비 'runner' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
 | `zombie_runner_flash.png` | zombie_runner 의 하얀 실루엣 (맞았을 때 잠깐) |
-| `zombie_walker.png` | 좀비 'walker' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_screamer.png` | 비명 좀비 'screamer' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_screamer_flash.png` | zombie_screamer 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `zombie_spitter.png` | 침 뱉는 좀비 'spitter' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
+| `zombie_spitter_flash.png` | zombie_spitter 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `zombie_walker.png` | 걷는 좀비 'walker' 동작 묶음 (16×16, 줄: walk_down, walk_up, walk_side, death) |
 | `zombie_walker_flash.png` | zombie_walker 의 하얀 실루엣 (맞았을 때 잠깐) |

@@ -1,0 +1,176 @@
+# [파일] art/source/bosses.txt
+# [하는 일] 보스 그림(24×24): 보스마다 걷기 2장(boss_<이름>_a · _b). 도살자 · 철거반장 · 거대 감염체. 한 글자 = 한 점, '.' = 빈칸.
+# [쓰는 곳] tools/sprite_zombies.py 의 build_boss_sheets 가 outfits.json 의 "global_palette" 색으로 칠해 art/sprites/boss_<이름>.png (1줄 걷기 a·b·a·b, 2줄 쓰러지기 3장) + _flash 로 만든다.
+# [근거 문서] 06 그림 규칙(보스 24×24 이상), 14 §1-3 보스 3종
+#
+# 글자 뜻은 sprites.txt 와 같은 global_palette (o 테두리 g G 쇠 w 흰색 y Y 노랑 n N 주황 b B 나무·갈색 z Z 좀비 피부 e 눈
+#   i I 작업복 a A 앞치마 q 바지 m M 병든 보라 p P 고름 물집 x X 병든 초록)
+
+# ───────── 보스: 도살자 (24×24, 걷기 2장) ─────────
+# 정육점 거구: 비뚤어진 위생모(w·g), 어깨에 파묻힌 작은 머리와 짝짝이 눈, 굽은 등·넓은 어깨(i·I 작업복),
+# 앞치마(a·A)의 얼룩은 갈색(b·B)·회색(G)만 — 피 묘사 없음. 오른손에 구멍 뚫린 큰 식칼(g·G·w), 흰 장화.
+# 비대칭: 왼팔이 더 길게 처지고 오른쪽 어깨가 솟음. b 장면은 몸 전체가 1점 내려앉고(무게) 앞발이 바뀐다.
+@sprite boss_butcher_a 24x24
+........................
+..........oooo..........
+.........ogwwwoo.oo.....
+.....oo.ogwwwwwgoiioo...
+...ooiiooZZZZZZoiiiiioo.
+..oiiiiIozezZzzoIiiiiiio
+.oiiiiIIozZzzezoIIiiiiio
+.oiiiIIIoZoooZzoIIIiiiio
+.oiiiiIIiooooooiIIIiiiio
+.oiiiIoIIaaaaaaIIoIIiiio
+.oIiiIoIIaaaaaaIIoIiiiIo
+.ozzzzoIIaAaaaaIIozzzzZo
+.ozzzZoAAAAAAAAAAozzzzZo
+.oZzzZoaaaaaaaaaaoZZZZZo
+.ozzzZoaaaaaaaaGAoobBoo.
+.ozzzZoaaaaaaaaaAoobBoo.
+ozzzzzoaBaaaaaaaAoGgggwo
+ozZzzZoabBaaaaAaAoGoggwo
+.oZZZooaaaaaaaAaAoGgggwo
+..ooo.oAAAAAAAAAAoGgggwo
+......oqqqqooqqqqoGgggwo
+......oqqqqooggggoGGggwo
+.....owggggooggggoooooo.
+......ooooo..oooo.......
+
+@sprite boss_butcher_b 24x24
+........................
+........................
+..........oooo..........
+.........ogwwwoo.oo.....
+.....oo.ogwwwwwgoiioo...
+...ooiiooZZZZZZoiiiiioo.
+..oiiiiIozezZzzoIiiiiiio
+.oiiiiIIozZzzezoIIiiiiio
+.oiiiIIIoZoooZzoIIIiiiio
+.oiiiiIIiooooooiIIIiiiio
+.oiiiIoIIaaaaaaIIoIIiiio
+.oIiiIoIIaaaaaaIIoIiiiIo
+.ozzzzoIIaAaaaaIIozzzzZo
+.ozzzZoAAAAAAAAAAozzzzZo
+.oZzzZoaaaaaaaaaaoZZZZZo
+ozzzzZoaaaaaaaaGAoobBoo.
+ozZzzZoaaaaaaaaaAoobBoo.
+.oZZZooaBaaaaaaaAoGgggwo
+..ooo.oabBaaaaAaAoGoggwo
+......oaaaaaaaAaAoGgggwo
+......oAAAAAAAAAAoGgggwo
+......oqqqqooqqqqoGgggwo
+......ogggoowggggoGGggwo
+.......ooo..ooooo.ooooo.
+
+# ───────── 보스: 철거반장 (24×24, 걷기 2장) ─────────
+# 재개발 철거 현장 반장: 노란 안전모(한쪽에 흰 스티커 w), 턱에 내려간 방진 마스크(w·g), 주황 조끼(n·N)에 은색 반사띠(g) 두 줄,
+# 회청색 작업복 소매(i·I), 갈색 작업화. 오른손에 세워 든 거대한 해머(머리 g·G, 자루 b·B)가 머리 위로 솟음 — 도살자(아래로 든 식칼)와 실루엣이 다르게.
+# 비대칭: 왼팔은 축 처지고 오른팔은 굽혀 자루를 잡음, 눈 높이 짝짝이. b 장면은 몸 전체가 1점 내려앉고 걸음이 바뀐다.
+@sprite boss_demolisher_a 24x24
+...............ooooooooo
+.......ooooooo.oggggggGo
+......oyywyyyYoogwggggGo
+......oyyyyyyYooggggGGGo
+.....oYYYYYYYYYoGGGGGGGo
+.......ozeZzeo.ooooBoooo
+.......ozZzzZo....obBo..
+.......owwgwwo....obBo..
+...oooooooooooo...obBo..
+..oiiiinnnnnnnio.ozbBo..
+.oiiiIonnnnnnnoizzzbzo..
+.oiiIIonnnnnnNoizzZbZo..
+.oiiIoggggggggoiizobBo..
+.oiiIonnnnnnnNoIIo.obBo.
+.oiiIonnnnnnnNoIo..obBo.
+.oizzoggggggggoo...oBBo.
+.ozzZonnnnnnnNo.....oo..
+.oZZoNNNNNNNNNo.........
+..ooooqqqqoqqqqo........
+......oqqqqoqqqqo.......
+......oqqqqooqqqo.......
+......oBBBBooBBBBo......
+.....oBBBBBooBBBBBo.....
+.....ooooooo.oooooo.....
+
+@sprite boss_demolisher_b 24x24
+........................
+...............ooooooooo
+.......ooooooo.oggggggGo
+......oyywyyyYoogwggggGo
+......oyyyyyyYooggggGGGo
+.....oYYYYYYYYYoGGGGGGGo
+.......ozeZzeo.ooooBoooo
+.......ozZzzZo....obBo..
+.......owwgwwo....obBo..
+...oooooooooooo...obBo..
+..oiiiinnnnnnnio.ozbBo..
+.oiiiIonnnnnnnoizzzbzo..
+.oiiIIonnnnnnNoizzZbZo..
+.oiiIoggggggggoiizobBo..
+.oiiIonnnnnnnNoIIo.obBo.
+.oiiIonnnnnnnNoIo..obBo.
+.oizzoggggggggoo...oBBo.
+.ozzZonnnnnnnNo.....oo..
+.oZZoNNNNNNNNNo.........
+..ooooqqqqoqqqqo........
+.....oqqqqo.oqqqqo......
+.....oqqqqo..oqqqo......
+....oBBBBBo..oBBBBo.....
+....ooooooo..oooooo.....
+
+# ───────── 보스: 거대 감염체 (24×24, 꿈틀대기 2장) ─────────
+# 여러 몸이 엉겨 부풀어 오른 덩어리(보라 m·M)에 병든 초록 반점(x·X), 고름 물집(p·P). 머리 셋(가운데 위·오른쪽 어깨·왼쪽 옆구리),
+# 팔 넷(위로 뻗은 가는 팔, 왼쪽 아래·오른쪽 아래로 늘어진 팔, 바닥을 짚는 손). 머리마다 눈 개수·입 모양이 다르게.
+# 덩어리 아래쪽 가운데에 기어다니는 좀비를 낳는 입(P 테두리, w 이빨) — 14 §1-3 '좀비 낳기'.
+# b 장면은 덩어리가 1점 주저앉고, 아래 입이 닫히고, 바닥을 짚는 손 자리가 바뀐다 (기어가듯).
+@sprite boss_mother_a 24x24
+........................
+........oooo........oo..
+.......ozzzZo......ozzo.
+.......ozezZo......oZo..
+.......oZzzeo..ooo.oZo..
+.......ozoooo.ozzZooZo..
+.....oooozZoooezZomZo...
+....ommmmoomoozooommo...
+...ommpPmmmmmmmoMmmmmo..
+..ommmPPmmmmmmmmmMmmmo..
+.ooommmmmmXXmmmmmmMmmmo.
+ozzommmmmmXxmmmmmmmMmmo.
+oezoMmmmmmmmmmmpPmmmMmo.
+ozzoMmmmmmmoommPPmmmMmmo
+oooMMmmmmmoPPommmmmmMMzo
+.oMmmmmmmoPwwPommmmMMozo
+ozMmmpPmmoPPPPomMmMMMozo
+ozoMmmPPmmoPPommMMMMMozZ
+oZoMMmmmmmmoommMMMMMo.oz
+oZo.oMMMMMMMMMMMMMMo..oZ
+ozzo.oooooozooooooo...oo
+.oZo.....ozZzo..........
+..oo.....oZoZo..........
+..........o.o...........
+
+@sprite boss_mother_b 24x24
+........................
+........................
+........oooo.......oo...
+.......ozzzZo......ozzo.
+.......ozezZo......oZo..
+.......oZzzeo..ooo.oZo..
+.......ozoooo.ozzZooZo..
+.....oooozZoooezZomZo...
+....ommmmoomoozooommo...
+...ommpPmmmmmmmoMmmmmo..
+..ommmPPmmmmmmmmmMmmmo..
+.ooommmmmmXXmmmmmmMmmmo.
+ozzommmmmmXxmmmmmmmMmmo.
+oezoMmmmmmmmmmmpPmmmMmo.
+ozzoMmmmmmmoommPPmmmMmmo
+oooMMmmmmmoPPommmmmmMMzo
+.oMmmmmmmoPPPPommmmMMozo
+ozMmmpPmmoPPPPomMmMMMozo
+ozoMmmPPmmoPPommMMMMMozZ
+oZoMMmmmmmmoommMMMMMo.oz
+oZo.oMMMMMMMMMMMMMMo..oZ
+.oZo......ozZzo.........
+..oo......oZoZo.........
+...........o.o..........

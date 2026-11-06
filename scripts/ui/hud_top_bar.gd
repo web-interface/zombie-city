@@ -17,6 +17,10 @@ var _kill_bump: float = 0.0
 var _level_bump: float = 0.0
 var _last_level: int = 1
 var _icon_cache: Dictionary = {}
+var _night_name: String = "첫째 밤"
+var _combo: int = 0
+var _combo_ratio: float = 0.0
+var _combo_bump: float = 0.0
 
 
 func setup(context: RunContext, level_up: LevelUp, rack: WeaponRack) -> void:
@@ -26,6 +30,15 @@ func setup(context: RunContext, level_up: LevelUp, rack: WeaponRack) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	offset_bottom = 44.0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+## 연속 처치는 5부터 보이고, 50 넘으면 금색 (문서 14 §4)
+func set_run_status(night_name: String, combo: int, combo_ratio: float) -> void:
+	_night_name = night_name
+	if combo > _combo:
+		_combo_bump = 1.0
+	_combo = combo
+	_combo_ratio = combo_ratio
 
 
 func refresh(remaining_seconds: float, kills: int, delta: float) -> void:
@@ -38,6 +51,7 @@ func refresh(remaining_seconds: float, kills: int, delta: float) -> void:
 		_last_level = _level_up.level
 	_kill_bump = maxf(_kill_bump - delta * 6.0, 0.0)
 	_level_bump = maxf(_level_bump - delta * 4.0, 0.0)
+	_combo_bump = maxf(_combo_bump - delta * 8.0, 0.0)
 	queue_redraw()
 
 
@@ -50,10 +64,20 @@ func _draw() -> void:
 	var level_y := SAFE_TOP + 16.0 - _level_bump * 2.0
 	_draw_text(font, "레벨 %d" % _level_up.level, Vector2(4, level_y), HORIZONTAL_ALIGNMENT_LEFT, PixelUi.GOOD)
 	_draw_text(PixelUi.FONT_BOLD, PixelUi.format_time(_remaining_seconds), Vector2(width * 0.5, SAFE_TOP + 16.0), HORIZONTAL_ALIGNMENT_CENTER, _timer_color())
-	_draw_text(PixelUi.FONT_SMALL, "구조까지", Vector2(width * 0.5, SAFE_TOP + 26.0), HORIZONTAL_ALIGNMENT_CENTER, PixelUi.MUTED, PixelUi.SIZE_SMALL)
+	_draw_text(PixelUi.FONT_SMALL, "%s · 구조까지" % _night_name, Vector2(width * 0.5, SAFE_TOP + 26.0), HORIZONTAL_ALIGNMENT_CENTER, PixelUi.MUTED, PixelUi.SIZE_SMALL)
 	_draw_text(font, "처치 %d" % _kills, Vector2(width - 4, SAFE_TOP + 16.0 - _kill_bump * 1.5), HORIZONTAL_ALIGNMENT_RIGHT, PixelUi.INK)
+	_draw_combo(width)
 	_draw_slots(SAFE_TOP + 30.0)
 	_draw_health_bar(width)
+
+
+func _draw_combo(width: float) -> void:
+	if _combo < 5:
+		return
+	var color := PixelUi.GOLD if _combo >= 50 else PixelUi.INK
+	var top := SAFE_TOP + 27.0 - _combo_bump * 2.0
+	_draw_text(PixelUi.FONT_SMALL, "연속 %d" % _combo, Vector2(width - 4, top), HORIZONTAL_ALIGNMENT_RIGHT, color, PixelUi.SIZE_SMALL)
+	draw_rect(Rect2(width - 34, SAFE_TOP + 29.0, 30.0 * _combo_ratio, 1), Color(color, 0.7))   # 끊기기까지 남은 시간
 
 
 func _timer_color() -> Color:

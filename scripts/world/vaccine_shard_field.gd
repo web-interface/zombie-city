@@ -51,6 +51,17 @@ func positions() -> Array[Vector2]:
 	return result
 
 
+## 밤을 넘길 때: 남은 조각을 한꺼번에 경험치로 바꾸고 비운다 (헬기 탄 보상)
+func cash_in_all() -> void:
+	var total := 0.0
+	for shard: Dictionary in _shards:
+		total += float(shard["value"])
+	_shards.clear()
+	queue_redraw()
+	if total > 0.0:
+		collected.emit(total)
+
+
 ## 화면의 조각을 모두 끌어온다 (물류왕 2차 전직)
 func collect_all() -> void:
 	for shard: Dictionary in _shards:

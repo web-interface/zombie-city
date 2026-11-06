@@ -1,7 +1,7 @@
 ## [파일] scripts/systems/zombie_spawner.gd
-## [하는 일] 시간표대로 좀비를 만든다: 지난 시간에 따라 초당 나오는 수(구간별로 점점 늘어남)와 종류(나오기 시작하는 때·비율)를 정하고, 생존자 둘레 화면 밖 고리에서 만든다. 시간이 갈수록 체력이 늘어난다. 탈출 버티기 때는 더 몰려온다.
-## [쓰는 곳] scenes/run.tscn 의 Systems/ZombieSpawner. run.gd 가 매 프레임 update() 를 부른다.
-## [근거 문서] 03 §6 늘어나는 정도, 02 §3 한 판 시간표, data/spawn_curve.json
+## [하는 일] 시간표대로 좀비를 만든다: 지난 시간에 따라 초당 나오는 수(구간별로 점점 늘어남)와 종류(나오기 시작하는 밤·때·비율)를 정하고, 생존자 둘레 화면 밖 고리에서 만든다. 밤이 지날수록 체력·수·피해·빠르기가 커지고(night_cycle), 가끔 금빛 정예가 나온다. 탈출 버티기 때는 더 몰려온다.
+## [쓰는 곳] scenes/run.tscn 의 Systems/ZombieSpawner. run.gd 가 매 프레임 update() 를 부른다. 이벤트(horde_events.gd)·보스(boss_attacks.gd)도 spawn_zombie() 로 만든다.
+## [근거 문서] 14 §1 끝없는 밤·§1-2 정예, 03 §6 늘어나는 정도, 02 §3 한 밤 시간표, data/spawn_curve.json
 class_name ZombieSpawner
 extends Node
 
@@ -17,6 +17,13 @@ func setup(context: RunContext) -> void:
 	_curve = GameData.table("spawn_curve")
 
 
+## 다음 밤 시작: 쌓인 몫·숨 돌리기·탈출 몰림을 지운다
+func reset_for_new_night() -> void:
+	_spawn_budget = 0.0
+	_calm_seconds_left = 0.0
+	is_extraction_rush = false
+
+
 ## 보스를 잡은 뒤 잠깐 숨 돌리기: 좀비가 덜 나온다 (몰아치기와 쉬기의 파도 — 문서 13)
 func start_calm() -> void:
 	_calm_seconds_left = float(_curve["calm_after_boss_seconds"])
@@ -25,7 +32,9 @@ func start_calm() -> void:
 func update(delta: float) -> void:
 	var elapsed := _context.elapsed_seconds
 	_calm_seconds_left = maxf(_calm_seconds_left - delta, 0.0)
-	var rate := spawn_rate_at(elapsed) * (float(_curve["extraction_spawn_multiplier"]) if is_extraction_rush else 1.0)
+	var rate := spawn_rate_at(elapsed) * _context.night_cycle.spawn_multiplier()
+	if is_extraction_rush:
+		rate *= float(_curve["extraction_spawn_multiplier"])
 	if _calm_seconds_left > 0.0:
 		rate *= float(_curve["calm_spawn_multiplier"])
 	_spawn_budget += rate * delta
@@ -33,8 +42,21 @@ func update(delta: float) -> void:
 	while _spawn_budget >= 1.0 and room > 0:
 		_spawn_budget -= 1.0
 		room -= 1
-		_spawn_one(elapsed)
+		spawn_zombie(_pick_kind(elapsed), _spawn_position(), true)
 	_spawn_budget = minf(_spawn_budget, float(_curve["max_stored_spawns"]))   # 꽉 찼을 때 쌓인 몫이 한꺼번에 쏟아지지 않게
+
+
+## 좀비 하나를 이번 밤의 세기로 만든다 (체력·피해·빠르기 배율, 정예 확률). 이벤트·보스 새끼도 이걸 쓴다.
+func spawn_zombie(kind_id: String, at_position: Vector2, can_be_elite: bool) -> Zombie:
+	var nights := _context.night_cycle
+	var zombie := _context.horde.spawn(kind_id, at_position, nights.zombie_health_multiplier(_context.elapsed_seconds))
+	zombie.contact_damage_per_second *= nights.contact_damage_multiplier()
+	zombie.move_speed *= nights.speed_multiplier()
+	var elite_rules: Dictionary = _curve["elite"]
+	if can_be_elite and _context.elapsed_seconds >= float(elite_rules["from_second"]) and not elite_rules["not_for_kinds"].has(kind_id) and randf() < nights.elite_chance():
+		zombie.make_elite(elite_rules)
+		_context.play_sound("elite_appear")
+	return zombie
 
 
 ## 구간 안에서 시작값 → 끝값으로 고르게 늘어나는 초당 수
@@ -49,25 +71,26 @@ func spawn_rate_at(elapsed: float) -> float:
 	return float(last["per_second_end"])
 
 
-func _spawn_one(elapsed: float) -> void:
-	var kind_id := _pick_kind(elapsed)
-	var health_multiplier := 1.0 + elapsed * float(_curve["health_growth_per_second"])
-	_context.horde.spawn(kind_id, _spawn_position(), health_multiplier)
-
-
+## 이번 밤에 나올 수 있는 종류 중 비율대로 하나. 처음 나오는 밤보다 뒤의 밤이면 처음부터 나온다.
 func _pick_kind(elapsed: float) -> String:
-	var available: Array[Dictionary] = []
+	var night := _context.night_cycle.night
 	var total_weight := 0.0
 	for kind: Dictionary in _curve["kinds"]:
-		if elapsed >= float(kind["from_second"]):
-			available.append(kind)
+		if _is_kind_available(kind, night, elapsed):
 			total_weight += float(kind["weight"])
 	var roll := randf() * total_weight
-	for kind: Dictionary in available:
+	for kind: Dictionary in _curve["kinds"]:
+		if not _is_kind_available(kind, night, elapsed):
+			continue
 		roll -= float(kind["weight"])
 		if roll <= 0.0:
 			return String(kind["kind"])
-	return String(available.back()["kind"])
+	return "walker"
+
+
+func _is_kind_available(kind: Dictionary, night: int, elapsed: float) -> bool:
+	var first_night := int(kind["from_night"])
+	return night > first_night or (night == first_night and elapsed >= float(kind["from_second"]))
 
 
 ## 생존자 둘레 화면 밖 고리. 움직이는 쪽에서 조금 더 자주 나오게 해 앞이 막히는 긴장을 만든다.

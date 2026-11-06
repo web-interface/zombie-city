@@ -15,7 +15,7 @@ sys.stdout.reconfigure(encoding="utf-8")   # 윈도 콘솔(cp949)에서 한글·
 
 PROJECT = Path(__file__).resolve().parent.parent
 CODE_MAP = PROJECT / "docs" / "11_코드구조.md"
-SKIP_FOLDERS = {".godot", ".git", "out", "__pycache__"}
+SKIP_FOLDERS = {".godot", ".git", "out", "__pycache__", "worktrees"}   # worktrees = 에이전트가 따로 일하는 작업 공간 (.claude/worktrees)
 HEADER_TAGS = ["[파일]", "[하는 일]", "[쓰는 곳]", "[근거 문서]"]
 BINARY_SUFFIXES = {".png", ".wav", ".ttf", ".otf", ".tres", ".ogg"}
 MAPPED_SUFFIXES = {".gd", ".tscn", ".py"}       # 코드 지도에 반드시 적혀야 하는 종류

@@ -1,5 +1,5 @@
 ## [파일] scripts/run/run_context.gd
-## [하는 일] 한 판 안의 주요 부분(생존자·좀비 무리·투사체·효과·빛·조각·장판·카메라·소리)을 한 묶음으로 들고 다니는 상자. 무기·스킬·시스템이 서로를 깊숙이 찾아가지 않고 이 상자로 쓴다 (문서 10 §7). 피해 계산(치명타)처럼 여러 곳이 같이 쓰는 계산도 둔다.
+## [하는 일] 한 판 안의 주요 부분(생존자·좀비 무리·투사체·효과·빛·조각·장판·위험물·카메라·소리·몇째 밤)을 한 묶음으로 들고 다니는 상자. 무기·스킬·시스템이 서로를 깊숙이 찾아가지 않고 이 상자로 쓴다 (문서 10 §7). 피해 계산(치명타)처럼 여러 곳이 같이 쓰는 계산도 둔다.
 ## [쓰는 곳] scripts/run/run.gd 가 만들어 각 부분의 setup() 에 넘긴다.
 ## [근거 문서] 11 §4·§5, 10 §7 연결 방식
 class_name RunContext
@@ -16,14 +16,20 @@ var area_effects: AreaEffects
 var props: Props
 var weapon_rack: WeaponRack
 var camera: RunCamera
+## 침·산성 웅덩이·해머 예고 원처럼 생존자를 노리는 것들 (scripts/world/hazards.gd)
+var hazards: Hazards
+## 몇째 밤인지와 그 밤의 세기 배율 (scripts/systems/night_cycle.gd)
+var night_cycle: NightCycle
 ## 빛과 어둠 숫자 (data/run_rules.json lighting)
 var light_rules: Dictionary = {}
 var juice_rules: Dictionary = {}
 ## 독 옮기기·보스 기절 배율 등 (data/run_rules.json status_effects)
 var status_rules: Dictionary = {}
 var spawn_distance: float = 200.0
-## 판이 시작되고 지난 초 (일시정지 시간 제외)
+## 이번 밤이 시작되고 지난 초 (일시정지 시간 제외) — 밤이 바뀌면 0 부터
 var elapsed_seconds: float = 0.0
+## 판 전체(모든 밤)에서 지난 초 — 기록·통계용
+var run_seconds: float = 0.0
 
 
 ## 무기·스킬 피해를 생존자 능력치로 계산: 모든 피해 배율 + 치명타. {"amount": 피해, "is_crit": 치명타였나}

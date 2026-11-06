@@ -1,0 +1,576 @@
+# [파일] art/source/parts_zombies.txt
+# [하는 일] 좀비를 이루는 부품 그림(머리·몸통·팔·덧그림)과 따로 그린 장면(기어다니는 좀비·들개 좀비). 한 글자 = 한 점, '.' = 빈칸, '~' = 투명 유리(뒤가 비쳐 보임).
+# [쓰는 곳] tools/sprite_zombies.py 가 부품을 겹쳐 걷기 4장 × 3방향 + 쓰러지기 3장을 만든다. 다리·모자는 parts_people.txt 것을 같이 쓴다. 색은 outfits.json 의 zombie_kinds.
+# [근거 문서] 06 그림 규칙(16×16, 비대칭), 14 §1-2 새 좀비 6종, 11 §11 픽셀 그림 만드는 길
+#
+# 글자 뜻 (좀비 종류마다 색이 다름)
+#   o 테두리  e 눈  z 피부  Z 피부 그늘  h 머리카락·털  t 옷  T 옷 그늘  q 바지
+#   a 줄무늬·명찰  j J 산성 침  v V 핏줄  g G 방패 테두리  m 벌린 입 속  b 갈비뼈  w 이빨
+# 부품 이름 규칙: <부위>_<방향>  방향 = down(앞모습) / up(뒷모습) / side(옆모습, 오른쪽을 봄)
+# 몸 설계(어느 부품을 어디에 찍는지)는 tools/sprite_zombies.py 의 BODIES 표.
+
+# ───────── 좀비 머리 (8×7) — 머리카락이 듬성듬성 ─────────
+@part zhead_down 8x7
+.oooooo.
+ohZhzhho
+ozzzzzZo
+ozezzZzo
+ozZzzezo
+ozzoZzzo
+.oooooo.
+
+@part zhead_up 8x7
+.oooooo.
+ohhZhhho
+ohhhhZho
+ohZhhhho
+ozhhhhzo
+ozzzzzzo
+.oooooo.
+
+@part zhead_side 8x7
+.oooooo.
+ohhhZhho
+ohhzzzzo
+ohzzzzZo
+ohzzzezz
+ozzzZooo
+.oooooo.
+
+# ───────── 좀비 몸통 (6×4) — 찢어진 옷 ─────────
+@part ztorso_down 6x4
+otTtzo
+oztTto
+oTttto
+oqqqqo
+
+@part ztorso_up 6x4
+otttto
+oTtzTo
+ottTto
+oqqqqo
+
+@part ztorso_side 6x4
+otttTo
+oTtzto
+ottTzo
+oqqqqo
+
+# ───────── 좀비 팔 — 앞으로 뻗음 ─────────
+@part zarm_down_left 2x4
+oT
+oz
+oz
+zz
+
+@part zarm_down_right 2x4
+To
+zo
+zo
+Zz
+
+@part zarm_side 5x2
+oTzzz
+oooZo
+
+# ───────── 기어다니는 좀비 (16×16, 아래쪽으로 기어 옴) — 다른 방향은 도구가 돌려서 만든다 ─────────
+# 위에서 내려다본 '바닥을 기는 사람': 머리가 앞(아래), 한 팔은 앞으로 뻗어 땅을 짚고 다른 팔은 굽혀 끌어당김,
+# 다리 두 개는 한쪽으로 늘어져 끌림. a ↔ b 에서 팔이 바뀌고 다리가 반대쪽으로 쓸려서 꿈틀대며 기는 동작이 된다.
+# 비대칭: 한쪽 발만 검은 신발(o), 다른 발은 맨발(z), 등 찢김(z)이 한쪽으로 치우침, 머리카락 듬성듬성.
+@part crawler_a 16x16
+.oo.............
+ozzo..oo........
+oqqqoooo........
+.oqqqoqqo.......
+..oqqqqqoo......
+...oqqqqqqo.....
+....otTttto.....
+...ottTzzto.....
+..oottTtzztooo..
+.ozotTtttttozzo.
+.ozzohhZhhhoozzo
+..ozohzzzzZoozo.
+.ozzozezzezozzo.
+.ozzozzZZzzooo..
+ozozooooooo.....
+.o.o............
+
+@part crawler_b 16x16
+.............oo.
+........oo..ozzo
+.......oooooqqqo
+.......oqqoqqqo.
+......ooqqqqqo..
+.....oqqqqqqo...
+.....ottTtTo....
+.....otzzTtto...
+..oootzztTttoo..
+.ozzottttTttozo.
+ozzoohhZhhhozzo.
+.ozoohzzzzZozo..
+.ozzozezzezozzo.
+..ooozzZZzzozzo.
+.....ooooooozozo
+............o.o.
+
+# ═════════ 새 좀비 6종 (14 §1-2) ═════════
+
+# ───────── 침 뱉는 좀비 (spitter): 구부정해서 머리가 1점 내려오고 옆모습은 앞으로 나옴 ─────────
+# 볼이 부풀어 머리 아랫부분이 옆으로 넓음(10점), 오므린 입술에 초록 침(j). 눈 한쪽이 처짐. 바랜 보라 추리닝(지퍼 a 가 한쪽으로).
+@part spitter_head_down 10x8
+..oooooo..
+.ohhZhzho.
+.ozzzzzZo.
+.ozezzZzo.
+ozZzzzezzo
+ozzzoozzZo
+.oZzjjzZo.
+..ooJooo..
+
+@part spitter_head_up 10x8
+..oooooo..
+.ohhZhhho.
+.ohhhhZho.
+.ohZhhhho.
+ozhhhhhhzo
+ozzhhhhzZo
+.ozzzzzZo.
+..oooooo..
+
+@part spitter_head_side 10x8
+..oooooo..
+.ohhhZhho.
+.ohhzzzzo.
+.ohzzzezo.
+.ohzzZzzzo
+.ozzzzzooo
+..ozZzzjjo
+...oooooJ.
+
+@part spitter_torso_down 10x5
+.oTttttTo.
+oTtattttTo
+otTatzttTo
+.otatttTo.
+..oqqqqo..
+
+@part spitter_torso_up 10x5
+.oTTTTTTo.
+oTTtttTTTo
+otTttttTto
+.otttTtto.
+..oqqqqo..
+
+@part spitter_torso_side 7x5
+.oTTTo.
+oTTttto
+oTttTao
+.ottTao
+..oqqo.
+
+# 침 뱉는 좀비는 거리를 두고 침을 뱉어서 팔을 앞으로 뻗지 않고 축 늘어뜨린다 (걷는 좀비와 옆 실루엣이 다르게).
+@part spitter_arm_down_left 2x5
+oT
+oT
+ot
+oz
+oz
+
+@part spitter_arm_down_right 2x5
+To
+to
+to
+zo
+Zo
+
+@part spitter_arm_side 2x5
+To
+to
+to
+zo
+Zo
+
+# ───────── 부푼 좀비 (bloater): 배가 둥글게 부풀어 몸통이 12점, 다리는 거의 묻힘 ─────────
+# 작아서 말려 올라간 런닝셔츠(t), 터질 듯한 배에 핏줄(v — 1·3번째 장면에서 빨갛게 꿈틀). 배꼽 한 점, 핏줄은 좌우 다르게.
+@part bloater_torso_down 12x8
+...oooooo...
+..otTttTto..
+.ozttttttTo.
+ozzttttTTzZo
+ozzvzzzzzvZo
+ozvzzzozzzZo
+.oZzvzzzvZo.
+..oooooooo..
+
+@part bloater_torso_up 12x8
+...oooooo...
+..otttTtto..
+.otttttTtto.
+ozttttttTTzo
+ozvTttttTzZo
+ozzvzzzzzvZo
+.oZzzzvzzZo.
+..oooooooo..
+
+@part bloater_torso_side 10x8
+..oooo....
+.otTtto...
+.otttTTo..
+.ottTzzzo.
+.oTtzzvzzo
+.oTzzvzzzo
+..oZzzzvZo
+...ooooo..
+
+# ───────── 진압복 좀비 (riot): 남색 진압복 + 얼굴창 헬멧(visor 모자) + 투명 방패 ─────────
+# 방패는 '~' 자리만 뒤 몸 색에 유리 색을 섞어 비쳐 보이게. 앞모습은 왼쪽으로 치우쳐 들고, 아래쪽에 작은 글자 띠(g).
+@part riot_shield_down 8x9
+.GGGGGG.
+Gg~~~~~G
+G~g~~~~G
+G~~~~~~G
+G~~~~~~G
+G~gg~g~G
+G~~~~~~G
+G~~~~~~G
+.GGGGGG.
+
+@part riot_shield_side 3x9
+.G.
+G~g
+G~g
+G~g
+G~g
+G~g
+G~g
+G~g
+.G.
+
+@part riot_shield_up 2x9
+G.
+Gg
+Gg
+Gg
+Gg
+Gg
+Gg
+Gg
+G.
+# ───────── 비명 좀비 (screamer): 마르고 키 큼, 긴 머리가 어깨까지, 입을 크게 벌림, 환자복 ─────────
+# 몸통 6점·다리 1점씩(thin_legs), 팔은 앞으로 뻗지 않고 축 늘어짐. 가르마가 한쪽으로, 환자복 밑단이 한쪽만 찢김.
+@part screamer_head_down 10x10
+..oooooo..
+.ohhhhhho.
+ohhhhhzhho
+ohhzzzzZho
+ohzezzezho
+ohzzoozzho
+ohzommozho
+ohhzoozhho
+ohho..ohho
+.oo....oo.
+
+@part screamer_head_up 10x10
+..oooooo..
+.ohhhhhho.
+ohhhhhhhho
+ohhhhhhhho
+ohhhhhhhho
+.ohhhhhhho
+.ohhhhhho.
+.ohhohhho.
+..oh.ohho.
+..o...oo..
+@part screamer_head_side 10x10
+..oooooo..
+.ohhhhhho.
+ohhhhhzzo.
+ohhhhzzezo
+ohhhzzzzzo
+ohhhzzzooo
+ohhhzzzmmo
+ohhhozzooo
+ohho.ooo..
+.oo.......
+
+@part screamer_torso_down 6x6
+otTtto
+otTtTo
+otTtto
+otTtTo
+otTtoo
+oooo..
+
+@part screamer_torso_up 6x6
+otzTto
+otzTto
+ottzTo
+otzTto
+ootzTo
+..oooo
+
+@part screamer_torso_side 6x6
+oTttto
+oTtTto
+oTttto
+oTtTto
+oTttoo
+oooo..
+
+@part screamer_arm_down_left 2x5
+ot
+oz
+oz
+oz
+oz
+
+@part screamer_arm_down_right 2x5
+to
+zo
+zo
+zo
+Zo
+
+@part screamer_arm_side 2x5
+to
+zo
+zo
+zo
+Zo
+
+# 마른 다리 (가운데 1점씩) — 비명 좀비. 환자복 밑으로 맨다리(p = 피부), 맨발.
+@part thin_legs_stand 5x4
+opppo
+opopo
+opopo
+ofofo
+
+@part thin_legs_contact_a 5x3
+opppo
+opofo
+ofo.o
+
+@part thin_legs_contact_b 5x3
+opppo
+ofopo
+o.ofo
+
+@part thin_legs_side_stand 3x4
+opo
+opo
+opo
+ofo
+
+@part thin_legs_side_stride 5x3
+.opo.
+op.po
+fo.of
+
+@part thin_legs_side_cross 3x3
+opo
+opo
+ofo
+
+# ───────── 덩치 좀비 (brute): 어깨가 14점으로 꽉 차고 머리는 작게 파묻힘, 큰 주먹 ─────────
+# 찢긴 회청색 작업복: 오른쪽(보는 사람 왼쪽) 소매가 뜯겨 맨팔, 가슴에 명찰(a) 한쪽. 눈 높이가 짝짝이.
+@part brute_head_down 6x6
+.oooo.
+ohZhho
+ozezZo
+ozzzeo
+ozooZo
+.oooo.
+
+@part brute_head_up 6x6
+.oooo.
+ohhZho
+ohhhho
+ohZhho
+ozzzzo
+.oooo.
+
+@part brute_head_side 6x6
+.oooo.
+ohhhZo
+ohzzeo
+ohzzzo
+ozzooo
+.oooo.
+
+@part brute_torso_down 14x6
+.oooooooooooo.
+oZztttttttttTo
+ozzttatttttTto
+oZzttttttttTTo
+.oZtttTtttTTo.
+..oqqqqqqqqo..
+
+@part brute_torso_up 14x6
+.oooooooooooo.
+oTtttttttttzZo
+otTtttttttttzo
+oTTtttttttttZo
+.oTTtttTtttZo.
+..oqqqqqqqqo..
+
+@part brute_torso_side 10x6
+..oooooo..
+.oTttttTo.
+oTtttattTo
+oTttttttTo
+.oTtttttTo
+..oqqqqqo.
+
+@part brute_arm_down_left 4x7
+otto
+ozZo
+ozZo
+ozzo
+ozZo
+ozZo
+.oo.
+@part brute_arm_down_right 4x7
+otTo
+otTo
+otTo
+otTo
+otTo
+ozZo
+.oo.
+@part brute_arm_up_left 4x7
+otTo
+otTo
+otTo
+otTo
+otTo
+ozZo
+.oo.
+@part brute_arm_up_right 4x7
+otto
+ozZo
+ozzo
+ozZo
+ozzo
+ozZo
+.oo.
+@part brute_arm_side 4x7
+otTo
+otTo
+otTo
+otTo
+otTo
+ozZo
+.oo.
+# ───────── 들개 좀비 (hound): 네 발 짐승 — 방향마다 따로 그린 장면 ─────────
+# 옆모습(오른쪽을 봄) 달리기 4장: a 쭉 뻗음 → b 모음 → c 쭉 뻗음(다리 바뀜) → d 모음. 앞·뒤 모습은 2장 번갈아.
+# 털(t·T)이 찢겨 맨살(z)이 드러나고 옆구리에 갈비뼈(b), 벌린 입에 이빨(w). 귀 한쪽이 찢겨 짧음, 꼬리는 털 빠진 채 위로.
+@part hound_side_a 16x10
+...........oo...
+o.........oTtoo.
+To.ooooooottttto
+.TotTtTtTtttetzz
+..otbtbtztTttzzo
+..oTbTbTtToTowow
+.oTtoooooottoooo
+oTo.......otTo..
+To.........oTto.
+o...........ooo.
+
+@part hound_side_b 16x10
+...........oo...
+o.........oTtoo.
+To.ooooooottttto
+.TotTtTtTtttetzz
+..otbtbtztTttzzo
+..oTbTbTtToTowow
+..otooooootoooo.
+...oto...oto....
+...oTo..oto.....
+...oo...oo......
+
+@part hound_side_c 16x10
+...........oo...
+o.........oTtoo.
+To.ooooooottttto
+.TotTtTtTtttetzz
+..otbtbtztTttzzo
+..oTbTbTtToTowow
+..oTtooooottooo.
+.oTo.......oTo..
+oTo.........oTo.
+oo...........oo.
+
+@part hound_side_d 16x10
+...........oo...
+o.........oTtoo.
+To.ooooooottttto
+.TotTtTtTtttetzz
+..otbtbtztTttzzo
+..oTbTbTtToTowow
+...otoooootooo..
+....oto..oto....
+....oTo.oto.....
+....oo..oo......
+
+@part hound_down_a 14x12
+..oo...oo.....
+.oTto.oTto....
+.oTtTttTto....
+.oteTtteto..o.
+.oZttttTTo.oTo
+..oTtootToooTo
+...owwwwoTtTo.
+..oTtbtbtTtTo.
+..otTbtbTtTto.
+..oto.oto.oto.
+..oto.oto.oto.
+..oo..oo..oo..
+@part hound_down_b 14x12
+..oo...oo.....
+.oTto.oTto....
+.oTtTttTto....
+.oteTtteto..o.
+.oZttttTTo.oTo
+..oTtootToooTo
+...owwwwoTtTo.
+..oTtbtbtTtTo.
+..otTbtbTtTto.
+..oto.oto.oto.
+..oo..oto..oto
+......oo...oo.
+@part hound_up_a 14x12
+..oo...oo.....
+.oTto.oTto....
+.oTttttTto....
+.otttttTTo..o.
+.ottttttTo.oTo
+..oTttttToooTo
+..otZttttbTTo.
+..otttttTbTto.
+..oTttttttTto.
+..oto.oto.oto.
+..oto.oto.oto.
+..oo..oo..oo..
+
+@part hound_up_b 14x12
+..oo...oo.....
+.oTto.oTto....
+.oTttttTto....
+.otttttTTo..o.
+.ottttttTo.oTo
+..oTttttToooTo
+..otZttttbTTo.
+..otttttTbTto.
+..oTttttttTto.
+..oto.oto.oto.
+..oo..oto..oto
+......oo...oo.
+
+@part hound_lying 16x7
+...........oo...
+o.........oTtoo.
+To.ooooooottttto
+.TotTtTtTtttottz
+..otbtbtztTttzzo
+..oTbTbTtTooooo.
+..ooto.ooto.....

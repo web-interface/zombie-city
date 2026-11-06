@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://scripts/run/run.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ground.gd" id="2"]
@@ -23,10 +23,12 @@
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="21"]
 [ext_resource type="Script" path="res://scripts/world/shadows.gd" id="22"]
 [ext_resource type="Script" path="res://scripts/world/health_packs.gd" id="23"]
+[ext_resource type="Script" path="res://scripts/world/hazards.gd" id="24"]
+[ext_resource type="Script" path="res://scripts/systems/horde_events.gd" id="25"]
 
 [node name="Run" type="Node2D"]
 editor_description = "[파일] scenes/run.tscn
-[하는 일] 한 판(5분) 장면. World = 보이는 것(바닥·장판·조각·소품·좀비·생존자·무기·투사체·탈출·효과·빛), Systems = 규칙 담당, Camera, Hud = 화면 UI.
+[하는 일] 한 판(밤마다 3분, 헬기를 타면 다음 밤) 장면. World = 보이는 것(바닥·장판·조각·위험물·소품·좀비·생존자·무기·투사체·탈출·효과·빛), Systems = 규칙 담당, Camera, Hud = 화면 UI.
 [쓰는 곳] SceneRouter.start_run() 이 연다 / scripts/run/run.gd 가 지휘한다.
 [근거 문서] 11 §4 한 판 장면 구성"
 script = ExtResource("1")
@@ -48,6 +50,9 @@ script = ExtResource("4")
 
 [node name="HealthPacks" type="Node2D" parent="World"]
 script = ExtResource("23")
+
+[node name="Hazards" type="Node2D" parent="World"]
+script = ExtResource("24")
 
 [node name="Props" type="Node2D" parent="World"]
 y_sort_enabled = true
@@ -85,6 +90,9 @@ script = ExtResource("14")
 
 [node name="ZombieSpawner" type="Node" parent="Systems"]
 script = ExtResource("15")
+
+[node name="HordeEvents" type="Node" parent="Systems"]
+script = ExtResource("25")
 
 [node name="LevelUp" type="Node" parent="Systems"]
 script = ExtResource("16")

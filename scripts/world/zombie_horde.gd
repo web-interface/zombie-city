@@ -1,7 +1,7 @@
 ## [파일] scripts/world/zombie_horde.gd
-## [하는 일] 좀비 무리 전부를 한곳에서 관리: 만들기, 생존자 쪽으로 움직이기(빛과 어둠에 따라 빠르기 다름), 서로 밀어내기, 생존자에게 닿으면 피해, 맞기·쓰러지기, 그림(걷기 4장·3방향, 맞으면 하얗게). 근처 좀비 찾기도 맡는다.
+## [하는 일] 좀비 무리 전부를 한곳에서 관리: 만들기, 생존자 쪽으로 움직이기(빛과 어둠에 따라 빠르기 다름), 서로 밀어내기, 생존자에게 닿으면 피해, 맞기·쓰러지기, 그림(걷기 4장·3방향, 맞으면 하얗게, 정예는 금빛), 특수 행동은 zombie_abilities.gd 에 맡김. 근처 좀비 찾기도 맡는다.
 ## [쓰는 곳] scenes/run.tscn 의 World/ZombieHorde. run.gd 가 setup()·update() 를 부르고, 무기·스킬·시스템이 hit()·nearest()·in_radius() 를 쓴다.
-## [근거 문서] 03 §6·§7, 02 §4 빛과 어둠, 11 §4·§5·§6
+## [근거 문서] 03 §6·§7, 02 §4 빛과 어둠, 11 §4·§5·§6, 14 §1-2 새 좀비·정예
 class_name ZombieHorde
 extends Node2D
 
@@ -20,6 +20,9 @@ const BASE_WALK_SPEED := 13.0        # 이 빠르기의 좀비가 기본 걸음 
 ## 독 피해처럼 자주 들어오는 피해는 숫자·소리를 내지 않는다 (매번 새 묶음을 만들지 않게 상수로)
 const QUIET_POISON_HIT := {"source": "poison", "show_number": false}
 const SILENT_SOURCES: Array[String] = ["poison", "fire"]
+const ELITE_GLOW := Color(1.35, 1.15, 0.55)
+const ELITE_RING_COLOR := Color("ffd25a")
+const FALLBACK_SPRITES := {false: "zombie_walker", true: "boss_butcher"}   # 그림이 아직 없을 때 (보스 여부 → 대신 쓸 그림)
 
 var zombies: Array[Zombie] = []
 var _dying: Array[Zombie] = []
@@ -31,10 +34,13 @@ var _bite_limit: int = 3
 var _sprite_pool: Array[Sprite2D] = []
 var _textures: Dictionary = {}       # 그림 이름 → [보통, 하얀 실루엣]
 var _context: RunContext
+var _abilities := ZombieAbilities.new()
+var _time: float = 0.0
 
 
 func setup(context: RunContext) -> void:
 	_context = context
+	_abilities.setup(context)
 
 
 func spawn(kind_id: String, at_position: Vector2, health_multiplier: float) -> Zombie:
@@ -56,10 +62,25 @@ func update(delta: float) -> void:
 		if zombie.is_dead:
 			continue
 		_move_toward_survivor(zombie, delta)
+		if zombie.info.has("ability"):
+			_abilities.update(zombie, delta)
 		_touch_survivor(zombie, survivor, delta)
 	_separate_neighbors()
 	_remove_dead_and_animate(delta)
 	_rebuild_grid()   # 무기·스킬이 이번 프레임에 찾을 때 움직인 뒤의 위치로 찾게
+	_time += delta
+	queue_redraw()   # 정예 금빛 고리
+
+
+## 다음 밤으로 넘어갈 때 무리를 비운다 (그림은 다시 쓰려고 모아 둠)
+func clear_all() -> void:
+	for zombie: Zombie in zombies:
+		_return_sprite(zombie.sprite)
+	for zombie: Zombie in _dying:
+		_return_sprite(zombie.sprite)
+	zombies.clear()
+	_dying.clear()
+	_grid.clear()
 
 
 ## 좀비에게 피해를 준다. options: knockback_from(Vector2) · knockback(float) · is_crit(bool) · source(String) · show_number(bool)
@@ -68,7 +89,7 @@ func hit(zombie: Zombie, amount: float, options: Dictionary = {}) -> void:
 		return
 	var in_light := _context.lighting.is_in_light(zombie.position)
 	var light_bonus: float = float(_context.light_rules["zombie_damage_taken_in_light"]) if in_light else 1.0
-	var final_amount: float = amount * light_bonus
+	var final_amount: float = amount * light_bonus * _abilities.damage_multiplier(zombie, options)
 	zombie.health -= final_amount
 	zombie.flash_time_left = HIT_FLASH_SECONDS
 	if options.has("knockback_from") and float(options.get("knockback", 0.0)) > 0.0:
@@ -119,9 +140,11 @@ func _move_toward_survivor(zombie: Zombie, delta: float) -> void:
 	var to_survivor := _context.survivor.position - zombie.position
 	if to_survivor.length() < zombie.radius + CONTACT_MARGIN:
 		return
-	var light_speed: float = _context.light_rules["zombie_speed_in_light"] if _context.lighting.is_in_light(zombie.position) else _context.light_rules["zombie_speed_in_dark"]
 	zombie.facing = to_survivor.normalized()
-	zombie.position += zombie.facing * zombie.move_speed * zombie.slow_speed_ratio * light_speed * delta
+	if _abilities.holds_distance(zombie, to_survivor.length()):
+		return
+	var light_speed: float = _context.light_rules["zombie_speed_in_light"] if _context.lighting.is_in_light(zombie.position) else _context.light_rules["zombie_speed_in_dark"]
+	zombie.position += zombie.facing * zombie.current_speed() * light_speed * delta
 	if to_survivor.length() > RECYCLE_DISTANCE and not zombie.is_boss:
 		zombie.position = _context.survivor.position - to_survivor.normalized() * _context.spawn_distance
 
@@ -165,6 +188,7 @@ func _kill(zombie: Zombie, source: String) -> void:
 	zombie.death_time_left = DEATH_SHOW_SECONDS
 	zombie.animation_time = 0.0
 	_dying.append(zombie)
+	_abilities.on_death(zombie)
 	zombie_died.emit(zombie)
 	if source == "poison" and _context.survivor.stats.is_on("poison_spread"):
 		_context.spread_poison_from(zombie)
@@ -213,6 +237,20 @@ func _animate(zombie: Zombie, delta: float) -> void:
 		target_alpha = 0.45 if is_close else HIDDEN_ZOMBIE_MIN_ALPHA
 	sprite.modulate.a = move_toward(sprite.modulate.a, target_alpha, delta * 4.0)
 	sprite.modulate.g = 0.55 if zombie.poison_time_left > 0.0 else 1.0   # 독에 걸리면 보랏빛
+	if zombie.is_boss and bool(zombie.boss_state.get("is_raging", false)):
+		var rage_pulse := 0.75 + 0.25 * sin(_time * 10.0)   # 분노한 보스는 붉게 고동침
+		sprite.modulate = Color(1.0, rage_pulse * 0.6, rage_pulse * 0.5, sprite.modulate.a)
+	if zombie.is_elite:
+		var pulse := 0.85 + 0.15 * sin(_time * 6.0)
+		sprite.modulate = Color(ELITE_GLOW.r * pulse, ELITE_GLOW.g * pulse, ELITE_GLOW.b, sprite.modulate.a)
+		sprite.scale = Vector2.ONE * (zombie.radius / float(zombie.info["radius"]))
+
+
+## 정예 발밑 금빛 고리 (그림보다 먼저 그려져 발밑에 깔림)
+func _draw() -> void:
+	for zombie: Zombie in zombies:
+		if zombie.is_elite:
+			draw_arc(zombie.position.round(), zombie.radius + 2.0 + sin(_time * 6.0), 0.0, TAU, 16, Color(ELITE_RING_COLOR, 0.8), 1.0)
 
 
 func _is_visible_target(zombie: Zombie) -> bool:
@@ -232,11 +270,13 @@ func _rebuild_grid() -> void:
 func _take_sprite(zombie: Zombie) -> Sprite2D:
 	var sprite_name: String = zombie.info["sprite"]
 	if not _textures.has(sprite_name):
-		_textures[sprite_name] = [load("res://art/sprites/%s.png" % sprite_name), load("res://art/sprites/%s_flash.png" % sprite_name)]
+		var file_name := sprite_name if ResourceLoader.exists("res://art/sprites/%s.png" % sprite_name) else String(FALLBACK_SPRITES[zombie.is_boss])
+		_textures[sprite_name] = [load("res://art/sprites/%s.png" % file_name), load("res://art/sprites/%s_flash.png" % file_name)]
 	var sprite: Sprite2D = _sprite_pool.pop_back() if not _sprite_pool.is_empty() else Sprite2D.new()
 	if sprite.get_parent() == null:
 		add_child(sprite)
 	sprite.visible = true
+	sprite.scale = Vector2.ONE
 	sprite.texture = _textures[sprite_name][0]
 	sprite.hframes = SpriteSheetLayout.COLUMNS
 	sprite.vframes = SpriteSheetLayout.BOSS_ROW_COUNT if zombie.is_boss else SpriteSheetLayout.ZOMBIE_ROW_COUNT

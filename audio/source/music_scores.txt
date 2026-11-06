@@ -1,7 +1,7 @@
 # [파일] audio/source/music_scores.txt
-# [하는 일] 음악 악보 원본: 악기 소리 설정(@instrument·@drum)과 곡 3개(한 판 음악 3층 · 타이틀 · 결과)의 마디별 음표.
-# [쓰는 곳] tools/build_sounds.py 가 읽어 tools/chiptune.py 로 audio/music_*.wav 를 만든다. 음악을 바꿀 때는 이 파일만 고치고 도구를 다시 돌린다.
-# [근거 문서] 02 §12 위험할수록 악기가 더해지는 음악, 06 사운드
+# [하는 일] 음악 악보 원본: 악기 소리 설정(@instrument·@drum)과 곡 4개(한 판 음악 3층 · 타이틀 · 결과 · 은신처)의 마디별 음표.
+# [쓰는 곳] tools/build_sounds.py → tools/sound_music.py 가 읽어 tools/chiptune.py 로 audio/music_*.wav 를 만든다. 음악을 바꿀 때는 이 파일만 고치고 도구를 다시 돌린다.
+# [근거 문서] 02 §12 위험할수록 악기가 더해지는 음악, 06 사운드, 14 §3 은신처
 #
 # 쓰는 법
 #   @instrument 이름 설정…   선율 악기 (설정 = 키=값, 값이 여럿이면 쉼표. adsr=올라가기,줄기,유지 높이,놓기 · gate=음 길이 중 소리 내는 비율
@@ -45,6 +45,15 @@
 @instrument result_bass  wave=triangle adsr=0.005,0.2,0.6,0.08 gate=0.9 volume=0.6
 @instrument result_chord wave=square duty=0.25 adsr=0.003,0.08,0.3,0.03 gate=0.6 lowpass=2600 volume=0.12
 @instrument result_lead  wave=square duty=0.5 adsr=0.01,0.2,0.65,0.12 gate=0.95 vibrato=5,0.22,0.2 lowpass=3500 volume=0.36 echo=4,0.3,0.35
+
+# ───────── 은신처 악기 ─────────
+# 불꽃 '타닥'은 @drum 이 아니라 노이즈 악기로: @drum 을 늘리면 다른 곡의 무작위 세기가 바뀌어 기존 음악 파일까지 달라진다.
+@instrument shelter_bass wave=triangle adsr=0.01,0.45,0.5,0.25 gate=0.95 volume=0.55
+@instrument shelter_pad  wave=square duty=0.5 adsr=0.45,0.6,0.65,0.6 gate=1 lowpass=900 vibrato=0.35,0.07 volume=0.06
+@instrument shelter_box  wave=triangle adsr=0.002,0.55,0,0.05 gate=1 volume=0.16 echo=3,0.3,0.3
+@instrument shelter_lead wave=square duty=0.25 adsr=0.03,0.3,0.55,0.2 gate=0.95 vibrato=4.8,0.18,0.25 lowpass=2000 volume=0.22 echo=6,0.3,0.4
+@instrument crackle      wave=noise pitch=7000 adsr=0.001,0.025,0,0.005 gate=0.3 highpass=1800 lowpass=7000 volume=0.16
+@instrument crackle_pop  wave=noise pitch=2600 adsr=0.001,0.04,0,0.005 gate=0.4 highpass=500 lowpass=3000 volume=0.2
 
 
 # ═════════ 한 판 음악: 레단조 126 BPM, 24마디(약 45.7초) ═════════
@@ -227,3 +236,41 @@
 
 @part music_result hat volume=0.45
 | x.x.x.x.x.x.x.x. | % | % | % | % | % | % | % | % | % | % | %
+
+
+# ═════════ 은신처: 라장조 75 BPM, 12마디(38.4초) — 폐건물 안 작은 모닥불 곁 ═════════
+# 화음: Dmaj7 Bm7 Gmaj7 A | Dmaj7 F#m7 Gmaj7 Em7-A | Bm7 Gmaj7 Em7 Asus4-A → 다시 Dmaj7 로 이어짐
+# 1~4마디는 오르골(삼각파)과 화음만, 5마디부터 느린 멜로디. 북 없이 불꽃 '타닥'만 — 쉬는 곳이라 박자를 세게 밀지 않는다.
+# 타이틀과 같은 크기 기준(−5): 조용한 곡이라 봉우리를 낮춰 들리는 크기를 맞춤
+@song music_shelter bpm=75 bars=12 peak_db=-5
+
+@part music_shelter shelter_bass
+| D2:6 A2:2 D3:4 A2:4 | B2:6 F#2:2 B2:4 D3:4 | G2:6 D2:2 G2:4 B2:4 | A2:6 E2:2 A2:4 C#3:4
+| D2:6 A2:2 D3:4 A2:4 | F#2:6 C#3:2 F#3:4 C#3:4 | G2:6 D2:2 G2:4 B2:4 | E2:8 A2:8
+| B2:6 F#2:2 B2:4 F#2:4 | G2:6 D2:2 G2:4 D3:4 | E2:6 B2:2 E3:4 B2:4 | A2:6 E2:2 A2:4 C#3:4
+
+@part music_shelter shelter_pad
+| F#4+A4+C#5:16 | F#4+A4+D5:16 | F#4+B4+D5:16 | E4+A4+C#5:16
+| F#4+A4+C#5:16 | E4+A4+C#5:16 | F#4+B4+D5:16 | E4+G4+B4:8 E4+A4+C#5:8
+| F#4+A4+D5:16 | F#4+B4+D5:16 | E4+G4+B4:16 | E4+A4+D5:8 E4+A4+C#5:8
+
+@part music_shelter shelter_box
+| D6:4 A6:4 F#6:4 C#7:4 | B5:4 F#6:4 D6:4 A6:4 | G5:4 D6:4 B5:4 F#6:4 | A5:4 E6:4 C#6:4 E6:4
+| D6:4 A6:4 F#6:4 C#7:4 | C#6:4 A6:4 F#6:4 E6:4 | G5:4 D6:4 B5:4 F#6:4 | E6:4 B5:4 C#6:4 E6:4
+| B5:4 F#6:4 D6:4 A6:4 | G5:4 D6:4 B5:4 D6:4 | E6:4 G6:4 B6:4 G6:4 | A5:4 D6:4 C#6:4 E6:4
+
+@part music_shelter shelter_lead
+| .:16 | % | % | %
+| .:4 F#5:4 E5:2 D5:2 E5:4 | C#5:8 A4:4 .:4 | B4:4 D5:4 G5:4 F#5:2 E5:2 | E5:8 .:4 C#5:2 E5:2
+| D5:6 F#5:2 B5:4 A5:2 F#5:2 | G5:8 D5:4 B4:4 | E5:4 G5:4 B5:4 A5:2 G5:2 | A5:12 .:4
+
+# 불꽃: 마디마다 자리를 다르게 — 규칙적으로 들리면 '찍어 낸' 소리가 된다
+@part music_shelter crackle
+| C4 .:3 C4 .:6 C4 . C4 .:2 | .:2 C4 .:7 C4 .:4 C4 | C4 .:2 C4 .:9 C4 .:2 | .:5 C4 . C4 .:6 C4 .
+| C4 .:7 C4 .:2 C4 .:4 | .:3 C4 . C4 .:5 C4 .:3 C4 | . C4 .:8 C4 . C4 .:3 | C4 .:4 C4 .:7 C4 .:2
+| .:2 C4 . C4 .:6 C4 .:4 | C4 .:9 C4 .:2 C4 .:2 | .:4 C4 . C4 .:7 C4 . | . C4 .:5 C4 .:3 C4 .:4
+
+@part music_shelter crackle_pop
+| .:7 C4 .:8 | .:16 | .:5 C4 .:10 | .:16
+| .:12 C4 .:3 | .:16 | .:3 C4 .:12 | .:16
+| .:8 C4 .:7 | .:16 | .:2 C4 .:13 | .:9 C4 .:6

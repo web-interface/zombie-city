@@ -1,8 +1,8 @@
 """
 [파일] tools/pixel_png.py
-[하는 일] 픽셀 그림 기본 도구: 글자 지도 파일 읽기(@part / @sprite), 점 단위 캔버스(겹쳐 찍기·돌리기·어둡게·하얀 실루엣), PNG 저장. 파이썬 기본 라이브러리만 쓴다.
-[쓰는 곳] tools/build_sprites.py 가 불러 쓴다.
-[근거 문서] 06 그림 규칙, 11 §9 픽셀 그림 만드는 길
+[하는 일] 픽셀 그림 기본 도구: 글자 지도 파일 읽기(@part / @sprite), 점 단위 캔버스(겹쳐 찍기·돌리기·어둡게·하얀 실루엣·투명 유리 섞기), 색 섞기·밝기, PNG 저장(반투명 #rrggbbaa 포함). 파이썬 기본 라이브러리만 쓴다.
+[쓰는 곳] tools/build_sprites.py · sprite_sheet.py · sprite_zombies.py · sprite_icons.py 가 불러 쓴다.
+[근거 문서] 06 그림 규칙, 11 §11 그림 만드는 길
 """
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ import zlib
 from pathlib import Path
 
 EMPTY = "."
+GLASS = "~"   # 투명한 유리·방패 자리: stamp 는 건너뛰고, glaze 가 아래 그림 색에 유리 색을 섞는다
 
 
 class PixelMap:
@@ -59,7 +60,7 @@ def _check_complete(pixel_map: PixelMap | None, path: Path) -> None:
 
 
 class Canvas:
-    """색(#rrggbb) 또는 None(투명)을 담는 점 격자."""
+    """색(#rrggbb, 반투명은 #rrggbbaa) 또는 None(투명)을 담는 점 격자."""
 
     def __init__(self, width: int, height: int) -> None:
         self.width = width
@@ -70,7 +71,7 @@ class Canvas:
         """지도를 (left, top) 에 겹쳐 찍는다. '.' 은 아래 그림을 그대로 둔다. 캔버스 밖은 버린다."""
         for row_index, row in enumerate(pixel_map.rows):
             for column_index, letter in enumerate(row):
-                if letter == EMPTY:
+                if letter in (EMPTY, GLASS):
                     continue
                 x = left + column_index
                 y = top + row_index
@@ -78,6 +79,15 @@ class Canvas:
                     if letter not in palette:
                         raise KeyError(f"'{pixel_map.name}' 의 글자 '{letter}' 에 해당하는 색이 팔레트에 없음")
                     self.pixels[y][x] = palette[letter]
+
+    def glaze(self, pixel_map: PixelMap, left: int, top: int, color: str, strength: float) -> None:
+        """지도의 '~' 자리에 있는 그림 색을 color 쪽으로 strength 만큼 섞는다. 빈 자리는 그대로 투명 → 뒤가 비쳐 보이는 유리."""
+        for row_index, row in enumerate(pixel_map.rows):
+            for column_index, letter in enumerate(row):
+                x = left + column_index
+                y = top + row_index
+                if letter == GLASS and 0 <= x < self.width and 0 <= y < self.height and self.pixels[y][x]:
+                    self.pixels[y][x] = mix_colors(self.pixels[y][x], color, strength)
 
     def paste(self, other: Canvas, left: int, top: int) -> None:
         for y in range(other.height):
@@ -128,6 +138,22 @@ def _darken(color: str, ratio: float) -> str:
     return "#%02x%02x%02x" % (int(red * keep), int(green * keep), int(blue * keep))
 
 
+def mix_colors(base: str, other: str, strength: float) -> str:
+    """base 색을 other 색 쪽으로 strength(0~1) 만큼 섞는다."""
+    mixed = []
+    for index in (1, 3, 5):
+        start = int(base[index:index + 2], 16)
+        end = int(other[index:index + 2], 16)
+        mixed.append(round(start + (end - start) * strength))
+    return "#%02x%02x%02x" % tuple(mixed)
+
+
+def brightness(color: str) -> float:
+    """사람 눈에 보이는 밝기 0~255 (초록이 가장 밝게 보임)."""
+    red, green, blue = (int(color[index:index + 2], 16) for index in (1, 3, 5))
+    return 0.299 * red + 0.587 * green + 0.114 * blue
+
+
 def save_png(canvas: Canvas, path: Path, alpha_rows: list[list[int]] | None = None) -> None:
     """캔버스를 RGBA PNG 로 저장한다. alpha_rows 를 주면 색 대신 흰색 + 그 투명도로 저장한다 (빛 그림용)."""
     raw = bytearray()
@@ -141,7 +167,8 @@ def save_png(canvas: Canvas, path: Path, alpha_rows: list[list[int]] | None = No
             if color is None:
                 raw += b"\x00\x00\x00\x00"
             else:
-                raw += bytes((int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16), 255))
+                alpha = int(color[7:9], 16) if len(color) == 9 else 255   # '#rrggbbaa' = 반투명 (진화 아이콘 테두리 빛)
+                raw += bytes((int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16), alpha))
     path.parent.mkdir(parents=True, exist_ok=True)
     header = struct.pack(">IIBBBBB", canvas.width, canvas.height, 8, 6, 0, 0, 0)
     png = b"\x89PNG\r\n\x1a\n" + _chunk(b"IHDR", header) + _chunk(b"IDAT", zlib.compress(bytes(raw), 9)) + _chunk(b"IEND", b"")

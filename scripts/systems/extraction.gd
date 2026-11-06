@@ -1,5 +1,5 @@
 ## [파일] scripts/systems/extraction.gd
-## [하는 일] 탈출 담당: 4:30 에 착륙 지점을 정해 알리고(화면 밖이면 HUD 가 화살표), 5:00 에 헬기가 내려와 서치라이트를 비춘다. 생존자가 착륙 원 안에 8초(밖으로 나가면 멈춤) 있으면 탈출 성공, 5:30 까지 못 타면 헬기가 떠나 실패. 헬기와 착륙 원도 직접 그린다.
+## [하는 일] 탈출 담당 (한 밤마다): 2:30 에 착륙 지점을 정해 알리고(화면 밖이면 HUD 가 화살표), 3:00 에 헬기가 내려와 서치라이트를 비춘다. 생존자가 착륙 원 안에 6초(밖으로 나가면 멈춤) 있으면 그 밤 생존 → 다음 밤, 3:25 까지 못 타면 헬기가 떠나 판이 끝난다. 헬기와 착륙 원도 직접 그린다. 시각은 data/run_rules.json extraction.
 ## [쓰는 곳] scenes/run.tscn 의 World/Extraction. run.gd 가 update() 를 부르고 신호를 HUD·결과에 잇는다.
 ## [근거 문서] 02 §3 시간표·§9 승패, 03 §8 탈출, data/run_rules.json extraction
 class_name Extraction
@@ -45,6 +45,16 @@ func update(delta: float) -> void:
 				helicopter_arrived.emit()
 		"landed":
 			_update_hold(delta)
+	queue_redraw()
+
+
+## 다음 밤: 착륙 지점·버티기를 처음으로
+func reset_for_new_night() -> void:
+	phase = "waiting"
+	hold_progress = 0.0
+	zone_position = Vector2.ZERO
+	_landed_at = 0.0
+	SoundPlayer.stop_loop("helicopter_loop")
 	queue_redraw()
 
 

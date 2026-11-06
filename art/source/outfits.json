@@ -1,9 +1,9 @@
 {
   "_설명": {
     "파일": "art/source/outfits.json",
-    "하는 일": "그림 색 표. 생존자 옷 16벌(기본 4 + 전직 12)·좀비 3종의 부품별 색과 모자 종류, 한 장 그림(sprites.txt)에 쓰는 공통 색을 정한다.",
-    "쓰는 곳": "tools/build_sprites.py 가 읽어 art/source/parts_people.txt · sprites.txt 의 글자를 색으로 바꾼다.",
-    "근거 문서": "04 §2 생존자 모습·전직 옷차림, 06 색 표"
+    "하는 일": "그림 색 표. 생존자 옷 16벌(기본 4 + 전직 12)·좀비 10종의 부품별 색과 모자 종류, 한 장 그림·보스·아이콘에 쓰는 공통 색, 진화 아이콘 금색 규칙을 정한다.",
+    "쓰는 곳": "tools/build_sprites.py · sprite_zombies.py · sprite_icons.py 가 읽어 art/source/*.txt 의 글자를 색으로 바꾼다.",
+    "근거 문서": "04 §2 생존자 모습·전직 옷차림, 06 색 표, 14 §1-2 새 좀비 · §2-4 진화"
   },
 
   "global_palette": {
@@ -11,7 +11,20 @@
     "y": "#f2c230", "Y": "#a88b2c", "b": "#8b5a2b", "B": "#5e3b1c", "x": "#8ff59a", "X": "#2f9e4f",
     "c": "#7fc8d8", "C": "#3b6fb6", "v": "#8fd3ff", "u": "#ffe066", "l": "#f0e3a0", "n": "#ff9a3c",
     "z": "#7fa36b", "Z": "#5d7d4e", "e": "#e0463f", "h": "#3b3b2e", "q": "#3a3f4a",
-    "a": "#c9c2ad", "A": "#9c947c", "d": "#7a4b46", "D": "#4f3330", "i": "#5b7a8c", "I": "#33464f"
+    "a": "#c9c2ad", "A": "#9c947c", "d": "#7a4b46", "D": "#4f3330", "i": "#5b7a8c", "I": "#33464f",
+    "k": "#c99a5b", "K": "#9a6b35", "N": "#c4621e", "m": "#9b5d8a", "M": "#64385a",
+    "j": "#b6d84a", "J": "#6f8f22", "p": "#d4848a", "P": "#9a4d5c", "E": "#fff6c4"
+  },
+
+  "_진화_아이콘": "무기 아이콘마다 icon_<무기>_evolved 를 자동으로 만든다: 밝기(0~255)에 따라 gold_steps 의 금색으로 바꾸고, 테두리는 outline, 바깥 한 겹은 glow(#rrggbbaa 반투명 빛), 오른쪽 위 한 점은 sparkle. 무기가 늘면 weapons 에 더한다.",
+  "evolved_icons": {
+    "weapons": ["pistol", "fire_axe", "nail_gun", "syringe_gun", "shotgun", "saw_drone",
+                "taser", "tear_gas", "megaphone", "fire_hose", "rescue_saw", "flare", "box_toss",
+                "tape_gun", "parcel_drone", "disinfectant", "defibrillator", "scalpel", "molotov"],
+    "outline": "#3a1d06",
+    "gold_steps": [[195, "#fff1a8"], [140, "#f7c843"], [95, "#d8902a"], [60, "#a35f1b"], [0, "#6b3810"]],
+    "glow": "#ffd84a80",
+    "sparkle": "#ffffff"
   },
 
   "_사람_공통": "o 테두리 · s 피부 · e 눈 은 모든 생존자가 같고, 나머지 글자(h t T a p f c C)는 옷마다 다르다.",
@@ -39,13 +52,19 @@
     "nurse_surgeon":        { "hat": "softcap", "h": "#4a3428", "t": "#4f9a6e", "T": "#3a7552", "a": "#f4f4f4", "p": "#4f9a6e", "f": "#f4f4f4", "c": "#4f9a6e", "C": "#3a7552" }
   },
 
-  "_좀비_공통": "o 테두리 · e 눈(빨강) 은 같고, z Z(피부) h(머리) t T(옷) q(바지) 는 종류마다 다르다. 다리 부품의 p(바지)·f(발)는 q·z 로 바꿔 칠한다.",
+  "_좀비_공통": "o 테두리 · e 눈(빨강) 은 같고, z Z(피부) h(머리) t T(옷) q(바지) 는 종류마다 다르다. 다리 부품의 p(바지)·f(발)는 q·z 로 바꿔 칠한다 (f 가 있으면 장화). 그 밖의 글자: a 줄무늬·명찰 · j J 산성 침 · v V 핏줄(꿈틀) · c C 헬멧·얼굴창 · g G 방패 테두리 · m 벌린 입 속 · b 갈비뼈 · w 이빨.",
   "zombie_common": { "o": "#16171f", "e": "#e0463f" },
 
   "zombie_kinds": {
     "walker": { "hat": "none",  "z": "#7fa36b", "Z": "#5d7d4e", "h": "#3b3b2e", "t": "#8b7355", "T": "#5e4b37", "q": "#3a3f4a" },
     "runner": { "hat": "none",  "z": "#b7c79c", "Z": "#8b9c72", "h": "#4a3f33", "t": "#a03e2e", "T": "#64261c", "q": "#2e3440" },
     "hazmat": { "hat": "visor", "z": "#7fa36b", "Z": "#5d7d4e", "h": "#3b3b2e", "t": "#e3c54b", "T": "#a88b2c", "q": "#e3c54b", "c": "#e3c54b", "C": "#7fc8d8" },
-    "crawler": { "hat": "none", "z": "#93a07a", "Z": "#6b7757", "h": "#2e2b24", "t": "#4d6a6c", "T": "#384f52", "q": "#3e4658" }
+    "crawler": { "hat": "none", "z": "#93a07a", "Z": "#6b7757", "h": "#2e2b24", "t": "#4d6a6c", "T": "#384f52", "q": "#3e4658" },
+    "spitter": { "hat": "none", "z": "#a3ad62", "Z": "#76803f", "h": "#2f2a22", "t": "#6a5d7b", "T": "#4a3f58", "a": "#d6d2c4", "q": "#3b3546", "j": "#b6e04a", "J": "#6f9a1e" },
+    "bloater": { "hat": "none", "z": "#a9b88f", "Z": "#7f8f69", "h": "#3b3326", "t": "#d9d3bd", "T": "#aaa288", "q": "#4a4f5c", "v": "#7a3b66", "V": "#c2415a" },
+    "riot":    { "hat": "visor", "z": "#8fa77a", "Z": "#677d57", "h": "#2a2a24", "t": "#2c3a5a", "T": "#1d2740", "q": "#253150", "f": "#15161c", "c": "#26324d", "C": "#8fb8cf", "g": "#d4e2ec", "G": "#7d93a6", "a": "#c9cdd4" },
+    "screamer": { "hat": "none", "z": "#c8cfb4", "Z": "#9aa38a", "h": "#3b302b", "t": "#b9d3df", "T": "#86a7b8", "q": "#c8cfb4", "m": "#4a0f14" },
+    "hound":   { "hat": "none", "z": "#8fa077", "Z": "#66744f", "h": "#3a3128", "t": "#7a6750", "T": "#54463a", "b": "#d2c8ad", "w": "#e8e2cc", "q": "#3a3f4a" },
+    "brute":   { "hat": "none", "z": "#76996a", "Z": "#557048", "h": "#2a2620", "t": "#5f6f7d", "T": "#44515c", "a": "#e6e6e6", "q": "#3a3f4a" }
   }
 }

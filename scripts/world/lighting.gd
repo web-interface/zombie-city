@@ -48,6 +48,13 @@ func add_temporary_light(at_position: Vector2, radius: float, seconds: float) ->
 	_temporary_lights.append({"position": at_position, "radius": radius, "time_left": seconds, "total": seconds, "light": light})
 
 
+## 다음 밤으로 넘어갈 때 잠깐 빛(헬기 착륙 지점 등)을 끈다
+func clear_temporary_lights() -> void:
+	for item: Dictionary in _temporary_lights:
+		(item["light"] as PointLight2D).queue_free()
+	_temporary_lights.clear()
+
+
 func update(delta: float) -> void:
 	_flashlight.position = _context.survivor.position
 	for index: int in range(_lamp_lights.size()):

@@ -1,0 +1,623 @@
+# [파일] art/source/icons.txt
+# [하는 일] 카드·스킬·줍기 아이콘(10×10) 글자 지도: 무기 19 · 장비 16 · 스킬 6 · 히든 스킬 4 · 줍기 3 · 응급 처치. 한 글자 = 한 점, '.' = 빈칸.
+# [쓰는 곳] tools/sprite_icons.py 가 outfits.json 의 "global_palette" 색으로 칠해 art/sprites/icons/icon_*.png 로 만들고, 무기 아이콘은 금색 진화 아이콘(_evolved)도 만든다. 게임에선 scripts/ui/*.gd 가 쓴다.
+# [근거 문서] 06 그림 규칙(아이콘 10×10), 14 §2-2 무기 · §2-3 장비 · §2-5 히든 스킬 · §2-6 줍기
+#
+# 글자 뜻 (global_palette — sprites.txt 와 같음, 더한 글자: k K 골판지 · N 짙은 주황 · m M 보라 · j J 산성 초록 · p P 분홍 · E 옅은 금빛)
+
+# ───────── 아이콘 공통 규칙 (10×10) ─────────
+# 모두 1점 테두리(o)로 닫고, 그림은 가장자리 1칸 안쪽에만 둔다. 빛은 왼쪽 위 → 밝은 색(g·w·x 등)은 위·왼쪽, 그늘(G·B·Y)은 아래·오른쪽.
+# 총은 생김새로 구분: 권총 = 짧은 회색 총 + 나무 손잡이, 산탄총 = 대각선으로 긴 총 + 나무 펌프·개머리판, 네일건 = 노란 공구 몸통 + 못 줄 + 배터리.
+# 속도를 뜻하는 스킬(질주)만 왼쪽에 바람 줄(g) — 같은 뜻은 같은 표시로.
+
+# ───────── 무기 아이콘 ─────────
+@sprite icon_pistol 10x10
+..........
+.oooooooo.
+oGgggggggo
+oGGGGGGGqo
+oGGGoGooo.
+obBGoo....
+obBo......
+obBo......
+.oo.......
+..........
+
+@sprite icon_fire_axe 10x10
+..ooo.....
+.orrro....
+orrrrRo...
+owrrRbbo..
+.owRRbo...
+..oobo....
+..obBo....
+.obBo.....
+obBo......
+.oo.......
+
+@sprite icon_nail_gun 10x10
+.oooooo...
+oyyyyyyoo.
+oyYyyyyGGo
+oYYYYYYGo.
+.oyYowwo..
+.oyYoowwo.
+.oyYo.oo..
+oGGGGo....
+.oooo.....
+..........
+
+@sprite icon_syringe_gun 10x10
+........o.
+.......owo
+.....oowo.
+....oggo..
+...ogxxgo.
+..ogxxXgo.
+..ogxXgo..
+.ogoggo...
+ogo.oo....
+.o........
+
+@sprite icon_shotgun 10x10
+.......oo.
+......ogGo
+.....ogGGo
+....oBBBo.
+...oBBBbo.
+..oGGGoo..
+.obGGo....
+obbBo.....
+obBo......
+.oo.......
+
+@sprite icon_saw_drone 10x10
+...o..o...
+..ogoogo..
+.oggGGggo.
+ogGgggGggo
+.ogguugGo.
+.oGguuggo.
+oggGgggGgo
+.oggGGggo.
+..ogoogo..
+...o..o...
+
+# ───────── 장비 아이콘 ─────────
+@sprite icon_vest 10x10
+..oo..oo..
+.oCCooCCo.
+.oCCiiCCo.
+oCCCCCCCCo
+oCyyyyyyCo
+oCCCiiCCCo
+oCCCCCCCCo
+oiCCiiCCio
+.oooooooo.
+..........
+
+@sprite icon_sneakers 10x10
+..........
+.ooo......
+orrro.o...
+orRrwowo..
+orrrrwrwo.
+orrrrrrrro
+owwwwwwwwo
+.oggggggo.
+..oooooo..
+..........
+
+@sprite icon_backpack 10x10
+....oo....
+..ooBBoo..
+.oXXXXXXo.
+oXxxxxxxXo
+oXXXXXXXXo
+oXBXXXXBXo
+oXBXuuXBXo
+oXBXXXXBXo
+oXXXXXXXXo
+.oooooooo.
+
+@sprite icon_ammo 10x10
+..o..o..o.
+.onoonoono
+onYonYonYo
+oyYoyYoyYo
+oyYoyYoyYo
+oyYoyYoyYo
+obbbbbbbbo
+oBbBbBbBBo
+.oooooooo.
+..........
+
+# ───────── 스킬 아이콘 ─────────
+# 응급 처치는 초록 십자(적십자 표장은 쓰지 않음).
+@sprite icon_flashbang 10x10
+.....oo...
+....oyyo..
+...oyooyo.
+..oGGgyo..
+..ogGGGgo.
+..ogqGqGo.
+..ogGGGgo.
+..ogqGqGo.
+..ogGGGGo.
+...ooooo..
+
+@sprite icon_snipe 10x10
+...ooo....
+..orrro...
+.orororo..
+oroorooro.
+orrrorrro.
+oroorooro.
+.orororo..
+..orrro...
+...ooo....
+..........
+
+@sprite icon_shield_dash 10x10
+...oooo...
+..oggggo..
+.ogvvvvgo.
+.ogvwvvgo.
+.oggggGgo.
+.ogyyyGgo.
+.oggggGgo.
+.oggggGgo.
+..oGGGGo..
+...oooo...
+
+@sprite icon_extinguisher 10x10
+....oo.o..
+...oqqowo.
+..oqrrqowo
+...orroowo
+..orrrroo.
+..orwwro..
+..orrrRo..
+..orrrRo..
+..oRRRRo..
+...oooo...
+
+@sprite icon_hammer 10x10
+..oooo....
+.oggGGo...
+ogggGGGo..
+oGGGGGGbo.
+.oGGGGbbo.
+..ooobBo..
+...obBo...
+..obBo....
+.obBo.....
+..oo......
+
+@sprite icon_sprint 10x10
+......oo..
+.....ouyo.
+.oo.ouyo..
+oggouyyoo.
+.oouyyyyyo
+oggoooyyo.
+.oo.oyyo..
+...oyyo...
+....oo....
+..........
+
+@sprite icon_first_aid 10x10
+...oooo...
+.oowwwwoo.
+owwwwwwwwo
+owwwxxwwwo
+owwxxxxwwo
+owwwxxwwwo
+owwwwwwwAo
+oAAAAAAAAo
+.oooooooo.
+..........
+
+# ═════════ 생존자 전용·공용 새 무기 아이콘 (14 §2-2) ═════════
+# 경찰: 테이저건(노란 몸통 + 파란 불꽃) · 최루탄(통 + 연기) · 확성기(흰 나팔 + 빨간 띠)
+# 소방관: 소방 호스(빨간 호스 + 놋쇠 노즐 + 물줄기) · 구조용 절단기(둥근 톱날 + 주황 몸통 + 불꽃) · 조명탄(빨간 막대 + 불)
+# 택배기사: 상자 던지기(테이프 붙인 골판지 상자 k·K) · 테이프 건(갈색 테이프 + 빨간 손잡이) · 배달 드론(소포를 매단 드론)
+# 간호사: 소독약 분무(분무기 + 안개) · 제세동기(하트 + 번개) · 메스(가는 칼날)
+# 공용: 화염병(초록 소주병 + 걸레 심지 + 불) — 한국 동네 디테일
+# 진화 아이콘(icon_<무기>_evolved)은 그리지 않는다 — tools/sprite_icons.py 가 금색으로 자동 생성 (outfits.json evolved_icons).
+
+@sprite icon_taser 10x10
+.......v..
+.oooooo.v.
+oyyyyyyowv
+oYYYYYYo.v
+oYoqoooov.
+.oqqo...v.
+.oqqo.....
+.oqqo.....
+..oo......
+..........
+
+@sprite icon_tear_gas 10x10
+.....oo.o.
+....owwowo
+...owgwgwo
+....ogoowo
+..ooGo.o..
+.oGGGGo...
+.oXXXXo...
+.oGggGo...
+.oXXXXo...
+..oooo....
+
+@sprite icon_megaphone 10x10
+......oo..
+....oowo.g
+..oowwwo..
+orrwwwwo.g
+orrwwwwo..
+.ooGgggo.g
+..obooGo..
+..obo.oo..
+..obo.....
+...o......
+
+@sprite icon_fire_hose 10x10
+.......vc.
+......vcwv
+.....ouuc.
+....ouuYo.
+...orYYo..
+..orRoo...
+.orRo.....
+orRo......
+oRRo......
+.oo.......
+
+@sprite icon_rescue_saw 10x10
+..ooo..u..
+.ogggo.n.u
+ogGoGgo...
+oGoooGonno
+ogGoGgonNo
+.oGGGonnNo
+..ooonNNo.
+....oqqo..
+....oqo...
+.....o....
+
+@sprite icon_flare 10x10
+..n.u.....
+.nuEun....
+.uEEuo....
+..nuuro...
+...orrRo..
+....orrRo.
+.....orrRo
+......orRo
+.......oo.
+..........
+
+@sprite icon_box_toss 10x10
+..........
+..oooooooo
+.okkkaakko
+oooooaaooo
+okkkkaakKo
+okkkkaakKo
+okBkkkkkKo
+okkkkkkKKo
+oKKKKKKKKo
+.oooooooo.
+
+@sprite icon_tape_gun 10x10
+..oooo....
+.okkkKo...
+okkokKKo..
+okoGoKKoo.
+okkoKKKoGo
+.oKKKKoGGo
+..ooroGoo.
+...orRo...
+...orRo...
+....oo....
+
+@sprite icon_parcel_drone 10x10
+gggo..oggg
+..oGooGo..
+..oGCCGo..
+..oGGGGo..
+...o..o...
+...oooo...
+..okkako..
+..okkaKo..
+..oKKKKo..
+...oooo...
+
+@sprite icon_disinfectant 10x10
+.....c.c..
+..oooo.c.c
+.oggggoc..
+.oGoooo.c.
+..owo.....
+.owwwo....
+owwwwwo...
+oCCCCwo...
+owCCwwo...
+.ooooo....
+
+@sprite icon_defibrillator 10x10
+..........
+.ooo.ooo..
+orrroruRo.
+orrrrurRo.
+orrruuuRo.
+.orrruRo..
+..oruRo...
+...oRo....
+....o.....
+..........
+
+@sprite icon_scalpel 10x10
+........o.
+.......owo
+......owgo
+.....owgo.
+....ogGo..
+...oGGo...
+..oGGo....
+.oGGo.....
+oGGo......
+.oo.......
+
+@sprite icon_molotov 10x10
+...n.u....
+..nuEn....
+..nuun....
+...aa.....
+...oxo....
+..oxXXo...
+.oxxXXXo..
+.oxwwXXo..
+.oxxXXXo..
+..ooooo...
+
+# ═════════ 장비 아이콘 (14 §2-3) ═════════
+# 공용: 에너지 음료(갈색 작은 병 + 노란 딱지) · 무릎 보호대(검은 덮개 + 주황 끈) · 손전등 배터리 · 비타민(약병 + 캡슐)
+#       행운 부적(노란 종이에 빨간 글씨 — 한국 부적) · 연구 노트(파란 공책 + 스프링) · 덕트 테이프(은색 테이프 + 종이심) · 믹스커피(종이컵 + 노란 막대)
+# 전용: 무전기(경찰) · 방화복(소방관, 주황 + 반사띠) · 배달 가방(택배기사, 빨간 보온 가방) · 청진기(간호사, 파란 관)
+
+@sprite icon_energy_drink 10x10
+...oooo...
+...oggo...
+...oGGo...
+..obbBBo..
+.obbbbBBo.
+.oyyyyyYo.
+.oyRyRyYo.
+.obbbbbBo.
+.obbbbBBo.
+..oooooo..
+
+@sprite icon_knee_pads 10x10
+...oooo...
+..oGgGqo..
+.oGgqqqqo.
+onnnnnnnNo
+.oGqqqqqo.
+.oGqqGqqo.
+.oqqqqqqo.
+onnnnnnnNo
+..oqqqqo..
+...oooo...
+
+@sprite icon_battery 10x10
+....oo....
+...oggo...
+..oyyyYo..
+..oywyYo..
+..owwwYo..
+..oywyYo..
+..oqqqGo..
+..oqqqGo..
+..oqqqGo..
+..oooooo..
+
+@sprite icon_vitamins 10x10
+.oooo.....
+owwwgo....
+oooooo....
+onnnNo..oo
+owwwwo.oro
+owrwwooRro
+onnnNoowRo
+onnnNoowo.
+onnNNo.oo.
+.oooo.....
+
+@sprite icon_lucky_charm 10x10
+.ooooooo.r
+.oyyyyyorr
+.oyrrryo.r
+.oyyryyo..
+.oyrryro..
+.oyyryyo..
+.oyrrrYo..
+.oyyryYo..
+.oyyYYYo..
+.ooooooo..
+
+@sprite icon_research_notes 10x10
+..ooooooo.
+.GoCCCCCCo
+..oCwwwwCo
+.GoCwgggCo
+..oCwwwwCo
+.GoCCCCCCo
+..oCCCCCCo
+.GoCCCCCCo
+..oCCCCrCo
+..ooooooro
+
+@sprite icon_duct_tape 10x10
+..oooo....
+.oggggo...
+oggkkgGo..
+ogk..kGo..
+ogk..kGo..
+oGgkkGGo..
+.oGGGGgggo
+..oooo.ogo
+.......ogo
+.......oo.
+
+@sprite icon_coffee 10x10
+.g.....oo.
+..g...oyyo
+.g...oyYo.
+....oyYo..
+ooooyYoooo
+owwwwwwwGo
+.obbbbbBo.
+.obbbbbBo.
+..owwwwGo.
+..oooooo..
+
+@sprite icon_radio 10x10
+..oo......
+..oGo.....
+..oGo.....
+.ooGoooo..
+.oqqqqqqo.
+.oqxxxxqo.
+.oqXxxXqo.
+.oqgqgqqo.
+.oqgqgqGo.
+..oooooo..
+
+@sprite icon_turnout_gear 10x10
+..oooooo..
+.onnoonno.
+onnnnnnNNo
+onnnonnnNo
+oggggggggo
+onnnonnnNo
+onnnonnnNo
+ouuuuuuuuo
+onnnoNNNNo
+.oooooooo.
+
+@sprite icon_delivery_bag 10x10
+...oooo...
+..oGooGo..
+.oooooooo.
+ornnnnnnRo
+orrrrrrrRo
+owwwwwwwwo
+orrrrrrrRo
+orrrrrrrRo
+oRRRRRRRRo
+.oooooooo.
+
+@sprite icon_stethoscope 10x10
+.g....g...
+oCo..oCo..
+.oCooCo...
+..oCCo....
+...oCo....
+...oCo.oo.
+...oCoowgo
+...oCCCggo
+....oooGo.
+.......o..
+
+# ═════════ 히든 스킬 아이콘 (14 §2-5) — 금빛 테두리 카드 ═════════
+# 다른 아이콘과 달리 금빛 테두리(위·왼쪽 u, 아래·오른쪽 Y)에 어두운 바탕(q), 왼쪽 위 모서리에 반짝 한 점(E) → '특별해 보이게'.
+# 항공 지원(경찰, 전투기 + 떨어지는 폭탄) · 백드래프트(소방관, 불기둥) · 총알 배송(택배기사, 소포 + 바람 줄) · 기적의 처방(간호사, 빛나는 초록 십자)
+
+@sprite icon_hidden_airstrike 10x10
+.uuuuuuuE.
+uqqqoqqqqY
+uqqoGoqqqY
+uqooGooqqY
+uoGGgGGoqY
+uqooGooqqY
+uqqoGoqnqY
+uqoGGGonuY
+uqqoooqnnY
+.YYYYYYYY.
+
+@sprite icon_hidden_backdraft 10x10
+.uuuuuuuE.
+uqqqrqqqqY
+uqqrnrqrqY
+uqrnunrnqY
+uqrnuunrqY
+urnuEEunrY
+urnuEEunrY
+uqrnuunrqY
+uqqrrrrqqY
+.YYYYYYYY.
+
+@sprite icon_hidden_express 10x10
+.uuuuuuuE.
+uqqqqqqqqY
+ugqqoooooY
+uqgokkakoY
+ugqokkakKY
+uqgokkakKY
+ugqoKKKKoY
+uqqqoooooY
+uqqqqqqqqY
+.YYYYYYYY.
+
+@sprite icon_hidden_miracle 10x10
+.uuuuuuuE.
+uqqqEqqqqY
+uqqoxxoqqY
+uqqoxXoqEY
+uoxxxxXXoY
+uoXxXXXXoY
+uqqoxXoqqY
+uEqoXXoqqY
+uqqqooqqqY
+.YYYYYYYY.
+
+# ═════════ 필드 줍기 아이콘 (14 §2-6) ═════════
+# 자석(빨간 말굽 + 회색 끝) · 폭탄(검은 공 + 심지 불꽃) · 냉각 스프레이(하늘색 통 + 눈꽃 + 찬 김)
+
+@sprite icon_magnet 10x10
+..oooooo..
+.orrrrrRo.
+orroooRRRo
+oro....oRo
+oro....oRo
+oro....oRo
+ogo....oGo
+ogo....oGo
+ooo....ooo
+..........
+
+@sprite icon_bomb 10x10
+.......n..
+......nun.
+.....obn..
+..ooobo...
+.oGgqqqqo.
+oGgqqqqqqo
+oGqqqqqqqo
+oqqqqqqqGo
+.oqqqqqGo.
+..oooooo..
+
+@sprite icon_freeze 10x10
+..ooo..w..
+..oggowvw.
+.oooooow..
+occccCo.v.
+ocwcwCo...
+occwcCo...
+ocwcwCo...
+occccCo...
+oCCCCCo...
+.ooooo....

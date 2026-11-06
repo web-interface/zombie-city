@@ -109,6 +109,10 @@ func wants_skill() -> bool:
 
 func _process(delta: float) -> void:
 	_capture_if_due()
+	if _hud.night_clear_panel.is_open():
+		_capture_once("night_clear_panel")
+		_hud.continue_night()
+		return
 	if not (_hud.level_up_panel.is_open() or _hud.promotion_panel.is_open()):
 		_decision_delay = 0.25
 		return
@@ -135,7 +139,18 @@ func _danger_escape() -> Vector2:
 	for zombie: Zombie in _context.horde.in_radius(survivor_position, DANGER_RADIUS):
 		var offset := survivor_position - zombie.position
 		away += offset.normalized() / maxf(offset.length() * offset.length(), 16.0) * 400.0 * (3.0 if zombie.is_boss else 1.0)
+	away += _hazard_escape(survivor_position)
 	return away.limit_length(1.5)
+
+
+## 산성 웅덩이·빨간 예고 원 안이거나 가까우면 바깥으로 (초보는 반만 신경 씀)
+func _hazard_escape(survivor_position: Vector2) -> Vector2:
+	var away := Vector2.ZERO
+	for zone: Dictionary in _context.hazards.danger_zones():
+		var offset := survivor_position - Vector2(zone["center"])
+		if offset.length() < float(zone["radius"]) + 8.0:
+			away += offset.normalized() * (0.5 if skill_level == "초보" else 1.2)
+	return away
 
 
 func _is_melee_fighter() -> bool:
@@ -201,7 +216,7 @@ func _boss_engage() -> Vector2:
 ## 고수: 보스 예고선이 보이면 돌진 방향의 옆으로 비킨다
 func _boss_dodge() -> Vector2:
 	for zombie: Zombie in _context.horde.zombies:
-		if zombie.is_boss and bool(zombie.boss_state.get("is_warning", false)):
+		if zombie.is_boss and bool(zombie.boss_state.get("is_warning", false)) and zombie.boss_state.has("direction"):
 			var charge_direction: Vector2 = zombie.boss_state["direction"]
 			var side := charge_direction.orthogonal()
 			var to_survivor := _context.survivor.position - zombie.position

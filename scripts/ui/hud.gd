@@ -7,6 +7,7 @@ extends CanvasLayer
 
 ## 일시정지 창에서 '포기하기'를 눌렀다 (run.gd 가 판을 끝낸다)
 signal give_up_requested
+signal next_night_requested
 
 const SKILL_BUTTON_MARGIN := Vector2(8, 16)
 ## 첫 판 안내: (보여 줄 때, 사라질 때, 글) — 글 설명 대신 처음 몇 초에 자연스럽게 (문서 02 §12)
@@ -24,6 +25,8 @@ const PC_RUN_HINTS: Array[Array] = [
 
 var level_up_panel: LevelUpPanel
 var promotion_panel: PromotionPanel
+var night_clear_panel: NightClearPanel
+var _boss_bar: BossHealthBar
 var _top_bar: HudTopBar
 var _joystick: FloatingJoystick
 var _skill_button: SkillButton
@@ -48,6 +51,8 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	_top_bar = HudTopBar.new()
 	root.add_child(_top_bar)
 	_top_bar.setup(context, level_up, rack)
+	_boss_bar = BossHealthBar.new()
+	root.add_child(_boss_bar)
 	_arrow = ExtractionArrow.new()
 	root.add_child(_arrow)
 	_arrow.setup(context, extraction)
@@ -75,6 +80,10 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	root.add_child(promotion_panel)
 	promotion_panel.setup(promotion)
 	promotion_panel.closed.connect(_on_choice_closed)
+	night_clear_panel = NightClearPanel.new()
+	root.add_child(night_clear_panel)
+	night_clear_panel.setup()
+	night_clear_panel.next_requested.connect(_on_night_continue)
 
 
 ## 이번에 켠 뒤 첫 판이면 처음 몇 초 동안 조작 안내를 차례로 보여 준다.
@@ -122,6 +131,27 @@ func update_display(elapsed_seconds: float, _alive_zombies: int, kills: int) -> 
 	_top_bar.refresh(_run_seconds - elapsed_seconds, kills, get_physics_process_delta_time())
 
 
+## 보스 체력 줄이 볼 보스 담당 (run.gd 가 준비 뒤 부름)
+func watch_bosses(director: BossDirector) -> void:
+	_boss_bar.watch(director)
+
+
+## 위 표시줄의 '둘째 밤'·연속 처치
+func update_run_status(night_name: String, combo_count: int, combo_time_ratio: float) -> void:
+	_top_bar.set_run_status(night_name, combo_count, combo_time_ratio)
+
+
+## 헬기를 타면 run.gd 가 부른다 (멈춘 채로 뜸)
+func open_night_clear(summary: Dictionary) -> void:
+	_joystick.release()
+	night_clear_panel.open(summary)
+
+
+## 자동 플레이 봇용
+func continue_night() -> void:
+	night_clear_panel.press_next()
+
+
 func show_banner(text: String, style_name: String) -> void:
 	_banner.show_message(text, style_name)
 
@@ -140,7 +170,7 @@ func on_run_over() -> void:
 
 
 func _is_choice_window_open() -> bool:
-	return level_up_panel.is_open() or promotion_panel.is_open()
+	return level_up_panel.is_open() or promotion_panel.is_open() or night_clear_panel.is_open()
 
 
 func choose_card(index: int) -> void:
@@ -154,3 +184,9 @@ func choose_branch(index: int) -> void:
 func _on_choice_closed() -> void:
 	_joystick.release()
 	get_tree().paused = false
+
+
+func _on_night_continue() -> void:
+	_joystick.release()
+	get_tree().paused = false
+	next_night_requested.emit()

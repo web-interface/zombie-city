@@ -27,6 +27,12 @@ func add_poison_cloud(center: Vector2, radius: float, seconds: float, damage_per
 	_zones.append({"kind": "poison", "center": center, "radius": radius, "time_left": seconds, "damage_per_second": damage_per_second})
 
 
+## 다음 밤으로 넘어갈 때 장판을 비운다
+func clear() -> void:
+	_zones.clear()
+	queue_redraw()
+
+
 func update(delta: float) -> void:
 	_tick_timer += delta
 	var is_damage_tick := _tick_timer >= DAMAGE_TICK_SECONDS
