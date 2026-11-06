@@ -118,14 +118,14 @@ func _possible_cards() -> Array:
 		if owned == null and has_weapon_room:
 			cards.append(_card("new_weapon", weapon_id, info, "새로 얻기"))
 		elif owned != null and owned.level < max_level:
-			cards.append(_card("weapon_upgrade", weapon_id, info, "%d단계 → %d단계" % [owned.level, owned.level + 1]))
+			cards.append(_card("weapon_upgrade", weapon_id, info, "%d→%d단계" % [owned.level, owned.level + 1]))
 	for gear_id: String in GameData.entry_ids("gear"):
 		var info := GameData.entry("gear", gear_id)
 		var gear_level := int(_rack.gear_levels.get(gear_id, 0))
 		if gear_level == 0 and has_gear_room:
 			cards.append(_card("new_gear", gear_id, info, "새로 얻기"))
 		elif gear_level > 0 and gear_level < max_level:
-			cards.append(_card("gear_upgrade", gear_id, info, "%d단계 → %d단계" % [gear_level, gear_level + 1]))
+			cards.append(_card("gear_upgrade", gear_id, info, "%d→%d단계" % [gear_level, gear_level + 1]))
 	return cards
 
 

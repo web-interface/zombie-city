@@ -35,6 +35,8 @@ static func label(text: String, color: Color = INK, is_small: bool = false, is_b
 	new_label.add_theme_color_override("font_shadow_color", SHADOW)
 	new_label.add_theme_constant_override("shadow_offset_x", 1)
 	new_label.add_theme_constant_override("shadow_offset_y", 1)
+	if is_small:
+		new_label.add_theme_constant_override("line_spacing", -3)   # 작은 픽셀 글꼴은 기본 줄 간격이 넓어 카드가 넘침
 	new_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return new_label
 
@@ -99,7 +101,8 @@ static func centered(child: Control) -> CenterContainer:
 
 ## 띄어쓰기 단위로만 줄을 바꾼다. Godot 기본 줄바꿈은 한글 글자 사이에서도 끊어서
 ## "휘두른 / 다" 처럼 낱말이 쪼개지기 때문 (검수 지적). 너비는 글꼴로 실제로 잰다.
-static func wrap_words(text: String, font: Font, font_size: int, max_width: float) -> String:
+## max_lines 를 넘으면 마지막 줄 끝을 '…' 로 줄인다 (0 이면 줄 수 제한 없음).
+static func wrap_words(text: String, font: Font, font_size: int, max_width: float, max_lines: int = 0) -> String:
 	var lines: Array[String] = []
 	var current := ""
 	for word: String in text.split(" "):
@@ -111,6 +114,9 @@ static func wrap_words(text: String, font: Font, font_size: int, max_width: floa
 			current = word
 	if not current.is_empty():
 		lines.append(current)
+	if max_lines > 0 and lines.size() > max_lines:
+		lines.resize(max_lines)
+		lines[max_lines - 1] = lines[max_lines - 1].left(maxi(lines[max_lines - 1].length() - 1, 0)) + "…"
 	return "
 ".join(lines)
 

@@ -30,9 +30,9 @@ func setup(promotion: Promotion, rack: WeaponRack) -> void:
 	add_child(pause_button)
 	pause_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	pause_button.offset_left = -34.0
-	pause_button.offset_top = 34.0
+	pause_button.offset_top = 50.0   # 맨 위 무기·장비 칸 줄(34~46) 아래로 — 겹치지 않게
 	pause_button.offset_right = -4.0
-	pause_button.offset_bottom = 50.0
+	pause_button.offset_bottom = 66.0
 	_window = _build_window()
 	add_child(PixelUi.centered(_window))
 	_countdown_label = PixelUi.label("", PixelUi.GOLD, false, true)

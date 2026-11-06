@@ -7,7 +7,7 @@ extends Control
 
 signal closed
 
-const CARD_SIZE := Vector2(164, 62)
+const CARD_SIZE := Vector2(164, 74)
 const PREVIEW_FRAME_SECONDS := 0.12
 const INPUT_GUARD_MILLISECONDS := 280.0 # 뜬 직후엔 눌러도 안 고름 (잘못 골리지 않게)
 
@@ -75,17 +75,18 @@ func _build_card(branch_id: String) -> Button:
 	preview.hframes = SpriteSheetLayout.COLUMNS
 	preview.vframes = SpriteSheetLayout.HUMAN_ROW_COUNT
 	preview.scale = Vector2.ONE * 2.0
-	preview.position = Vector2(20, 30)
+	preview.position = Vector2(20, 36)
 	card_button.add_child(preview)
 	_previews.append(preview)
 	var texts := VBoxContainer.new()
 	texts.position = Vector2(40, 3)
 	texts.add_theme_constant_override("separation", 0)
 	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	texts.add_child(PixelUi.label("%s — %s" % [branch["name"], branch["summary"]], PixelUi.GOLD))
-	for line: String in [String(branch["stage_1"]["text"]), "각성: " + String(branch["stage_2"]["text"])]:
-		var wrapped := PixelUi.wrap_words(line, PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, CARD_SIZE.x - 44.0)
-		texts.add_child(PixelUi.label(wrapped, PixelUi.INK if not line.begins_with("각성") else PixelUi.MUTED, true))
+	texts.add_child(PixelUi.label(String(branch["name"]), PixelUi.GOLD, false, true))
+	# 1차 효과는 2줄까지, 각성은 1줄 맛보기 (카드 밖으로 넘치지 않게)
+	var text_width := CARD_SIZE.x - 44.0
+	texts.add_child(PixelUi.label(PixelUi.wrap_words(String(branch["stage_1"]["text"]), PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, text_width, 2), PixelUi.INK, true))
+	texts.add_child(PixelUi.label(PixelUi.wrap_words("각성: " + String(branch["stage_2"]["text"]), PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, text_width, 1), PixelUi.MUTED, true))
 	card_button.add_child(texts)
 	card_button.pressed.connect(_pick.bind(branch_id))
 	return card_button

@@ -21,7 +21,7 @@ tools: Read, Grep, Glob, Bash, Edit
 
 ## 돌리는 법
 - Godot 콘솔판: `C:/Users/kbs/Godot/Godot_v4.7.2-stable_win64_console.exe`
-- 한 묶음 예: `"<godot>" --headless --path . -- --autoplay=보통 --survivor=police --branch=random --runs=20 --stats=tools/out/balance/police_normal.json`
+- 한 묶음 예: `"<godot>" --headless --path . res://scenes/run.tscn --fixed-fps 60 -- --autoplay=보통 --survivor=police --branch=random --runs=20 --stats=tools/out/balance/police_normal.jsonl`
 - 요약: `py -3 tools/balance_stats.py tools/out/balance` → `tools/out/balance/report.md`
 - **배속 옵션(`--speed`)은 쓰지 않는다** — 한 걸음이 커져서 총알이 좀비를 뚫고 지나가 통계가 틀려진다 (검수관 확인 2026-11-07). `--headless --fixed-fps 60` 이면 한 판 30초 안팎.
 - 정확한 옵션은 `tools/autoplay.gd` 머리말과 `docs/11_코드구조.md` §11 을 따른다.

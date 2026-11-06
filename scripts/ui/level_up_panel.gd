@@ -7,7 +7,7 @@ extends Control
 
 signal closed
 
-const CARD_SIZE := Vector2(164, 50)
+const CARD_SIZE := Vector2(164, 56)
 const APPEAR_MILLISECONDS := 250.0      # 나타나는 시간 (실제 시간 — 보스 처치 느린 화면 중에도 똑같이)
 const INPUT_GUARD_MILLISECONDS := 280.0 # 뜬 직후엔 눌러도 안 고름 (전투 중 두드리던 손에 잘못 골리지 않게 — 검수 지적)
 
