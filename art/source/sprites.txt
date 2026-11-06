@@ -1,0 +1,423 @@
+# [파일] art/source/sprites.txt
+# [하는 일] 부품 조합 없이 한 장으로 그리는 그림: 보스(도살자), 소품(버려진 차·고깔·타이어·가로등·기름통·분리수거함·배달 오토바이), 헬기, 백신 조각, 톱날 드론, 카드·스킬 아이콘(10×10).
+# [쓰는 곳] tools/build_sprites.py 가 art/source/outfits.json 의 "global_palette" 색으로 칠해 art/sprites/*.png 로 만든다.
+# [근거 문서] 04 무기·좀비 모습, 06 그림 규칙
+#
+# 글자 뜻 (global_palette)
+#   o 테두리  g 쇠  G 짙은 쇠  w 흰색  r 빨강  R 짙은 빨강  y 노랑  Y 짙은 노랑  b 나무  B 짙은 나무
+#   x 백신 초록  X 짙은 초록  c 하늘  v 유리  u 금빛  l 가로등 빛  n 주황  z 좀비 피부  Z 좀비 그늘
+#   e 눈·꼬리등(빨강)  h 머리카락  q 바지·바퀴  a 앞치마  A 앞치마 그늘  d 차 몸  D 차 그늘
+#   i 푸른 회색(차 유리·작업복·드럼통)  I 짙은 푸른 회색  C 파랑
+
+# ───────── 보스: 도살자 (24×24, 걷기 2장) ─────────
+# 정육점 거구: 비뚤어진 위생모(w·g), 어깨에 파묻힌 작은 머리와 짝짝이 눈, 굽은 등·넓은 어깨(i·I 작업복),
+# 앞치마(a·A)의 얼룩은 갈색(b·B)·회색(G)만 — 피 묘사 없음. 오른손에 구멍 뚫린 큰 식칼(g·G·w), 흰 장화.
+# 비대칭: 왼팔이 더 길게 처지고 오른쪽 어깨가 솟음. b 장면은 몸 전체가 1점 내려앉고(무게) 앞발이 바뀐다.
+@sprite boss_butcher_a 24x24
+........................
+..........oooo..........
+.........ogwwwoo.oo.....
+.....oo.ogwwwwwgoiioo...
+...ooiiooZZZZZZoiiiiioo.
+..oiiiiIozezZzzoIiiiiiio
+.oiiiiIIozZzzezoIIiiiiio
+.oiiiIIIoZoooZzoIIIiiiio
+.oiiiiIIiooooooiIIIiiiio
+.oiiiIoIIaaaaaaIIoIIiiio
+.oIiiIoIIaaaaaaIIoIiiiIo
+.ozzzzoIIaAaaaaIIozzzzZo
+.ozzzZoAAAAAAAAAAozzzzZo
+.oZzzZoaaaaaaaaaaoZZZZZo
+.ozzzZoaaaaaaaaGAoobBoo.
+.ozzzZoaaaaaaaaaAoobBoo.
+ozzzzzoaBaaaaaaaAoGgggwo
+ozZzzZoabBaaaaAaAoGoggwo
+.oZZZooaaaaaaaAaAoGgggwo
+..ooo.oAAAAAAAAAAoGgggwo
+......oqqqqooqqqqoGgggwo
+......oqqqqooggggoGGggwo
+.....owggggooggggoooooo.
+......ooooo..oooo.......
+
+@sprite boss_butcher_b 24x24
+........................
+........................
+..........oooo..........
+.........ogwwwoo.oo.....
+.....oo.ogwwwwwgoiioo...
+...ooiiooZZZZZZoiiiiioo.
+..oiiiiIozezZzzoIiiiiiio
+.oiiiiIIozZzzezoIIiiiiio
+.oiiiIIIoZoooZzoIIIiiiio
+.oiiiiIIiooooooiIIIiiiio
+.oiiiIoIIaaaaaaIIoIIiiio
+.oIiiIoIIaaaaaaIIoIiiiIo
+.ozzzzoIIaAaaaaIIozzzzZo
+.ozzzZoAAAAAAAAAAozzzzZo
+.oZzzZoaaaaaaaaaaoZZZZZo
+ozzzzZoaaaaaaaaGAoobBoo.
+ozZzzZoaaaaaaaaaAoobBoo.
+.oZZZooaBaaaaaaaAoGgggwo
+..ooo.oabBaaaaAaAoGoggwo
+......oaaaaaaaAaAoGgggwo
+......oAAAAAAAAAAoGgggwo
+......oqqqqooqqqqoGgggwo
+......ogggoowggggoGGggwo
+.......ooo..ooooo.ooooo.
+
+# ───────── 소품 ─────────
+@sprite car 12x20
+..oooooooo..
+.oddddddddo.
+odllddddlldo
+oddddddddddo
+odIIIIIIIIdo
+odIiiiiiiIdo
+odIiiiiiiIdo
+odIIIIIIIIdo
+oddddddddddo
+odDddddddDdo
+odDddddddDdo
+odDddddddDdo
+oddddddddddo
+odIIIIIIIIdo
+odIiiiiiiIdo
+odIIIIIIIIdo
+oddddddddddo
+oDrrddddrrDo
+.oDDDDDDDDo.
+..oooooooo..
+
+@sprite cone 5x5
+..n..
+..n..
+.www.
+.nnn.
+nnnnn
+
+@sprite tire 6x6
+.oooo.
+oqqqqo
+oq..qo
+oq..qo
+oqqqqo
+.oooo.
+
+@sprite lamp 5x5
+.ooo.
+oglgo
+olllo
+oglgo
+.ooo.
+
+@sprite helicopter 24x10
+........................
+......oooooo............
+....oogggggggo..........
+...ogvvvggggggoooooooo..
+...ogvvvgggggggggggggggo
+...ogvvvggggggoooooooggo
+....oogggggggo.......ooo
+......oooooo............
+....o........o..........
+...oooooooooooo.........
+
+# ───────── v0.1 동네 소품 (한국 동네 느낌 — 06 'AI 티 안 나게') ─────────
+# 기름통: 파란 칠이 바랜 쇠 드럼통, 위 뚜껑과 마개(q), 테 두 줄(I), 녹 자국(b).
+@sprite barrel 8x10
+..oooo..
+.oggggo.
+ogGqGggo
+oGggggGo
+ociiiiIo
+oIIIIIIo
+ocibiiIo
+ociiibIo
+oIIIIIIo
+.oooooo.
+
+# 분리수거함: 파란 통(재활용, 키가 작음)과 초록 통(일반) 두 개가 붙어 있음. 흰 딱지(w).
+@sprite trash_bin 8x10
+..oooooo
+.oxxxXXo
+ooiiIXXo
+oCCCoXXo
+oCwCoxwo
+oCCCoXXo
+ocCCoxXo
+oCCCoXXo
+oIIIoXXo
+oooooooo
+
+# 배달 오토바이: 뒤에서 내려다본 모습 — 양쪽 거울, 큰 배달통(빨강, 위 뚜껑은 주황), 꼬리등(e), 번호판(g), 뒷바퀴.
+@sprite bike 10x16
+.o......o.
+oGo....oGo
+.oGooooGo.
+..oGggGo..
+..owwwwo..
+.onnnnnno.
+.orrrrrro.
+.orwwwwRo.
+.orrrrrRo.
+.orrrrrRo.
+.orrrrrRo.
+.oRRRRRRo.
+..oeggeo..
+...oqqo...
+...oqqo...
+....oo....
+
+# ───────── 백신 조각 (작은 1 · 중간 5 · 큰 20) ─────────
+@sprite shard_small 3x3
+.x.
+xwx
+.x.
+
+@sprite shard_medium 5x5
+..X..
+.XxX.
+XxwxX
+.XxX.
+..X..
+
+@sprite shard_large 7x7
+...X...
+..XxX..
+.XxwxX.
+XxwwwxX
+.XxwxX.
+..XxX..
+...X...
+
+# ───────── 톱날 드론 (돌아가는 2장) ─────────
+@sprite drone_a 7x7
+w.....w
+.w...w.
+..ogo..
+..gug..
+..ogo..
+.w...w.
+w.....w
+
+@sprite drone_b 7x7
+...w...
+...w...
+..ogo..
+wwgugww
+..ogo..
+...w...
+...w...
+
+# ───────── 아이콘 공통 규칙 (10×10) ─────────
+# 모두 1점 테두리(o)로 닫고, 그림은 가장자리 1칸 안쪽에만 둔다. 빛은 왼쪽 위 → 밝은 색(g·w·x 등)은 위·왼쪽, 그늘(G·B·Y)은 아래·오른쪽.
+# 총은 생김새로 구분: 권총 = 짧은 회색 총 + 나무 손잡이, 산탄총 = 대각선으로 긴 총 + 나무 펌프·개머리판, 네일건 = 노란 공구 몸통 + 못 줄 + 배터리.
+# 속도를 뜻하는 스킬(질주)만 왼쪽에 바람 줄(g) — 같은 뜻은 같은 표시로.
+
+# ───────── 무기 아이콘 ─────────
+@sprite icon_pistol 10x10
+..........
+.oooooooo.
+oGgggggggo
+oGGGGGGGqo
+oGGGoGooo.
+obBGoo....
+obBo......
+obBo......
+.oo.......
+..........
+
+@sprite icon_fire_axe 10x10
+..ooo.....
+.orrro....
+orrrrRo...
+owrrRbbo..
+.owRRbo...
+..oobo....
+..obBo....
+.obBo.....
+obBo......
+.oo.......
+
+@sprite icon_nail_gun 10x10
+.oooooo...
+oyyyyyyoo.
+oyYyyyyGGo
+oYYYYYYGo.
+.oyYowwo..
+.oyYoowwo.
+.oyYo.oo..
+oGGGGo....
+.oooo.....
+..........
+
+@sprite icon_syringe_gun 10x10
+........o.
+.......owo
+.....oowo.
+....oggo..
+...ogxxgo.
+..ogxxXgo.
+..ogxXgo..
+.ogoggo...
+ogo.oo....
+.o........
+
+@sprite icon_shotgun 10x10
+.......oo.
+......ogGo
+.....ogGGo
+....oBBBo.
+...oBBBbo.
+..oGGGoo..
+.obGGo....
+obbBo.....
+obBo......
+.oo.......
+
+@sprite icon_saw_drone 10x10
+...o..o...
+..ogoogo..
+.oggGGggo.
+ogGgggGggo
+.ogguugGo.
+.oGguuggo.
+oggGgggGgo
+.oggGGggo.
+..ogoogo..
+...o..o...
+
+# ───────── 장비 아이콘 ─────────
+@sprite icon_vest 10x10
+..oo..oo..
+.oCCooCCo.
+.oCCiiCCo.
+oCCCCCCCCo
+oCyyyyyyCo
+oCCCiiCCCo
+oCCCCCCCCo
+oiCCiiCCio
+.oooooooo.
+..........
+
+@sprite icon_sneakers 10x10
+..........
+.ooo......
+orrro.o...
+orRrwowo..
+orrrrwrwo.
+orrrrrrrro
+owwwwwwwwo
+.oggggggo.
+..oooooo..
+..........
+
+@sprite icon_backpack 10x10
+....oo....
+..ooBBoo..
+.oXXXXXXo.
+oXxxxxxxXo
+oXXXXXXXXo
+oXBXXXXBXo
+oXBXuuXBXo
+oXBXXXXBXo
+oXXXXXXXXo
+.oooooooo.
+
+@sprite icon_ammo 10x10
+..o..o..o.
+.onoonoono
+onYonYonYo
+oyYoyYoyYo
+oyYoyYoyYo
+oyYoyYoyYo
+obbbbbbbbo
+oBbBbBbBBo
+.oooooooo.
+..........
+
+# ───────── 스킬 아이콘 ─────────
+# 응급 처치는 초록 십자(적십자 표장은 쓰지 않음).
+@sprite icon_flashbang 10x10
+.....oo...
+....oyyo..
+...oyooyo.
+..oGGgyo..
+..ogGGGgo.
+..ogqGqGo.
+..ogGGGgo.
+..ogqGqGo.
+..ogGGGGo.
+...ooooo..
+
+@sprite icon_snipe 10x10
+...ooo....
+..orrro...
+.orororo..
+oroorooro.
+orrrorrro.
+oroorooro.
+.orororo..
+..orrro...
+...ooo....
+..........
+
+@sprite icon_shield_dash 10x10
+...oooo...
+..oggggo..
+.ogvvvvgo.
+.ogvwvvgo.
+.oggggGgo.
+.ogyyyGgo.
+.oggggGgo.
+.oggggGgo.
+..oGGGGo..
+...oooo...
+
+@sprite icon_extinguisher 10x10
+....oo.o..
+...oqqowo.
+..oqrrqowo
+...orroowo
+..orrrroo.
+..orwwro..
+..orrrRo..
+..orrrRo..
+..oRRRRo..
+...oooo...
+
+@sprite icon_hammer 10x10
+..oooo....
+.oggGGo...
+ogggGGGo..
+oGGGGGGbo.
+.oGGGGbbo.
+..ooobBo..
+...obBo...
+..obBo....
+.obBo.....
+..oo......
+
+@sprite icon_sprint 10x10
+......oo..
+.....ouyo.
+.oo.ouyo..
+oggouyyoo.
+.oouyyyyyo
+oggoooyyo.
+.oo.oyyo..
+...oyyo...
+....oo....
+..........
+
+@sprite icon_first_aid 10x10
+...oooo...
+.oowwwwoo.
+owwwwwwwwo
+owwwxxwwwo
+owwxxxxwwo
+owwwxxwwwo
+owwwwwwwAo
+oAAAAAAAAo
+.oooooooo.
+..........

@@ -1,0 +1,80 @@
+{
+  "_설명": {
+    "파일": "data/skills.json",
+    "하는 일": "스킬 버튼으로 쓰는 스킬. 스킬 하나 = 다시 쓰기 시간 + 효과 조각 목록(기절·밀기·회복·돌진·빛·불 장판 …). 전직은 이 조각의 숫자를 바꾸거나 조각을 더하거나 스킬을 통째로 바꾼다.",
+    "쓰는 곳": "scripts/skills/skill_runner.gd 가 효과 조각을 차례로 실행한다. scripts/ui/skill_button.gd 가 아이콘과 다시 쓰기 시간을 보여 준다.",
+    "근거 문서": "03 §1 생존자 스킬, 03 §1-2 전직"
+  },
+  "_효과_조각_종류": {
+    "radial_stun": "반경 안 좀비 기절 (radius, seconds, damage)",
+    "radial_push": "반경 안 좀비를 바깥으로 밀기 (radius, push_distance, damage)",
+    "cone_push": "바라보는 쪽 부채꼴 좀비 밀고 느리게 (angle_degrees, range, push_distance, slow_ratio, slow_seconds, damage)",
+    "light_burst": "그 자리를 잠깐 밝힘 — 빛과 어둠 (radius, seconds)",
+    "dash": "돌진 (seconds, speed_multiplier, contact_damage, knockback, invulnerable)",
+    "heal": "최대 체력의 비율만큼 회복 (ratio)",
+    "guard": "잠깐 받는 피해 줄이기 (seconds, damage_taken_multiplier)",
+    "line_shot": "바라보는 쪽으로 화면 끝까지 꿰뚫는 한 발 (damage, width)",
+    "fire_zone": "생존자 주변 불 장판 (radius, seconds, damage_per_second)",
+    "poison_burst": "주변 좀비에 독 (radius, damage_per_second, seconds)",
+    "collect_all_shards": "화면의 백신 조각을 모두 끌어옴"
+  },
+  "flashbang": {
+    "name": "섬광탄",
+    "icon": "icon_flashbang",
+    "cooldown_seconds": 18,
+    "effects": [
+      { "type": "radial_stun", "radius": 45, "seconds": 2, "damage": 5 },
+      { "type": "light_burst", "radius": 45, "seconds": 6 }
+    ]
+  },
+  "snipe": {
+    "name": "저격",
+    "icon": "icon_snipe",
+    "cooldown_seconds": 10,
+    "effects": [
+      { "type": "line_shot", "damage": 150, "width": 6 }
+    ]
+  },
+  "shield_dash": {
+    "name": "방패 돌진",
+    "icon": "icon_shield_dash",
+    "cooldown_seconds": 8,
+    "effects": [
+      { "type": "dash", "seconds": 0.6, "speed_multiplier": 3.0, "contact_damage": 40, "knockback": 40, "invulnerable": true }
+    ]
+  },
+  "extinguisher": {
+    "name": "소화기 분사",
+    "icon": "icon_extinguisher",
+    "cooldown_seconds": 14,
+    "effects": [
+      { "type": "cone_push", "angle_degrees": 90, "range": 60, "push_distance": 25, "slow_ratio": 0.5, "slow_seconds": 3, "damage": 4 }
+    ]
+  },
+  "impact_hammer": {
+    "name": "충격 해머",
+    "icon": "icon_hammer",
+    "cooldown_seconds": 10,
+    "effects": [
+      { "type": "radial_push", "radius": 60, "push_distance": 40, "damage": 50 },
+      { "type": "radial_stun", "radius": 60, "seconds": 1, "damage": 0 }
+    ]
+  },
+  "sprint": {
+    "name": "질주",
+    "icon": "icon_sprint",
+    "cooldown_seconds": 12,
+    "effects": [
+      { "type": "dash", "seconds": 2, "speed_multiplier": 2.5, "contact_damage": 10, "knockback": 0, "invulnerable": true }
+    ]
+  },
+  "first_aid": {
+    "name": "응급 처치",
+    "icon": "icon_first_aid",
+    "cooldown_seconds": 25,
+    "effects": [
+      { "type": "heal", "ratio": 0.4 },
+      { "type": "radial_push", "radius": 40, "push_distance": 20, "damage": 0 }
+    ]
+  }
+}

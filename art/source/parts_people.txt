@@ -1,0 +1,292 @@
+# [파일] art/source/parts_people.txt
+# [하는 일] 사람(생존자)과 좀비를 이루는 부품 그림: 머리·몸통·팔·다리·모자를 방향별로 그린 글자 지도. 한 글자 = 한 점, '.' = 빈칸.
+# [쓰는 곳] tools/build_sprites.py 가 부품을 겹쳐서 걷기 4장 × 3방향 동작을 만든다. 색은 art/source/outfits.json 의 팔레트로 칠한다.
+# [근거 문서] 06 그림 규칙(16×16, 걷기 4장·3방향), 11 §9 픽셀 그림 만드는 길
+#
+# 글자 뜻 (옷마다 색이 다름)
+#   o 테두리   s 피부   e 눈   h 머리카락   t 옷   T 옷 그늘   a 포인트(배지·벨트·반사띠)
+#   p 바지   f 신발   c 모자   C 모자 포인트(챙·띠·얼굴창)   z 좀비 피부   Z 좀비 피부 그늘   q 좀비 바지
+# 부품 이름 규칙: <부위>_<방향>  방향 = down(앞모습) / up(뒷모습) / side(옆모습, 오른쪽을 봄)
+
+# ───────── 생존자 머리 (8×7) ─────────
+@part head_down 8x7
+.oooooo.
+ohhhhhho
+ohhhhhho
+ohhsssho
+osesseso
+osssssso
+.oooooo.
+
+@part head_up 8x7
+.oooooo.
+ohhhhhho
+ohhhhhho
+ohhhhhho
+ohhhhhho
+oshhhhso
+.oooooo.
+
+@part head_side 8x7
+.oooooo.
+ohhhhhho
+ohhhhhho
+ohhhssso
+ohhssses
+ohssssso
+.oooooo.
+
+# ───────── 생존자 몸통 (6×4) — 배지를 한쪽에만 둬서 좌우가 똑같지 않게 ─────────
+@part torso_down 6x4
+otTTto
+oatTto
+otttTo
+oaaaao
+
+@part torso_up 6x4
+otTTto
+otTTto
+otttto
+oaaaao
+
+@part torso_side 6x4
+oTttto
+ottTto
+otttTo
+oaaaao
+
+# ───────── 생존자 팔 (2×4) ─────────
+@part arm_left 2x4
+ot
+ot
+oT
+os
+
+@part arm_right 2x4
+to
+To
+to
+so
+
+@part arm_side 2x4
+To
+to
+to
+so
+
+# ───────── 다리 (6×4 서 있기, 6×3 내딛기) — 내딛을 때는 몸 전체가 1점 내려간다 ─────────
+@part legs_stand 6x4
+oppppo
+opoopo
+opoopo
+ofoofo
+
+@part legs_contact_a 6x3
+oppppo
+opoofo
+ofo.o.
+
+@part legs_contact_b 6x3
+oppppo
+ofoopo
+.o.ofo
+
+@part legs_side_stand 6x4
+.oppo.
+.oppo.
+.oppo.
+.offo.
+
+@part legs_side_stride 6x3
+.oppo.
+opo.po
+fo..of
+
+@part legs_side_cross 6x3
+.oppo.
+.oppo.
+.offo.
+
+# ───────── 모자 (머리 위에 겹침, 머리보다 1점 위에서 시작) ─────────
+# cap = 챙 모자 (경찰·택배·저격수)
+@part hat_cap_down 8x4
+..oooo..
+.occcco.
+occcccco
+oCCCCCCo
+
+@part hat_cap_up 8x4
+..oooo..
+.occcco.
+occcccco
+occcccco
+
+@part hat_cap_side 8x4
+..oooo..
+.occcco.
+occcccco
+occcCCCC
+
+# helmet = 둥근 헬멧·안전모 (소방관·특공대·철거반)
+@part hat_helmet_down 8x4
+.oooooo.
+occcCcco
+occcccco
+oCCCCCCo
+
+@part hat_helmet_up 8x4
+.oooooo.
+occcccco
+occcccco
+oCCCCCCo
+
+@part hat_helmet_side 8x4
+.oooooo.
+occcccco
+occcccco
+oCCCCCCC
+
+# visor = 얼굴창 헬멧 (기동대·배달 라이더·방호복 좀비) — 눈이 얼굴창 너머로 보임
+@part hat_visor_down 8x6
+.oooooo.
+occcccco
+occcccco
+occcccco
+oCCCCCCo
+oCeCCeCo
+
+@part hat_visor_up 8x6
+.oooooo.
+occcccco
+occcccco
+occcccco
+occcccco
+occcccco
+
+@part hat_visor_side 8x6
+.oooooo.
+occcccco
+occcccco
+occcCCCo
+occCCeCo
+occCCCCo
+
+# softcap = 천 모자·후드 (간호사·수술팀·역학조사관)
+@part hat_softcap_down 8x3
+..oooo..
+.occCco.
+occcccco
+
+@part hat_softcap_up 8x3
+..oooo..
+.occcco.
+occcccco
+
+@part hat_softcap_side 8x3
+..oooo..
+.occcco.
+occcccco
+
+# ───────── 좀비 머리 (8×7) — 머리카락이 듬성듬성 ─────────
+@part zhead_down 8x7
+.oooooo.
+ohZhzhho
+ozzzzzZo
+ozezzZzo
+ozZzzezo
+ozzoZzzo
+.oooooo.
+
+@part zhead_up 8x7
+.oooooo.
+ohhZhhho
+ohhhhZho
+ohZhhhho
+ozhhhhzo
+ozzzzzzo
+.oooooo.
+
+@part zhead_side 8x7
+.oooooo.
+ohhhZhho
+ohhzzzzo
+ohzzzzZo
+ohzzzezz
+ozzzZooo
+.oooooo.
+
+# ───────── 좀비 몸통 (6×4) — 찢어진 옷 ─────────
+@part ztorso_down 6x4
+otTtzo
+oztTto
+oTttto
+oqqqqo
+
+@part ztorso_up 6x4
+otttto
+oTtzTo
+ottTto
+oqqqqo
+
+@part ztorso_side 6x4
+otttTo
+oTtzto
+ottTzo
+oqqqqo
+
+# ───────── 좀비 팔 — 앞으로 뻗음 ─────────
+@part zarm_down_left 2x4
+oT
+oz
+oz
+zz
+
+@part zarm_down_right 2x4
+To
+zo
+zo
+Zz
+
+@part zarm_side 5x2
+oTzzz
+oooZo
+
+# ───────── 기어다니는 좀비 (16×16, 아래쪽으로 기어 옴) — 다른 방향은 도구가 돌려서 만든다 ─────────
+# 위에서 내려다본 '바닥을 기는 사람': 머리가 앞(아래), 한 팔은 앞으로 뻗어 땅을 짚고 다른 팔은 굽혀 끌어당김,
+# 다리 두 개는 한쪽으로 늘어져 끌림. a ↔ b 에서 팔이 바뀌고 다리가 반대쪽으로 쓸려서 꿈틀대며 기는 동작이 된다.
+# 비대칭: 한쪽 발만 검은 신발(o), 다른 발은 맨발(z), 등 찢김(z)이 한쪽으로 치우침, 머리카락 듬성듬성.
+@part crawler_a 16x16
+.oo.............
+ozzo..oo........
+oqqqoooo........
+.oqqqoqqo.......
+..oqqqqqoo......
+...oqqqqqqo.....
+....otTttto.....
+...ottTzzto.....
+..oottTtzztooo..
+.ozotTtttttozzo.
+.ozzohhZhhhoozzo
+..ozohzzzzZoozo.
+.ozzozezzezozzo.
+.ozzozzZZzzooo..
+ozozooooooo.....
+.o.o............
+
+@part crawler_b 16x16
+.............oo.
+........oo..ozzo
+.......oooooqqqo
+.......oqqoqqqo.
+......ooqqqqqo..
+.....oqqqqqqo...
+.....ottTtTo....
+.....otzzTtto...
+..oootzztTttoo..
+.ozzottttTttozo.
+ozzoohhZhhhozzo.
+.ozoohzzzzZozo..
+.ozzozezzezozzo.
+..ooozzZZzzozzo.
+.....ooooooozozo
+............o.o.

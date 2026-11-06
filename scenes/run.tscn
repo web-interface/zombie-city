@@ -1,0 +1,97 @@
+[gd_scene load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://scripts/run/run.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/world/ground.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/world/area_effects.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/world/vaccine_shard_field.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/world/props.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/world/zombie_horde.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/world/survivor.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/world/survivor_animator.gd" id="8"]
+[ext_resource type="Script" path="res://scripts/weapons/weapon_rack.gd" id="9"]
+[ext_resource type="Script" path="res://scripts/weapons/projectile_pool.gd" id="10"]
+[ext_resource type="Script" path="res://scripts/systems/extraction.gd" id="11"]
+[ext_resource type="Script" path="res://scripts/world/effects.gd" id="12"]
+[ext_resource type="Script" path="res://scripts/world/lighting.gd" id="13"]
+[ext_resource type="Script" path="res://scripts/skills/skill_runner.gd" id="14"]
+[ext_resource type="Script" path="res://scripts/systems/zombie_spawner.gd" id="15"]
+[ext_resource type="Script" path="res://scripts/systems/level_up.gd" id="16"]
+[ext_resource type="Script" path="res://scripts/systems/promotion.gd" id="17"]
+[ext_resource type="Script" path="res://scripts/systems/boss_director.gd" id="18"]
+[ext_resource type="Script" path="res://scripts/run/run_recorder.gd" id="19"]
+[ext_resource type="Script" path="res://scripts/run/run_camera.gd" id="20"]
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="21"]
+
+[node name="Run" type="Node2D"]
+editor_description = "[파일] scenes/run.tscn
+[하는 일] 한 판(5분) 장면. World = 보이는 것(바닥·장판·조각·소품·좀비·생존자·무기·투사체·탈출·효과·빛), Systems = 규칙 담당, Camera, Hud = 화면 UI.
+[쓰는 곳] SceneRouter.start_run() 이 연다 / scripts/run/run.gd 가 지휘한다.
+[근거 문서] 11 §4 한 판 장면 구성"
+script = ExtResource("1")
+
+[node name="World" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Ground" type="Node2D" parent="World"]
+script = ExtResource("2")
+
+[node name="AreaEffects" type="Node2D" parent="World"]
+script = ExtResource("3")
+
+[node name="VaccineShards" type="Node2D" parent="World"]
+script = ExtResource("4")
+
+[node name="Props" type="Node2D" parent="World"]
+y_sort_enabled = true
+script = ExtResource("5")
+
+[node name="ZombieHorde" type="Node2D" parent="World"]
+y_sort_enabled = true
+script = ExtResource("6")
+
+[node name="Survivor" type="Node2D" parent="World"]
+script = ExtResource("7")
+
+[node name="Animator" type="Sprite2D" parent="World/Survivor"]
+script = ExtResource("8")
+
+[node name="WeaponRack" type="Node2D" parent="World"]
+script = ExtResource("9")
+
+[node name="Projectiles" type="Node2D" parent="World"]
+script = ExtResource("10")
+
+[node name="Extraction" type="Node2D" parent="World"]
+script = ExtResource("11")
+
+[node name="Effects" type="Node2D" parent="World"]
+script = ExtResource("12")
+
+[node name="Lighting" type="Node2D" parent="World"]
+script = ExtResource("13")
+
+[node name="Systems" type="Node" parent="."]
+
+[node name="SkillRunner" type="Node" parent="Systems"]
+script = ExtResource("14")
+
+[node name="ZombieSpawner" type="Node" parent="Systems"]
+script = ExtResource("15")
+
+[node name="LevelUp" type="Node" parent="Systems"]
+script = ExtResource("16")
+
+[node name="Promotion" type="Node" parent="Systems"]
+script = ExtResource("17")
+
+[node name="BossDirector" type="Node" parent="Systems"]
+script = ExtResource("18")
+
+[node name="RunRecorder" type="Node" parent="Systems"]
+script = ExtResource("19")
+
+[node name="Camera" type="Camera2D" parent="."]
+script = ExtResource("20")
+
+[node name="Hud" type="CanvasLayer" parent="."]
+script = ExtResource("21")

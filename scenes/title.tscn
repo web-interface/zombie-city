@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/title_screen.gd" id="1"]
+
+[node name="Title" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+editor_description = "[파일] scenes/title.tscn
+[하는 일] 타이틀 화면: 게임 이름·밤거리 연출, 누르면 생존자 고르기로
+[쓰는 곳] 게임을 켜면 처음 여는 장면 (project.godot run/main_scene) / scripts/ui/title_screen.gd 가 화면을 만든다
+[근거 문서] 05 화면 목록(타이틀)"
+script = ExtResource("1")

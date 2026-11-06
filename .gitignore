@@ -1,0 +1,6 @@
+# [파일] .gitignore — git 에 올리지 않을 것
+# Godot 가 만드는 캐시·가져오기 결과
+.godot/
+*.import.tmp
+# 시험 캡처·통계 결과
+tools/out/

@@ -1,0 +1,530 @@
+<!doctype html>
+<!--
+[파일] docs/style_preview/그림스타일_미리보기.html  (버리는 시안 — 게임 코드 아님)
+[하는 일] 좀비 도시를 픽셀 아트 / 도형+네온 두 스타일로 움직이며 보여 주는 비교용 페이지. 생존자가 혼자 돌아다니며 자동으로 싸운다.
+[쓰는 곳] 사용자가 브라우저로 열어 그림 스타일을 고를 때 / 바깥 파일 없음(글꼴만 jsdelivr 에서 받음).
+[근거 문서] 06 아트 (2026-11-07 픽셀 아트로 결정)
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>좀비 도시 그림 미리보기</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css">
+<style>
+:root { --bg:#0d0f14; --card:#171a22; --fg:#e8ecf3; --mu:#9aa3b5; --acc:#7ee081; --line:#2a2f3b; --sel:#4fd1ff; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:Pretendard,-apple-system,"Malgun Gothic",sans-serif; }
+.wrap { max-width:860px; margin:0 auto; padding:24px 16px 48px; }
+h1 { font-size:22px; margin:0 0 6px; }
+h2 { font-size:16px; margin:0 0 10px; }
+.lede { color:var(--mu); margin:0 0 18px; font-size:14px; line-height:1.6; }
+.tabs { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.tabs button { font:inherit; font-size:15px; padding:10px 16px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--mu); cursor:pointer; }
+.tabs button[aria-pressed="true"] { background:#1f2a38; color:var(--fg); border-color:var(--sel); }
+.stage { display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start; }
+.phone { position:relative; width:min(360px,100%); aspect-ratio:9/16; border-radius:24px; overflow:hidden; border:6px solid #000; box-shadow:0 0 0 1px var(--line), 0 12px 40px rgba(0,0,0,.5); background:#000; flex:0 0 auto; }
+.phone canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+canvas.px { image-rendering:pixelated; image-rendering:crisp-edges; }
+.hud { position:absolute; inset:0; pointer-events:none; color:#fff; font-family:Pretendard,sans-serif; }
+.px-mode .hud { font-family:'Galmuri11','Galmuri9',monospace; }
+.xp { position:absolute; left:0; right:0; top:0; height:7px; background:rgba(255,255,255,.1); }
+.xp i { display:block; height:100%; width:0; background:var(--acc); }
+.row { position:absolute; top:14px; left:12px; right:12px; display:flex; justify-content:space-between; align-items:flex-start; font-size:13px; text-shadow:0 1px 0 #000, 0 0 4px #000; }
+.lv { color:var(--acc); }
+.timer { text-align:center; font-size:22px; line-height:1.1; }
+.timer small { display:block; font-size:10px; color:#c9d3e6; }
+.banner { position:absolute; top:24%; left:0; right:0; text-align:center; font-size:20px; color:#ffd166; text-shadow:0 2px 0 #000, 0 0 6px #000; opacity:0; transition:opacity .15s; }
+.side { flex:1 1 300px; min-width:0; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
+.sheet { display:flex; flex-wrap:wrap; gap:14px 18px; }
+.sheet figure { margin:0; text-align:center; font-size:12px; color:var(--mu); }
+.sheet canvas { display:block; margin:0 auto 6px; image-rendering:pixelated; image-rendering:crisp-edges; background:#262a33; border-radius:6px; padding:4px; box-sizing:content-box; }
+ul { margin:0; padding-left:18px; color:var(--mu); font-size:14px; line-height:1.7; }
+ul b { color:var(--fg); font-weight:600; }
+.hide { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>좀비 도시 — 그림 스타일 미리보기</h1>
+  <p class="lede">위 버튼으로 두 스타일을 바꿔 보세요. 화면은 실제 폰 비율(세로)이고, 생존자는 혼자 움직이며 자동으로 싸워요.<br>
+  픽셀은 제가 코드로 직접 찍은 <b>시안</b>이라 거칠어요. 실제 게임에서는 더 다듬어요.</p>
+
+  <div class="tabs" role="group" aria-label="그림 스타일">
+    <button id="bPx" aria-pressed="true">픽셀 아트</button>
+    <button id="bNe" aria-pressed="false">도형 + 네온</button>
+  </div>
+
+  <div class="stage">
+    <div class="phone px-mode" id="phone">
+      <canvas id="cPx" class="px" width="180" height="320"></canvas>
+      <canvas id="cNe" class="hide" width="360" height="640"></canvas>
+      <div class="hud">
+        <div class="xp"><i id="xp"></i></div>
+        <div class="row">
+          <span class="lv" id="lv">Lv 1</span>
+          <span class="timer"><span id="tm">05:00</span><small>구조 헬기까지</small></span>
+          <span id="kl">처치 0</span>
+        </div>
+        <div class="banner" id="bn"></div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card" id="sheetCard">
+        <h2>등장 캐릭터 (픽셀 시안, 4배 확대)</h2>
+        <div class="sheet" id="sheet"></div>
+      </div>
+      <div class="card">
+        <h2 id="noteTitle">픽셀 아트</h2>
+        <ul id="notePx">
+          <li><b>장점</b> — 작은 화면에서도 캐릭터가 또렷해요. 좀비 도시의 레트로·B급 분위기와 잘 맞아요.</li>
+          <li><b>장점</b> — 그림이 작아서 폰에서 가볍고, 무료 자료도 많아요.</li>
+          <li><b>단점</b> — 캐릭터·좀비마다 그림(걷기 동작 포함)을 따로 만들어야 해서 손이 가요.</li>
+        </ul>
+        <ul id="noteNe" class="hide">
+          <li><b>장점</b> — 그림 파일 없이 코드로 그려서 제일 빨리 만들 수 있어요.</li>
+          <li><b>장점</b> — 빛나는 효과가 화려해서 후반에 화면이 꽉 찰 때 시원해요.</li>
+          <li><b>단점</b> — 좀비라는 게 잘 안 보여요. 주제 느낌이 약해요.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+// ---------- 색 ----------
+const PAL = {
+  k:'#16171f', h:'#3b2a20', s:'#f2c79e', b:'#3b6fb6', B:'#29466e', p:'#2b2b3a', g:'#a3a9b3',
+  z:'#7fa36b', Z:'#4d6b45', r:'#e0463f', t:'#8b7355', T:'#5e4b37', q:'#3a3f4a',
+  y:'#e3c54b', Y:'#a88b2c', v:'#7fc8d8', m:'#9b5d8a', M:'#5c3352', w:'#f4f4f4',
+  x:'#8ff59a', X:'#2f9e4f', o:'#e07b39', c:'#7a4b46', C:'#4f3330', e:'#5b7a8c', W:'#33464f', l:'#f0e3a0', u:'#ffe066'
+};
+const RUNNER = { z:'#b7c79c', Z:'#7d8c68', t:'#a03e2e', T:'#64261c', q:'#2e3440' };
+
+// ---------- 픽셀 그림 ----------
+const SURV = [
+"................",
+".....kkkkkk.....",
+"....khhhhhhk....",
+"....khsssshk....",
+"....kskssksk....",
+"....kssssssk....",
+".....kssssk.....",
+"....kbbbbbbk....",
+"...kbbbBBbbbk...",
+"...ksbbBBbbsgk..",
+"....kbbBBbbk.gg.",
+"....kppppppk....",
+"....kpp..ppk....",
+"....kpk..kpk....",
+"....kkk..kkk....",
+"................"];
+const WALK = [
+"................",
+"......kkkk......",
+".....kZzzZk.....",
+"....kzzzzzzk....",
+"....kzrzzrzk....",
+"....kzzzzzzk....",
+".....kzZZzk.....",
+"..kz.kttttk.zk..",
+"..kzktTttTtkzk..",
+"...kktttTttkk...",
+"....kttTtttk....",
+"....kqqqqqqk....",
+"....kqq..qqk....",
+"....kzk..kzk....",
+"....kkk..kkk....",
+"................"];
+const HAZ = [
+"................",
+".....kkkkkk.....",
+"....kyyyyyyk....",
+"...kyvvvvvvyk...",
+"...kyvzrrzvyk...",
+"...kyvvvvvvyk...",
+"....kyyyyyyk....",
+"..kyyyyYYyyyyk..",
+"..kyyyYYYYyyyk..",
+"..kyykyyyykyyk..",
+"...kkyyyyyykk...",
+"....kyyyyyyk....",
+"....kyy..yyk....",
+"....kYk..kYk....",
+"....kkk..kkk....",
+"................"];
+const BOSS = [
+"........kkkkkkkk........",
+"......kkmmmmmmmmkk......",
+".....kmmmmMmmMmmmmk.....",
+"....kmmmrmmmmmmrmmmk....",
+"...kmmmmmmmmmmmmmmmmk...",
+"..kmmMmmmrrmmrrmmmMmmk..",
+"..kmmmmmmmmmmmmmmmmmmk..",
+".kzmmmmkwkwkwkwmmmmmzk..",
+"kzzmmmmmkkkkkkkmmmmmzzk.",
+"kzzkmmmmmmmmmmmmmmmkzzk.",
+".kk.kmmmMmmmmmMmmmmk.kk.",
+"....kmmmmmmmmmmmmmmk....",
+"....kMmmmmmmmmmmmmMk....",
+".....kmmmmmmmmmmmmk.....",
+".....kmmmk....kmmmk.....",
+".....kmmmk....kmmmk.....",
+"....kmmmmk....kmmmmk....",
+"....kkkkkk....kkkkkk...."];
+const SHARD = ["..X..", ".XxX.", "XxwxX", ".XxX.", "..X.."];
+const DRONE_A = ["w.....w", ".w...w.", "..kgk..", "..gug..", "..kgk..", ".w...w.", "w.....w"];
+const DRONE_B = ["...w...", "...w...", "..kgk..", "wwgugww", "..kgk..", "...w...", "...w..."];
+const CAR = [
+"..kkkkkkkk..",
+".kcccccccck.",
+"kcllccccllck",
+"kcccccccccck",
+"kcWWWWWWWWck",
+"kcWeeeeeeWck",
+"kcWeeeeeeWck",
+"kcWWWWWWWWck",
+"kcccccccccck",
+"kcCccccccCck",
+"kcCccccccCck",
+"kcCccccccCck",
+"kcccccccccck",
+"kcWWWWWWWWck",
+"kcWeeeeeeWck",
+"kcWWWWWWWWck",
+"kcccccccccck",
+"kCrrccccrrCk",
+".kCCCCCCCCk.",
+"..kkkkkkkk.."];
+const CONE = ["..o..", "..o..", ".www.", ".ooo.", "ooooo"];
+const TIRE = [".kkkk.", "kqqqqk", "kq..qk", "kq..qk", "kqqqqk", ".kkkk."];
+const LAMP = [".kkk.", "kglgk", "klllk", "kglgk", ".kkk."];
+
+function legsB(rows, p) {
+  const r = rows.slice();
+  r[13] = "...k" + p + "k....k" + p + "k...";
+  r[14] = "...kkk....kkk...";
+  return r;
+}
+function sprite(rows, over = {}, flash = false) {
+  const w = Math.max(...rows.map(r => r.length)), h = rows.length;
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  rows.forEach((r, y) => { for (let x = 0; x < w; x++) {
+    const ch = r[x] || '.'; if (ch === '.') continue;
+    g.fillStyle = flash ? '#ffffff' : (over[ch] || PAL[ch] || '#f0f'); g.fillRect(x, y, 1, 1);
+  }});
+  return c;
+}
+function pair(rows, p, over) {
+  const b = legsB(rows, p);
+  return { f: [sprite(rows, over), sprite(b, over)], w: [sprite(rows, over, true), sprite(b, over, true)] };
+}
+const SP = {
+  surv: pair(SURV, 'p', {}),
+  walker: pair(WALK, 'z', {}),
+  runner: pair(WALK, 'z', RUNNER),
+  hazmat: pair(HAZ, 'Y', {}),
+  boss: { f: [sprite(BOSS)], w: [sprite(BOSS, {}, true)] },
+  shard: sprite(SHARD), shard2: sprite(SHARD, { x:'#c8ffd0', X:'#5fd47c' }),
+  droneA: sprite(DRONE_A), droneB: sprite(DRONE_B),
+  car: sprite(CAR), cone: sprite(CONE), tire: sprite(TIRE), lamp: sprite(LAMP),
+};
+
+// ---------- 바닥 타일 ----------
+function rng(seed) { let s = seed >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+function hash(a, b) { return (((a * 73856093) ^ (b * 19349663)) >>> 0); }
+function tile(kind, seed) {
+  const c = document.createElement('canvas'); c.width = c.height = 16;
+  const g = c.getContext('2d'), R = rng(seed);
+  g.fillStyle = '#262a33'; g.fillRect(0, 0, 16, 16);
+  for (let i = 0; i < 16; i++) { g.fillStyle = R() < .5 ? '#2d313b' : '#20232b'; g.fillRect(R() * 16 | 0, R() * 16 | 0, 1, 1); }
+  if (kind === 'crack') { g.fillStyle = '#191b21'; let x = R() * 16 | 0; for (let y = 0; y < 16; y++) { g.fillRect(x, y, 1, 1); x = Math.max(0, Math.min(15, x + (R() * 3 | 0) - 1)); } }
+  if (kind === 'oil') { g.fillStyle = '#1d2027'; for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) { const d = ((x - 8) / 6) ** 2 + ((y - 9) / 4) ** 2; if (d < 1 && R() > .15) g.fillRect(x, y, 1, 1); } }
+  if (kind === 'man') { for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) { const d = Math.hypot(x - 7.5, y - 7.5); if (d < 5.6) { g.fillStyle = d > 4.6 ? '#454b57' : ((y % 3 === 0) ? '#30343d' : '#1c1f26'); g.fillRect(x, y, 1, 1); } } }
+  return c;
+}
+const TILES = { plain: [0, 1, 2, 3].map(i => tile('plain', 11 + i * 97)), crack: tile('crack', 7), oil: tile('oil', 5), man: tile('man', 3) };
+function tileAt(tx, ty) {
+  const h = hash(tx, ty) % 100;
+  if (h < 2) return TILES.man; if (h < 7) return TILES.crack; if (h < 10) return TILES.oil;
+  return TILES.plain[h % 4];
+}
+
+// ---------- 게임 흐름(두 스타일이 같이 씀) ----------
+const G = 224, ROAD = 40;               // 도로 간격, 도로 반폭
+const KIND = {
+  walker: { r: 5, hp: 3, sp: 12 }, runner: { r: 4, hp: 2, sp: 27 },
+  hazmat: { r: 6, hp: 10, sp: 9 }, boss: { r: 10, hp: 80, sp: 11 },
+};
+const S = { t: 0, px: 0, py: 0, face: 1, zs: [], bs: [], sh: [], parts: [], fire: 0, da: 0, nova: { cd: 3, fx: 0 }, kills: 0, lv: 1, xp: 0, need: 5, spawn: 0, boss: 8, ban: { text: '', t: 0 }, hit: 0, lvfx: 0 };
+
+function banner(text, t) { S.ban.text = text; S.ban.t = t; }
+function spawn(kind) {
+  const a = Math.random() * Math.PI * 2, d = 200;
+  const k = KIND[kind];
+  S.zs.push({ kind, x: S.px + Math.cos(a) * d, y: S.py + Math.sin(a) * d, hp: k.hp, r: k.r, sp: k.sp, fl: 0, dcd: 0, seed: Math.random() * 2, face: 1 });
+}
+function hurt(z, n) { z.hp -= n; z.fl = 0.08; }
+
+function step(dt) {
+  S.t += dt;
+  const ox = S.px, oy = S.py;
+  S.px = 150 * Math.sin(S.t * 0.19); S.py = 150 * Math.sin(S.t * 0.12 + 1);
+  if (Math.abs(S.px - ox) > 0.01) S.face = S.px > ox ? 1 : -1;
+
+  // 좀비 나오기
+  S.spawn -= dt;
+  if (S.spawn <= 0 && S.zs.length < 70) {
+    S.spawn = Math.max(0.22, 0.8 - S.t * 0.006);
+    const r = Math.random();
+    spawn(S.t > 10 && r < 0.10 ? 'hazmat' : S.t > 4 && r < 0.30 ? 'runner' : 'walker');
+  }
+  S.boss -= dt;
+  if (S.boss <= 0) { S.boss = 22; spawn('boss'); banner('거대 변종 등장!', 2); }
+
+  // 좀비 움직임
+  for (const z of S.zs) {
+    const dx = S.px - z.x, dy = S.py - z.y, d = Math.hypot(dx, dy) || 1;
+    if (d > z.r + 5) { z.x += dx / d * z.sp * dt; z.y += dy / d * z.sp * dt; } else S.hit = 0.1;
+    z.face = dx > 0 ? 1 : -1; z.fl -= dt; z.dcd -= dt;
+  }
+  for (let i = 0; i < S.zs.length; i++) for (let j = i + 1; j < S.zs.length; j++) {
+    const a = S.zs[i], b = S.zs[j], dx = b.x - a.x, dy = b.y - a.y, m = a.r + b.r - 2, d = Math.hypot(dx, dy);
+    if (d > 0 && d < m) { const p = (m - d) / 2 / d; a.x -= dx * p; a.y -= dy * p; b.x += dx * p; b.y += dy * p; }
+  }
+
+  // 권총(2발)
+  S.fire -= dt;
+  if (S.fire <= 0) {
+    let best = null, bd = 150;
+    for (const z of S.zs) { const d = Math.hypot(z.x - S.px, z.y - S.py); if (d < bd) { bd = d; best = z; } }
+    if (best) {
+      const a = Math.atan2(best.y - S.py, best.x - S.px);
+      for (const o of [-0.07, 0.07]) S.bs.push({ x: S.px, y: S.py - 2, vx: Math.cos(a + o) * 170, vy: Math.sin(a + o) * 170, life: 1.1 });
+      S.fire = 0.3;
+    }
+  }
+  for (let i = S.bs.length - 1; i >= 0; i--) {
+    const b = S.bs[i]; b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt;
+    let dead = b.life <= 0;
+    if (!dead) for (const z of S.zs) if (Math.hypot(z.x - b.x, z.y - b.y) < z.r + 1) { hurt(z, 1); dead = true; break; }
+    if (dead) S.bs.splice(i, 1);
+  }
+
+  // 톱날 드론 2개
+  S.da += dt * 3;
+  for (let k = 0; k < 2; k++) {
+    const x = S.px + Math.cos(S.da + k * Math.PI) * 24, y = S.py + Math.sin(S.da + k * Math.PI) * 24;
+    for (const z of S.zs) if (z.dcd <= 0 && Math.hypot(z.x - x, z.y - y) < z.r + 3) { hurt(z, 1); z.dcd = 0.3; }
+  }
+
+  // 화염병
+  S.nova.cd -= dt; S.nova.fx -= dt;
+  if (S.nova.cd <= 0) {
+    S.nova.cd = 4; S.nova.fx = 0.45;
+    for (const z of S.zs) { const dx = z.x - S.px, dy = z.y - S.py, d = Math.hypot(dx, dy) || 1; if (d < 44) { hurt(z, 3); z.x += dx / d * 10; z.y += dy / d * 10; } }
+  }
+
+  // 쓰러진 좀비 → 백신 조각
+  for (let i = S.zs.length - 1; i >= 0; i--) {
+    const z = S.zs[i]; if (z.hp > 0) continue;
+    S.zs.splice(i, 1); S.kills++;
+    const v = z.kind === 'boss' ? 10 : z.kind === 'hazmat' ? 3 : 1;
+    S.sh.push({ x: z.x, y: z.y, v });
+    for (let n = 0; n < (z.kind === 'boss' ? 18 : 6); n++) S.parts.push({ x: z.x, y: z.y, vx: (Math.random() - .5) * 60, vy: (Math.random() - .5) * 60, life: 0.5, c: Math.random() < .5 ? '#6f9a52' : '#a5c46a' });
+  }
+  for (let i = S.parts.length - 1; i >= 0; i--) { const p = S.parts[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.9; p.vy *= 0.9; p.life -= dt; if (p.life <= 0) S.parts.splice(i, 1); }
+  for (let i = S.sh.length - 1; i >= 0; i--) {
+    const s = S.sh[i], dx = S.px - s.x, dy = S.py - s.y, d = Math.hypot(dx, dy);
+    if (d < 36) { s.x += dx / d * 120 * dt; s.y += dy / d * 120 * dt; }
+    if (d < 6) {
+      S.sh.splice(i, 1); S.xp += s.v;
+      while (S.xp >= S.need) { S.xp -= S.need; S.lv++; S.need = 5 + S.lv * 4; S.lvfx = 0.5; if (S.ban.t <= 0) banner('레벨 업!', 1); }
+    }
+  }
+  S.hit -= dt; S.lvfx -= dt; S.ban.t -= dt;
+}
+
+// ---------- 픽셀 그리기 (180×320) ----------
+const cPx = document.getElementById('cPx'), gp = cPx.getContext('2d');
+const dark = document.createElement('canvas'); dark.width = 180; dark.height = 320;
+const gd = dark.getContext('2d');
+gp.imageSmoothingEnabled = false;
+
+function drawSprite(g, img, x, y, flip) {
+  const ix = Math.round(x - img.width / 2), iy = Math.round(y - img.height / 2);
+  if (flip) { g.save(); g.translate(ix + img.width, iy); g.scale(-1, 1); g.drawImage(img, 0, 0); g.restore(); }
+  else g.drawImage(img, ix, iy);
+}
+
+function renderPx() {
+  const W = 180, H = 320, ox = Math.round(S.px - W / 2), oy = Math.round(S.py - H / 2);
+  const g = gp;
+  // 아스팔트
+  for (let ty = Math.floor(oy / 16); ty <= Math.floor((oy + H) / 16); ty++)
+    for (let tx = Math.floor(ox / 16); tx <= Math.floor((ox + W) / 16); tx++)
+      g.drawImage(tileAt(tx, ty), tx * 16 - ox, ty * 16 - oy);
+  // 인도 블록
+  const k0 = Math.floor(ox / G) - 1, k1 = Math.floor((ox + W) / G) + 1, j0 = Math.floor(oy / G) - 1, j1 = Math.floor((oy + H) / G) + 1;
+  for (let j = j0; j <= j1; j++) for (let k = k0; k <= k1; k++) {
+    const x0 = k * G + ROAD - ox, y0 = j * G + ROAD - oy, sz = G - ROAD * 2;
+    g.fillStyle = '#555b66'; g.fillRect(x0 - 2, y0 - 2, sz + 4, sz + 4);
+    g.fillStyle = '#30343c'; g.fillRect(x0, y0, sz, sz);
+    g.fillStyle = '#2a2d34';
+    for (let s = 12; s < sz; s += 12) { g.fillRect(x0 + s, y0, 1, sz); g.fillRect(x0, y0 + s, sz, 1); }
+  }
+  // 차선·횡단보도
+  for (let k = k0; k <= k1; k++) {
+    const x = k * G - ox;
+    for (let y = -oy % 12 - 12; y < H; y += 12) { const wy = y + oy, jj = Math.round(wy / G); if (Math.abs(wy - jj * G) > ROAD + 14) { g.fillStyle = '#8c7a32'; g.fillRect(x - 1, y, 2, 6); } }
+  }
+  for (let j = j0; j <= j1; j++) {
+    const y = j * G - oy;
+    for (let x = -ox % 12 - 12; x < W; x += 12) { const wx = x + ox, kk = Math.round(wx / G); if (Math.abs(wx - kk * G) > ROAD + 14) { g.fillStyle = '#8c7a32'; g.fillRect(x, y - 1, 6, 2); } }
+  }
+  g.fillStyle = 'rgba(190,194,204,0.55)';
+  for (let j = j0; j <= j1; j++) for (let k = k0; k <= k1; k++) {
+    const cx = k * G - ox, cy = j * G - oy;
+    for (const sy of [-ROAD - 9, ROAD + 1]) for (let s = -ROAD + 4; s < ROAD - 2; s += 6) g.fillRect(cx + s, cy + sy, 3, 8);
+    for (const sx of [-ROAD - 9, ROAD + 1]) for (let s = -ROAD + 4; s < ROAD - 2; s += 6) g.fillRect(cx + sx, cy + s, 8, 3);
+  }
+  // 소품: 버려진 차, 고깔, 타이어, 가로등
+  const lamps = [];
+  for (let j = j0; j <= j1; j++) for (let k = k0; k <= k1; k++) {
+    const h = hash(k + 1000, j + 2000), bx = k * G - ox, by = j * G - oy;
+    if (h % 3 === 0) g.drawImage(SP.car, bx + ROAD - 22, by + ROAD + 30 + (h % 60));
+    if (h % 4 === 1) g.drawImage(SP.car, bx + G / 2 + (h % 50), by + G - ROAD + 12);
+    if (h % 5 === 2) g.drawImage(SP.cone, bx + 14, by + G / 2 + (h % 30));
+    if (h % 7 === 3) g.drawImage(SP.tire, bx + G / 2 - 30 + (h % 40), by + 18);
+    for (const [lx, ly] of [[ROAD + 6, ROAD + 6], [G - ROAD - 6, G - ROAD - 6]]) {
+      g.drawImage(SP.lamp, bx + lx - 2, by + ly - 2); lamps.push([bx + lx, by + ly]);
+    }
+  }
+  // 체액·백신 조각
+  for (const p of S.parts) { g.fillStyle = p.c; g.globalAlpha = Math.max(0, p.life * 2); g.fillRect(Math.round(p.x - ox), Math.round(p.y - oy), 1, 1); }
+  g.globalAlpha = 1;
+  const blink = Math.floor(S.t * 6) % 2;
+  for (const s of S.sh) drawSprite(g, blink ? SP.shard2 : SP.shard, s.x - ox, s.y - oy);
+  // 화염병
+  if (S.nova.fx > 0) {
+    const r = 44 * (1 - S.nova.fx / 0.45) + 6;
+    for (let a = 0; a < Math.PI * 2; a += 0.09) {
+      const fx = Math.round(S.px - ox + Math.cos(a) * r), fy = Math.round(S.py - oy + Math.sin(a) * r);
+      g.fillStyle = Math.random() < .5 ? '#ff9a3c' : '#ffd25a'; g.fillRect(fx, fy, 2, 2);
+      if (Math.random() < .3) { g.fillStyle = '#ff5a2a'; g.fillRect(fx + 1, fy - 2, 1, 1); }
+    }
+  }
+  // 캐릭터 (아래쪽이 앞)
+  const fr = Math.floor(S.t * 5) % 2;
+  const list = S.zs.map(z => ({ y: z.y, z })).concat([{ y: S.py, me: true }]).sort((a, b) => a.y - b.y);
+  for (const it of list) {
+    if (it.me) {
+      const set = SP.surv[S.hit > 0 && fr ? 'w' : 'f'];
+      drawSprite(g, set[fr], S.px - ox, S.py - oy, S.face < 0);
+      g.fillStyle = '#16171f'; g.fillRect(Math.round(S.px - ox - 7), Math.round(S.py - oy + 9), 14, 3);
+      g.fillStyle = '#e0463f'; g.fillRect(Math.round(S.px - ox - 6), Math.round(S.py - oy + 10), 12, 1);
+    } else {
+      const z = it.z, set = SP[z.kind][z.fl > 0 ? 'w' : 'f'];
+      const f = set.length > 1 ? Math.floor(S.t * (z.kind === 'runner' ? 9 : 4) + z.seed) % 2 : 0;
+      const bob = z.kind === 'boss' ? Math.round(Math.sin(S.t * 4 + z.seed)) : 0;
+      drawSprite(g, set[f], z.x - ox, z.y - oy + bob, z.face < 0);
+    }
+  }
+  // 총알·드론
+  g.fillStyle = '#ffe066';
+  for (const b of S.bs) { const x = Math.round(b.x - ox), y = Math.round(b.y - oy); g.fillRect(x, y, 2, 2); g.fillStyle = 'rgba(255,224,102,.45)'; g.fillRect(Math.round(x - b.vx * 0.012), Math.round(y - b.vy * 0.012), 1, 1); g.fillStyle = '#ffe066'; }
+  const dimg = Math.floor(S.t * 12) % 2 ? SP.droneA : SP.droneB;
+  for (let k = 0; k < 2; k++) drawSprite(g, dimg, S.px - ox + Math.cos(S.da + k * Math.PI) * 24, S.py - oy + Math.sin(S.da + k * Math.PI) * 24);
+  // 밤: 어둡게 + 가로등·손전등 빛
+  gd.globalCompositeOperation = 'source-over';
+  gd.clearRect(0, 0, W, H); gd.fillStyle = 'rgba(4,6,18,0.62)'; gd.fillRect(0, 0, W, H);
+  gd.globalCompositeOperation = 'destination-out';
+  const hole = (x, y, r, a) => { const gr = gd.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(0,0,0,${a})`); gr.addColorStop(1, 'rgba(0,0,0,0)'); gd.fillStyle = gr; gd.fillRect(x - r, y - r, r * 2, r * 2); };
+  hole(S.px - ox, S.py - oy, 70, 0.95);
+  for (const [lx, ly] of lamps) hole(lx, ly, 44, 0.85);
+  if (S.nova.fx > 0) hole(S.px - ox, S.py - oy, 60, 0.9);
+  g.drawImage(dark, 0, 0);
+  for (const [lx, ly] of lamps) { const gr = g.createRadialGradient(lx, ly, 0, lx, ly, 40); gr.addColorStop(0, 'rgba(255,196,120,0.14)'); gr.addColorStop(1, 'rgba(255,196,120,0)'); g.fillStyle = gr; g.fillRect(lx - 40, ly - 40, 80, 80); }
+  if (S.lvfx > 0) { g.strokeStyle = `rgba(126,224,129,${S.lvfx * 2})`; g.lineWidth = 1; g.beginPath(); g.arc(S.px - ox, S.py - oy, 30 - S.lvfx * 30, 0, Math.PI * 2); g.stroke(); }
+}
+
+// ---------- 네온 그리기 (360×640, 2배) ----------
+const cNe = document.getElementById('cNe'), gn = cNe.getContext('2d');
+const NC = { walker: '#ff5c5c', runner: '#ff9f43', hazmat: '#b388ff', boss: '#ff4fd8' };
+function renderNe() {
+  const K = 2, W = 360, H = 640, g = gn;
+  const ox = S.px * K - W / 2, oy = S.py * K - H / 2;
+  g.shadowBlur = 0; g.fillStyle = '#10121a'; g.fillRect(0, 0, W, H);
+  g.strokeStyle = 'rgba(255,255,255,0.05)'; g.lineWidth = 1; g.beginPath();
+  for (let x = -((ox % 80) + 80) % 80; x < W; x += 80) { g.moveTo(x + .5, 0); g.lineTo(x + .5, H); }
+  for (let y = -((oy % 80) + 80) % 80; y < H; y += 80) { g.moveTo(0, y + .5); g.lineTo(W, y + .5); }
+  g.stroke();
+  const P = (x, y) => [x * K - ox, y * K - oy];
+  g.shadowBlur = 10;
+  for (const s of S.sh) { const [x, y] = P(s.x, s.y); g.shadowColor = g.fillStyle = '#7ee081'; g.beginPath(); g.moveTo(x, y - 6); g.lineTo(x + 5, y); g.lineTo(x, y + 6); g.lineTo(x - 5, y); g.closePath(); g.fill(); }
+  for (const p of S.parts) { const [x, y] = P(p.x, p.y); g.globalAlpha = Math.max(0, p.life * 2); g.shadowColor = g.fillStyle = '#ff7a7a'; g.fillRect(x - 1.5, y - 1.5, 3, 3); }
+  g.globalAlpha = 1;
+  if (S.nova.fx > 0) { const [x, y] = P(S.px, S.py), r = (44 * (1 - S.nova.fx / 0.45) + 6) * K; g.shadowColor = g.strokeStyle = '#ffb347'; g.lineWidth = 4; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.stroke(); }
+  for (const z of S.zs) { const [x, y] = P(z.x, z.y); const c = z.fl > 0 ? '#ffffff' : NC[z.kind]; g.shadowColor = g.fillStyle = c; g.beginPath(); g.arc(x, y, z.r * K + 2, 0, Math.PI * 2); g.fill(); }
+  { const [x, y] = P(S.px, S.py); g.shadowColor = g.fillStyle = S.hit > 0 ? '#ffffff' : '#4fd1ff'; g.beginPath(); g.arc(x, y, 14, 0, Math.PI * 2); g.fill();
+    g.shadowBlur = 0; g.fillStyle = '#000'; g.fillRect(x - 18, y + 20, 36, 5); g.fillStyle = '#ff6b6b'; g.fillRect(x - 17, y + 21, 30, 3); g.shadowBlur = 10; }
+  g.shadowColor = g.fillStyle = '#ffe066';
+  for (const b of S.bs) { const [x, y] = P(b.x, b.y); g.beginPath(); g.arc(x, y, 3.5, 0, Math.PI * 2); g.fill(); }
+  g.shadowColor = g.strokeStyle = '#e8f4ff'; g.lineWidth = 3;
+  for (let k = 0; k < 2; k++) { const a = S.da + k * Math.PI, [x, y] = P(S.px + Math.cos(a) * 24, S.py + Math.sin(a) * 24); g.beginPath(); for (let i = 0; i < 4; i++) { const b = S.t * 14 + i * Math.PI / 2; g.moveTo(x, y); g.lineTo(x + Math.cos(b) * 9, y + Math.sin(b) * 9); } g.stroke(); }
+  g.shadowBlur = 0;
+}
+
+// ---------- 화면 위 정보 ----------
+const $ = id => document.getElementById(id);
+function hud() {
+  $('xp').style.width = (S.xp / S.need * 100).toFixed(1) + '%';
+  $('lv').textContent = 'Lv ' + S.lv;
+  const remain = Math.ceil(300 - (S.t % 300));
+  $('tm').textContent = String(Math.floor(remain / 60)).padStart(2, '0') + ':' + String(remain % 60).padStart(2, '0');
+  $('kl').textContent = '처치 ' + S.kills;
+  $('bn').textContent = S.ban.text; $('bn').style.opacity = S.ban.t > 0 ? 1 : 0;
+}
+
+// ---------- 스타일 바꾸기 ----------
+let mode = location.hash === '#neon' ? 'ne' : 'px';
+function setMode(m) {
+  mode = m;
+  $('bPx').setAttribute('aria-pressed', m === 'px'); $('bNe').setAttribute('aria-pressed', m === 'ne');
+  $('cPx').classList.toggle('hide', m !== 'px'); $('cNe').classList.toggle('hide', m !== 'ne');
+  $('phone').classList.toggle('px-mode', m === 'px');
+  $('sheetCard').classList.toggle('hide', m !== 'px');
+  $('notePx').classList.toggle('hide', m !== 'px'); $('noteNe').classList.toggle('hide', m !== 'ne');
+  $('noteTitle').textContent = m === 'px' ? '픽셀 아트' : '도형 + 네온';
+}
+$('bPx').onclick = () => setMode('px'); $('bNe').onclick = () => setMode('ne');
+setMode(mode);
+
+// ---------- 캐릭터 모음 ----------
+for (const [name, img] of [['생존자', SP.surv.f[0]], ['걷는 좀비', SP.walker.f[0]], ['달리는 좀비', SP.runner.f[0]], ['방호복 좀비', SP.hazmat.f[0]], ['거대 변종', SP.boss.f[0]], ['백신 조각', SP.shard], ['톱날 드론', SP.droneA], ['버려진 차', SP.car]]) {
+  const f = document.createElement('figure'), c = document.createElement('canvas');
+  c.width = img.width; c.height = img.height; c.getContext('2d').drawImage(img, 0, 0);
+  c.style.width = img.width * 4 + 'px'; c.style.height = img.height * 4 + 'px';
+  f.append(c, name); $('sheet').append(f);
+}
+
+// ---------- 돌리기 ----------
+for (let i = 0; i < 900; i++) step(1 / 30);   // 30초 미리 돌려서 열자마자 좀비가 몰려 있게
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  step(dt);
+  if (mode === 'px') renderPx(); else renderNe();
+  hud();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

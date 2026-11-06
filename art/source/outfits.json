@@ -1,0 +1,51 @@
+{
+  "_설명": {
+    "파일": "art/source/outfits.json",
+    "하는 일": "그림 색 표. 생존자 옷 16벌(기본 4 + 전직 12)·좀비 3종의 부품별 색과 모자 종류, 한 장 그림(sprites.txt)에 쓰는 공통 색을 정한다.",
+    "쓰는 곳": "tools/build_sprites.py 가 읽어 art/source/parts_people.txt · sprites.txt 의 글자를 색으로 바꾼다.",
+    "근거 문서": "04 §2 생존자 모습·전직 옷차림, 06 색 표"
+  },
+
+  "global_palette": {
+    "o": "#16171f", "g": "#a3a9b3", "G": "#6b7280", "w": "#f4f4f4", "r": "#d0453c", "R": "#8f2219",
+    "y": "#f2c230", "Y": "#a88b2c", "b": "#8b5a2b", "B": "#5e3b1c", "x": "#8ff59a", "X": "#2f9e4f",
+    "c": "#7fc8d8", "C": "#3b6fb6", "v": "#8fd3ff", "u": "#ffe066", "l": "#f0e3a0", "n": "#ff9a3c",
+    "z": "#7fa36b", "Z": "#5d7d4e", "e": "#e0463f", "h": "#3b3b2e", "q": "#3a3f4a",
+    "a": "#c9c2ad", "A": "#9c947c", "d": "#7a4b46", "D": "#4f3330", "i": "#5b7a8c", "I": "#33464f"
+  },
+
+  "_사람_공통": "o 테두리 · s 피부 · e 눈 은 모든 생존자가 같고, 나머지 글자(h t T a p f c C)는 옷마다 다르다.",
+  "human_common": { "o": "#16171f", "s": "#f1c49b", "e": "#16171f" },
+
+  "human_outfits": {
+    "police":               { "hat": "cap",     "h": "#2a2420", "t": "#2d3e6b", "T": "#1f2b4d", "a": "#e8c547", "p": "#22283a", "f": "#15161c", "c": "#1f2b4d", "C": "#e8c547" },
+    "police_swat":          { "hat": "helmet",  "h": "#2a2420", "t": "#2a2d33", "T": "#1b1d22", "a": "#5b6270", "p": "#23252b", "f": "#15161c", "c": "#2a2d33", "C": "#3e434d" },
+    "police_sniper":        { "hat": "cap",     "h": "#2a2420", "t": "#5c6b3c", "T": "#44512c", "a": "#8a7a4a", "p": "#4b4f35", "f": "#2b2a22", "c": "#6b7445", "C": "#4d5432" },
+    "police_riot":          { "hat": "visor",   "h": "#2a2420", "t": "#3b4a5c", "T": "#2b3644", "a": "#c9cdd4", "p": "#2b3644", "f": "#15161c", "c": "#1f2933", "C": "#8fd3ff" },
+
+    "firefighter":          { "hat": "helmet",  "h": "#3b2a20", "t": "#d8742c", "T": "#a85520", "a": "#e9e36b", "p": "#a85520", "f": "#2a2a2a", "c": "#c9352b", "C": "#8f2219" },
+    "firefighter_rescue":   { "hat": "helmet",  "h": "#3b2a20", "t": "#e8c22e", "T": "#b8961f", "a": "#f4f4f4", "p": "#3a3a3a", "f": "#2a2a2a", "c": "#f1f1f1", "C": "#c7c7c7" },
+    "firefighter_flame":    { "hat": "helmet",  "h": "#3b2a20", "t": "#2d2a28", "T": "#1d1b1a", "a": "#ff8a2a", "p": "#2d2a28", "f": "#1d1b1a", "c": "#2d2a28", "C": "#ff8a2a" },
+    "firefighter_demolition": { "hat": "helmet", "h": "#3b2a20", "t": "#4a5d7a", "T": "#364660", "a": "#f2c230", "p": "#364660", "f": "#2a2a2a", "c": "#f2c230", "C": "#c99a12" },
+
+    "courier":              { "hat": "cap",     "h": "#1e1a17", "t": "#3f8f4e", "T": "#2d6b39", "a": "#e8e8e8", "p": "#3a3f4a", "f": "#e8e8e8", "c": "#3f8f4e", "C": "#2d6b39" },
+    "courier_quick":        { "hat": "cap",     "h": "#1e1a17", "t": "#c73a32", "T": "#8f2620", "a": "#f4f4f4", "p": "#262a33", "f": "#f4f4f4", "c": "#c73a32", "C": "#8f2620" },
+    "courier_logistics":    { "hat": "cap",     "h": "#1e1a17", "t": "#7d828c", "T": "#5c6069", "a": "#f2c230", "p": "#3a3f4a", "f": "#2a2a2a", "c": "#5c6069", "C": "#f2c230" },
+    "courier_rider":        { "hat": "visor",   "h": "#1e1a17", "t": "#1f2126", "T": "#121316", "a": "#c73a32", "p": "#1f2126", "f": "#121316", "c": "#1f2126", "C": "#8fd3ff" },
+
+    "nurse":                { "hat": "softcap", "h": "#4a3428", "t": "#8cc8e8", "T": "#5fa0c4", "a": "#f4f4f4", "p": "#8cc8e8", "f": "#f4f4f4", "c": "#f4f4f4", "C": "#d0453c" },
+    "nurse_emergency":      { "hat": "none",    "h": "#4a3428", "t": "#d0453c", "T": "#9e3029", "a": "#f4f4f4", "p": "#3a3f4a", "f": "#2a2a2a", "c": "#d0453c", "C": "#f4f4f4" },
+    "nurse_epidemiology":   { "hat": "softcap", "h": "#4a3428", "t": "#e9ecef", "T": "#b9bec6", "a": "#7fc8d8", "p": "#e9ecef", "f": "#b9bec6", "c": "#e9ecef", "C": "#7fc8d8" },
+    "nurse_surgeon":        { "hat": "softcap", "h": "#4a3428", "t": "#4f9a6e", "T": "#3a7552", "a": "#f4f4f4", "p": "#4f9a6e", "f": "#f4f4f4", "c": "#4f9a6e", "C": "#3a7552" }
+  },
+
+  "_좀비_공통": "o 테두리 · e 눈(빨강) 은 같고, z Z(피부) h(머리) t T(옷) q(바지) 는 종류마다 다르다. 다리 부품의 p(바지)·f(발)는 q·z 로 바꿔 칠한다.",
+  "zombie_common": { "o": "#16171f", "e": "#e0463f" },
+
+  "zombie_kinds": {
+    "walker": { "hat": "none",  "z": "#7fa36b", "Z": "#5d7d4e", "h": "#3b3b2e", "t": "#8b7355", "T": "#5e4b37", "q": "#3a3f4a" },
+    "runner": { "hat": "none",  "z": "#b7c79c", "Z": "#8b9c72", "h": "#4a3f33", "t": "#a03e2e", "T": "#64261c", "q": "#2e3440" },
+    "hazmat": { "hat": "visor", "z": "#7fa36b", "Z": "#5d7d4e", "h": "#3b3b2e", "t": "#e3c54b", "T": "#a88b2c", "q": "#e3c54b", "c": "#e3c54b", "C": "#7fc8d8" },
+    "crawler": { "hat": "none", "z": "#93a07a", "Z": "#6b7757", "h": "#2e2b24", "t": "#4d6a6c", "T": "#384f52", "q": "#3e4658" }
+  }
+}

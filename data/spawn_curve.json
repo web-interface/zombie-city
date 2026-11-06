@@ -1,0 +1,88 @@
+{
+  "_설명": {
+    "파일": "data/spawn_curve.json",
+    "하는 일": "한 판 동안 좀비가 나오는 속도(시간 구간별), 종류별로 나오기 시작하는 때·비율, 체력이 늘어나는 정도, 보스 등장 시각을 정한다.",
+    "쓰는 곳": "scripts/systems/zombie_spawner.gd, scripts/systems/boss_director.gd",
+    "근거 문서": "03 §6 늘어나는 정도, 02 §3 한 판 시간표"
+  },
+  "spawn_rate_segments": [
+    {
+      "from_second": 0,
+      "to_second": 60,
+      "per_second_start": 1.6,
+      "per_second_end": 2.8
+    },
+    {
+      "from_second": 60,
+      "to_second": 120,
+      "per_second_start": 3.0,
+      "per_second_end": 4.2
+    },
+    {
+      "from_second": 120,
+      "to_second": 180,
+      "per_second_start": 4.2,
+      "per_second_end": 5.5
+    },
+    {
+      "from_second": 180,
+      "to_second": 240,
+      "per_second_start": 5.5,
+      "per_second_end": 7.0
+    },
+    {
+      "from_second": 240,
+      "to_second": 330,
+      "per_second_start": 7.0,
+      "per_second_end": 9.0
+    }
+  ],
+  "kinds": [
+    {
+      "kind": "walker",
+      "from_second": 0,
+      "weight": 1.0
+    },
+    {
+      "kind": "runner",
+      "from_second": 40,
+      "weight": 0.35
+    },
+    {
+      "kind": "hazmat",
+      "from_second": 100,
+      "weight": 0.12
+    },
+    {
+      "kind": "crawler",
+      "from_second": 140,
+      "weight": 0.15
+    }
+  ],
+  "health_growth_per_second": 0.01,
+  "max_zombies_on_field": 300,
+  "spawn_distance": 200,
+  "bosses": [
+    {
+      "at_second": 90,
+      "kind": "butcher",
+      "health_multiplier": 1.0,
+      "banner": "도살자 등장!"
+    },
+    {
+      "at_second": 180,
+      "kind": "butcher",
+      "health_multiplier": 1.8,
+      "banner": "더 큰 도살자가 온다!"
+    },
+    {
+      "at_second": 240,
+      "kind": "butcher",
+      "health_multiplier": 2.6,
+      "banner": "마지막 도살자!"
+    }
+  ],
+  "calm_after_boss_seconds": 18,
+  "calm_spawn_multiplier": 0.4,
+  "_보스_숨돌리기_근거": "보스를 잡은 뒤 18초는 좀비가 40%만 나온다 — 몰아치기와 숨 돌리기의 파도 (L4D AI 감독, 문서 13). 마지막 보스는 4:00 (헬기 버티기와 안 겹치게)"
+}

@@ -1,0 +1,64 @@
+{
+  "_설명": {
+    "파일": "data/survivors.json",
+    "하는 일": "생존자(플레이어 캐릭터)마다 이름·체력·속도·시작 무기·특성·스킬·전직 갈래·옷 그림·난이도를 정한다. v0.1 은 4명.",
+    "쓰는 곳": "scripts/world/survivor.gd 가 능력치를, scripts/ui/survivor_select.gd 가 고르기 카드를 이 표로 만든다.",
+    "근거 문서": "03 §1 생존자, 04 §2 생존자 이름·모습"
+  },
+  "police": {
+    "name": "강도윤",
+    "role": "경찰",
+    "intro": "마지막까지 무전을 붙잡고 있던 신입 순경",
+    "difficulty_stars": 1,
+    "max_health": 100,
+    "move_speed": 55,
+    "start_weapon": "pistol",
+    "skill": "flashbang",
+    "outfit": "police",
+    "trait_text": "치명타 확률 +15%",
+    "trait": { "add": { "crit_chance": 0.15 } },
+    "branches": ["police_swat", "police_sniper", "police_riot"]
+  },
+  "firefighter": {
+    "name": "최태산",
+    "role": "소방관",
+    "intro": "은신처 소방서의 원래 주인",
+    "difficulty_stars": 2,
+    "max_health": 140,
+    "move_speed": 50,
+    "start_weapon": "fire_axe",
+    "skill": "extinguisher",
+    "outfit": "firefighter",
+    "trait_text": "받는 피해 -10%, 불 피해 안 받음",
+    "trait": { "multiply": { "damage_taken_multiplier": 0.9 }, "add": { "fire_immune": 1 } },
+    "branches": ["firefighter_rescue", "firefighter_flame", "firefighter_demolition"]
+  },
+  "courier": {
+    "name": "윤재민",
+    "role": "택배기사",
+    "intro": "배달하던 동네라 골목을 다 안다",
+    "difficulty_stars": 2,
+    "max_health": 90,
+    "move_speed": 66,
+    "start_weapon": "nail_gun",
+    "skill": "sprint",
+    "outfit": "courier",
+    "trait_text": "줍는 범위 +50%",
+    "trait": { "multiply": { "pickup_radius": 1.5 } },
+    "branches": ["courier_quick", "courier_logistics", "courier_rider"]
+  },
+  "nurse": {
+    "name": "한서연",
+    "role": "간호사",
+    "intro": "병원에서 처음 감염을 본 사람",
+    "difficulty_stars": 3,
+    "max_health": 90,
+    "move_speed": 55,
+    "start_weapon": "syringe_gun",
+    "skill": "first_aid",
+    "outfit": "nurse",
+    "trait_text": "초당 체력 1 회복, 백신 조각 +15%",
+    "trait": { "add": { "regen_per_second": 1.0, "shard_bonus_ratio": 0.15 } },
+    "branches": ["nurse_emergency", "nurse_epidemiology", "nurse_surgeon"]
+  }
+}

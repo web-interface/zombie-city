@@ -1,0 +1,76 @@
+{
+  "_설명": {
+    "파일": "data/zombies.json",
+    "하는 일": "좀비 종류마다 크기·체력·속도·닿았을 때 피해·떨구는 백신 조각·그림·특수 행동을 정한다. v0.1 = 일반 4종 + 보스 도살자.",
+    "쓰는 곳": "scripts/world/zombie_horde.gd 가 좀비를 만들 때, scripts/systems/boss_director.gd 가 보스를 만들 때 읽는다.",
+    "근거 문서": "03 §6 좀비, 04 §5 좀비 도감"
+  },
+  "_숫자_뜻": {
+    "radius": "부딪힘 크기 (점)",
+    "max_health": "체력 (시간이 지나면 늘어남 — spawn_curve.json 의 health_growth)",
+    "move_speed": "초당 점",
+    "contact_damage_per_second": "생존자에게 닿아 있는 동안 초당 피해",
+    "shard_value": "쓰러질 때 떨구는 백신 조각 양",
+    "sprite": "art/sprites/ 의 동작 묶음 이름 (16×16 또는 보스 24×24)",
+    "hidden_in_dark": "어둠 속에선 안 보임 (빛 안에서만 보임)"
+  },
+  "walker": {
+    "name": "걷는 좀비",
+    "radius": 4,
+    "max_health": 12,
+    "move_speed": 15,
+    "contact_damage_per_second": 10,
+    "shard_value": 1,
+    "sprite": "zombie_walker",
+    "frame_size": 16
+  },
+  "runner": {
+    "name": "달리는 좀비",
+    "radius": 4,
+    "max_health": 7,
+    "move_speed": 26,
+    "contact_damage_per_second": 7,
+    "shard_value": 1,
+    "sprite": "zombie_runner",
+    "frame_size": 16
+  },
+  "hazmat": {
+    "name": "방호복 좀비",
+    "radius": 5,
+    "max_health": 60,
+    "move_speed": 9,
+    "contact_damage_per_second": 18,
+    "shard_value": 4,
+    "sprite": "zombie_hazmat",
+    "frame_size": 16
+  },
+  "crawler": {
+    "name": "기어다니는 좀비",
+    "radius": 3,
+    "max_health": 9,
+    "move_speed": 17,
+    "contact_damage_per_second": 8,
+    "shard_value": 1,
+    "sprite": "zombie_crawler",
+    "frame_size": 16,
+    "hidden_in_dark": true
+  },
+  "butcher": {
+    "name": "도살자",
+    "is_boss": true,
+    "radius": 9,
+    "max_health": 380,
+    "move_speed": 12,
+    "contact_damage_per_second": 30,
+    "shard_value": 40,
+    "sprite": "boss_butcher",
+    "frame_size": 24,
+    "charge": {
+      "every_seconds": 6,
+      "warning_seconds": 1.0,
+      "speed": 95,
+      "duration_seconds": 0.9,
+      "hit_damage": 30
+    }
+  }
+}

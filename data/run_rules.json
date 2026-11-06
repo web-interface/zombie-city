@@ -1,0 +1,86 @@
+{
+  "_설명": {
+    "파일": "data/run_rules.json",
+    "하는 일": "한 판 규칙 숫자: 헬기 시각·탈출, 경험치 곡선, 무기·장비 칸, 레벨 업 카드, 전직 레벨, 빛과 어둠, 생존자 기본 능력치.",
+    "쓰는 곳": "scripts/run/run.gd, scripts/systems/*.gd, scripts/world/lighting.gd, scripts/world/survivor_stats.gd",
+    "근거 문서": "02 §3·§4·§5, 03 §5·§7·§8"
+  },
+  "extraction": {
+    "landing_zone_reveal_second": 270,
+    "helicopter_arrive_second": 300,
+    "helicopter_leave_second": 330,
+    "hold_seconds": 8,
+    "landing_zone_distance": 200,
+    "landing_zone_radius": 24
+  },
+  "experience": {
+    "shards_needed_base": 2,
+    "shards_needed_per_level": 2.5,
+    "shard_magnet_speed": 130
+  },
+  "build": {
+    "weapon_slots": 4,
+    "gear_slots": 4,
+    "max_item_level": 5,
+    "cards_per_level_up": 3,
+    "rerolls_per_run": 1,
+    "skip_card_heal_ratio": 0.15
+  },
+  "promotion": {
+    "first_promotion_level": 10,
+    "second_promotion_level": 20
+  },
+  "lighting": {
+    "flashlight_radius": 30,
+    "street_lamp_radius": 32,
+    "darkness_color": "#3a3f63",
+    "zombie_speed_in_dark": 1.15,
+    "zombie_speed_in_light": 0.75,
+    "zombie_damage_taken_in_light": 1.2
+  },
+  "city_layout": {
+    "block_spacing": 224,
+    "road_half_width": 40,
+    "car_chance_percent": 45,
+    "cone_chance_percent": 30,
+    "lamps_per_block": 2
+  },
+  "juice": {
+    "trauma_survivor_big_hit": 0.25,
+    "trauma_survivor_contact_per_second": 0.15,
+    "trauma_boss_charge": 0.35,
+    "trauma_explosion": 0.4,
+    "trauma_boss_kill": 0.5,
+    "trauma_skill": 0.2,
+    "trauma_recoil": 0.08,
+    "trauma_decay_per_second": 1.5,
+    "max_shake_pixels": 3,
+    "hit_stop_on_survivor_big_hit_seconds": 0.06,
+    "hit_stop_on_boss_kill_seconds": 0.15,
+    "slow_motion_after_boss_kill_seconds": 0.6,
+    "slow_motion_scale": 0.3,
+    "max_damage_numbers": 20,
+    "damage_number_min_amount": 45
+  },
+  "survivor_base_stats": {
+    "damage_multiplier": 1.0,
+    "attack_speed_multiplier": 1.0,
+    "crit_chance": 0.05,
+    "crit_damage_multiplier": 2.0,
+    "damage_taken_multiplier": 1.0,
+    "pickup_radius": 22,
+    "regen_per_second": 0.0,
+    "shard_bonus_ratio": 0.0,
+    "skill_cooldown_multiplier": 1.0,
+    "extra_projectiles": 0,
+    "range_multiplier": 1.0,
+    "area_multiplier": 1.0,
+    "knockback_multiplier": 1.0,
+    "heal_multiplier": 1.0,
+    "poison_damage_multiplier": 1.0,
+    "fire_immune": 0,
+    "poison_spread": 0,
+    "last_stand": 0
+  },
+  "_juice_근거": "디자인 분석가 조사(2026-11-07): 흔들림은 충격 값 제곱·최대 3점, 잠깐 멈춤은 보스 처치 150ms+0.6초 30% 느리게, 피해 숫자는 치명타·30 이상·보스만 최대 20개 (문서 13)"
+}
