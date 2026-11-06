@@ -1,5 +1,5 @@
 ## [파일] scripts/systems/horde_events.gd
-## [하는 일] 밤 중간의 위기 이벤트: '포위'(생존자 둘레 원으로 좀비 떼, 한 군데 틈), '떼 돌진'(빨간 화살표 예고 뒤 한쪽에서 달리는 좀비가 줄지어 몰려옴), 둘째 밤부터 '들개 무리'(한쪽에서 4~6마리). 시각은 data/spawn_curve.json 의 events_by_night·hound_packs.
+## [하는 일] 밤 중간의 위기 이벤트: '포위'(생존자 둘레 원으로 좀비 떼, 한 군데 틈), '떼 돌진'(빨간 화살표 예고 뒤 한쪽에서 달리는 좀비가 줄지어 몰려옴), 둘째 밤부터 '들개 무리'(한쪽에서 4~6마리). 제자리 압박이 처음 걸리면 알림도 띄운다. 시각은 data/spawn_curve.json 의 events_by_night·hound_packs.
 ## [쓰는 곳] scenes/run.tscn 의 Systems/HordeEvents. run.gd 가 update() 를 부르고 event_started 로 재난문자 알림을 띄운다. 좀비는 ZombieSpawner.spawn_zombie() 로 만든다.
 ## [근거 문서] 14 §1-4 이벤트, 13 조사 반영(몰아치기와 숨 돌리기의 파도), 12 §6 공정함(예고)
 class_name HordeEvents
@@ -16,6 +16,8 @@ var _schedule: Array = []
 var _next_index: int = 0
 var _next_pack_second: float = INF
 var _pending_stampede: Dictionary = {}
+var _was_idle: bool = false
+var _idle_warned: bool = false   # 제자리 압박 알림은 판에 한 번
 
 
 func setup(context: RunContext, spawner: ZombieSpawner) -> void:
@@ -41,6 +43,10 @@ func update(delta: float) -> void:
 	if elapsed >= _next_pack_second:
 		_next_pack_second += float(_curve["hound_packs"]["every_seconds"])
 		_send_hound_pack()
+	if _spawner.is_idle_pressure and not _was_idle and not _idle_warned:
+		_idle_warned = true
+		event_started.emit(String(_curve["idle_pressure"]["banner"]))
+	_was_idle = _spawner.is_idle_pressure
 	if not _pending_stampede.is_empty():
 		_pending_stampede["time_left"] = float(_pending_stampede["time_left"]) - delta
 		if float(_pending_stampede["time_left"]) <= 0.0:

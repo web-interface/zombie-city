@@ -48,6 +48,7 @@ func start_next_night() -> void:
 		system.call("reset_for_new_night")
 	_context.horde.clear_all()
 	_context.health_packs.clear()
+	_context.pickups.clear()
 	_context.projectiles.clear()
 	_context.area_effects.clear()
 	_context.hazards.clear()

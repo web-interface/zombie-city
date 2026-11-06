@@ -1,33 +1,131 @@
 ## [파일] scripts/run/run_rewards.gd
-## [하는 일] 판 중 '받는 맛' 연출과 보상: 정예를 잡으면 금빛 폭죽·흔들림·구급함, 연속 처치가 50·100·200… 에 닿으면 금빛 고리·소리·알림과 조각 보너스. (보물 상자도 여기에 붙는다 — 묶음 2)
-## [쓰는 곳] scripts/run/run.gd 가 만들어 좀비 쓰러짐(정예)·KillCombo.milestone_reached 에 잇는다.
-## [근거 문서] 14 §1-2 정예·§4 중독 설계(쉴 새 없는 보상·연속 처치)
+## [하는 일] 판 중 '받는 맛' 보상과 연출: 정예를 잡으면 금빛 폭죽 + 보물 상자 + 줍기 하나, 보스를 잡으면 보물 상자, 좀비는 아주 가끔 자석·폭탄·냉각 스프레이를 떨굼. 주운 상자는 창을 띄울 수 있을 때 슬롯 창으로 열고(1·3·5개), 받으면 강화를 적용한다. 줍기 효과(조각 끌어오기·화면 폭발·얼리기)와 연속 처치 보상(조각·소리·알림)도 여기서.
+## [쓰는 곳] scripts/run/run.gd 가 만들어 setup() 하고, 창 띄우기 차례에 open_pending_chest() 를 묻는다. 좀비 쓰러짐·줍기·연속 처치·상자 받기 신호를 스스로 잇는다.
+## [근거 문서] 14 §1-2 정예·§2-6 보물 상자·줍기·§4 중독 설계, data/run_rules.json chest·pickups
 class_name RunRewards
 extends RefCounted
 
 var _context: RunContext
 var _hud: Hud
+var _level_up: LevelUp
+var _chest_rules: Dictionary = {}
+var _pickup_rules: Dictionary = {}
+var _pending_chests: int = 0
+var _open_cards: Array = []
+var _open_count: int = 0
 
 
-func setup(context: RunContext, hud: Hud) -> void:
+func setup(context: RunContext, hud: Hud, level_up: LevelUp, combo: KillCombo) -> void:
 	_context = context
 	_hud = hud
+	_level_up = level_up
+	_chest_rules = GameData.rules("chest")
+	_pickup_rules = GameData.rules("pickups")
+	context.horde.zombie_died.connect(_on_zombie_died)
+	context.pickups.picked.connect(_on_picked)
+	combo.milestone_reached.connect(_on_combo_milestone)
+	hud.chest_claimed.connect(_on_chest_claimed)
 
 
-func on_elite_killed(zombie: Zombie) -> void:
-	_context.health_packs.drop_at(zombie.position)
+## 쌓인 상자가 있으면 슬롯 창을 연다 (run.gd 가 창을 띄워도 될 때만 부름). 열었으면 true.
+func open_pending_chest() -> bool:
+	if _pending_chests <= 0:
+		return false
+	_pending_chests -= 1
+	_open_count = _roll_chest_size()
+	_open_cards = _roll_cards(_open_count)
+	_hud.open_chest(_open_cards, _open_count)
+	return true
+
+
+func _on_zombie_died(zombie: Zombie) -> void:
+	if zombie.is_boss:
+		_context.pickups.drop("chest", zombie.position)
+		return
+	if zombie.is_elite:
+		_on_elite_killed(zombie)
+		return
+	_context.pickups.maybe_drop(zombie.position)
+
+
+func _on_elite_killed(zombie: Zombie) -> void:
+	_context.pickups.drop("chest", zombie.position)
+	_context.pickups.drop(["magnet", "bomb", "freeze"].pick_random(), zombie.position + Vector2(10, 0))
 	_context.effects.burst(zombie.position, PixelUi.GOLD, 18, 70.0)
 	_context.effects.ring(zombie.position, 20.0, PixelUi.GOLD, 0.4)
 	_context.shake("explosion")
-	_hud.show_banner("정예 처치!", "good")
+	_hud.show_banner("정예 처치! 보물 상자", "good")
 
 
-func on_combo_milestone(count: int, shard_bonus: int) -> void:
+func _on_picked(kind: String, at_position: Vector2) -> void:
+	match kind:
+		"chest":
+			_pending_chests += 1
+			_context.play_sound("chest_drop")
+		"magnet":
+			_context.shards.collect_all()
+			_context.effects.ring(_context.survivor.position, 60.0, Color("8fd3ff"), 0.5)
+			_context.play_sound("magnet_pickup")
+		"bomb":
+			_blow_up_screen(at_position)
+		"freeze":
+			_freeze_everyone()
+
+
+## 폭탄: 둘레의 일반 좀비는 쓰러지고 보스는 체력이 조금 깎인다
+func _blow_up_screen(center: Vector2) -> void:
+	var radius := float(_pickup_rules["bomb_radius"])
+	for zombie: Zombie in _context.horde.in_radius(center, radius):
+		var amount := zombie.max_health * float(_pickup_rules["bomb_boss_damage_ratio"]) if zombie.is_boss else zombie.health + 1.0
+		_context.horde.hit(zombie, amount, {"source": "explosion", "show_number": zombie.is_boss})
+	_context.effects.ring(center, radius * 0.5, Color("ffd25a"), 0.5)
+	_context.effects.burst(center, Color("ff9a3c"), 30, 120.0)
+	_context.shake("boss_kill")
+	_context.play_sound("bomb_blast")
+
+
+func _freeze_everyone() -> void:
+	for zombie: Zombie in _context.horde.zombies:
+		zombie.stun(float(_pickup_rules["freeze_boss_seconds"]) if zombie.is_boss else float(_pickup_rules["freeze_seconds"]))
+	_context.effects.ring(_context.survivor.position, 90.0, Color("bfe9ff"), 0.6)
+	_context.play_sound("freeze_spray")
+	_hud.show_banner("좀비가 얼어붙었어요!", "good")
+
+
+func _on_combo_milestone(count: int, shard_bonus: int) -> void:
 	var survivor_position := _context.survivor.position
 	_context.shards.drop(survivor_position, shard_bonus)
 	_context.effects.ring(survivor_position, 30.0, PixelUi.GOLD, 0.5)
 	SoundPlayer.play_exact("combo_milestone_%d" % _milestone_sound_step(count))   # 50·100·200 차례로 더 화려한 소리
 	_hud.show_banner("연속 %d!" % count, "good")
+
+
+func _on_chest_claimed() -> void:
+	if _open_cards.is_empty():
+		for index: int in range(_open_count):   # 카드 목록을 못 받았으면 카드 고르기로 대신
+			_level_up.grant_bonus_choice()
+		return
+	for card: Dictionary in _open_cards:
+		_level_up.call("apply_card", card)
+	_context.effects.ring(_context.survivor.position, 26.0, PixelUi.GOLD, 0.5)
+
+
+## 1개 70% · 3개 25% · 5개 5% (data/run_rules.json chest)
+func _roll_chest_size() -> int:
+	var weights: Array = _chest_rules["count_weights"]
+	var roll := randf() * float(weights.reduce(func(total: float, weight: Variant) -> float: return total + float(weight), 0.0))
+	for index: int in range(weights.size()):
+		roll -= float(weights[index])
+		if roll <= 0.0:
+			return int(_chest_rules["upgrade_counts"][index])
+	return int(_chest_rules["upgrade_counts"][0])
+
+
+## 받을 강화 카드 (진화할 수 있으면 진화 먼저 — LevelUp.roll_upgrade_cards, 무기·카드 담당)
+func _roll_cards(count: int) -> Array:
+	if not _level_up.has_method("roll_upgrade_cards"):
+		return []
+	return _level_up.call("roll_upgrade_cards", count)
 
 
 ## 연속 소리 단계: 50 → 1, 100 → 2, 200 이상 → 3 (audio/README.md 순서 있는 소리)

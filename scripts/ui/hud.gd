@@ -8,6 +8,7 @@ extends CanvasLayer
 ## 일시정지 창에서 '포기하기'를 눌렀다 (run.gd 가 판을 끝낸다)
 signal give_up_requested
 signal next_night_requested
+signal chest_claimed
 
 const SKILL_BUTTON_MARGIN := Vector2(8, 16)
 ## 첫 판 안내: (보여 줄 때, 사라질 때, 글) — 글 설명 대신 처음 몇 초에 자연스럽게 (문서 02 §12)
@@ -27,6 +28,7 @@ var level_up_panel: LevelUpPanel
 var promotion_panel: PromotionPanel
 var night_clear_panel: NightClearPanel
 var _boss_bar: BossHealthBar
+var chest_panel: ChestPanel
 var _top_bar: HudTopBar
 var _joystick: FloatingJoystick
 var _skill_button: SkillButton
@@ -84,6 +86,10 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	root.add_child(night_clear_panel)
 	night_clear_panel.setup()
 	night_clear_panel.next_requested.connect(_on_night_continue)
+	chest_panel = ChestPanel.new()
+	root.add_child(chest_panel)
+	chest_panel.setup()
+	chest_panel.claimed.connect(_on_chest_claimed)
 
 
 ## 이번에 켠 뒤 첫 판이면 처음 몇 초 동안 조작 안내를 차례로 보여 준다.
@@ -147,6 +153,12 @@ func open_night_clear(summary: Dictionary) -> void:
 	night_clear_panel.open(summary)
 
 
+## 보물 상자 슬롯 창 (run.gd 가 이미 멈춘 뒤 부름)
+func open_chest(cards: Array, count: int) -> void:
+	_joystick.release()
+	chest_panel.open(cards, count)
+
+
 ## 자동 플레이 봇용
 func continue_night() -> void:
 	night_clear_panel.press_next()
@@ -170,7 +182,7 @@ func on_run_over() -> void:
 
 
 func _is_choice_window_open() -> bool:
-	return level_up_panel.is_open() or promotion_panel.is_open() or night_clear_panel.is_open()
+	return level_up_panel.is_open() or promotion_panel.is_open() or night_clear_panel.is_open() or chest_panel.is_open()
 
 
 func choose_card(index: int) -> void:
@@ -184,6 +196,12 @@ func choose_branch(index: int) -> void:
 func _on_choice_closed() -> void:
 	_joystick.release()
 	get_tree().paused = false
+
+
+func _on_chest_claimed() -> void:
+	_joystick.release()
+	get_tree().paused = false
+	chest_claimed.emit()
 
 
 func _on_night_continue() -> void:

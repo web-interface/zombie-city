@@ -46,7 +46,7 @@ func setup(context: RunContext, hud: Hud, level_up: LevelUp, promotion: Promotio
 
 ## 매 프레임 run.gd 가 묻는 이동 방향
 func move_direction() -> Vector2:
-	if _context.survivor.is_dead:
+	if _context.survivor.is_dead or skill_level == "가만히":   # '가만히' 봇 = 제자리 버티기가 통하는지 시험
 		return Vector2.ZERO
 	var wanted := _danger_escape() * _escape_weight() + _goal_pull() + Vector2.from_angle(_wander_angle) * 0.25
 	if _is_melee_fighter() and not _is_heading_to_zone():
@@ -112,6 +112,10 @@ func _process(delta: float) -> void:
 	if _hud.night_clear_panel.is_open():
 		_capture_once("night_clear_panel")
 		_hud.continue_night()
+		return
+	if _hud.chest_panel.is_open():
+		_capture_once("chest_panel")
+		_hud.chest_panel.press_claim()
 		return
 	if not (_hud.level_up_panel.is_open() or _hud.promotion_panel.is_open()):
 		_decision_delay = 0.25
@@ -180,6 +184,8 @@ func _goal_pull() -> Vector2:
 		# 원 바깥에서 기다릴 땐 자리에 가까울수록 살살 끌어서, 좀비가 오면 피하는 쪽이 이기게 (2차: 기다리다 떼 속에서 쓰러짐)
 		return to_goal.normalized() * clampf(to_goal.length() / ZONE_SLOW_DOWN_DISTANCE, 0.0, 1.5)
 	var targets := _context.shards.positions()
+	if not _context.pickups.positions().is_empty() and skill_level != "초보":
+		targets = _context.pickups.positions()   # 상자·자석·폭탄은 꼭 줍는다
 	if _context.survivor.health_ratio() < HEAL_SEEK_HEALTH_RATIO and not _context.health_packs.positions().is_empty():
 		targets = _context.health_packs.positions()   # 위험하면 구급함 먼저
 	var best := Vector2.ZERO

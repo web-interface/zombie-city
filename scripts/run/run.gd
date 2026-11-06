@@ -47,7 +47,7 @@ func _ready() -> void:
 	_extraction.setup(context)
 	_hud.setup(context, _rack, _level_up, _promotion, _skill_runner, _extraction)
 	_hud.watch_bosses(_boss_director)
-	_rewards.setup(context, _hud)
+	_rewards.setup(context, _hud, _level_up, _combo)
 	add_child(_night_flow)
 	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo,
 		"night_systems": [_spawner, _events, _boss_director, _extraction]})
@@ -71,6 +71,7 @@ func _build_context() -> void:
 	context.health_packs = world.get_node("HealthPacks")
 	context.area_effects = world.get_node("AreaEffects")
 	context.hazards = world.get_node("Hazards")
+	context.pickups = world.get_node("Pickups")
 	context.props = world.get_node("Props")
 	context.weapon_rack = _rack
 	context.camera = $Camera
@@ -91,6 +92,7 @@ func _build_context() -> void:
 	context.health_packs.setup(context)
 	context.area_effects.setup(context)
 	context.hazards.setup(context)
+	context.pickups.setup(context)
 	world.get_node("Shadows").setup(context)
 
 
@@ -104,7 +106,6 @@ func _connect_signals() -> void:
 	_boss_director.boss_defeated.connect(_on_boss_defeated)
 	_boss_director.boss_enraged.connect(_on_alert_event)
 	_events.event_started.connect(_on_alert_event)
-	_combo.milestone_reached.connect(_rewards.on_combo_milestone)
 	_survivor.damaged.connect(_on_survivor_damaged)
 	_survivor.died.connect(_on_survivor_died)
 	_survivor.healed.connect(func(amount: float) -> void: context.effects.show_heal_number(_survivor.position, amount))
@@ -140,6 +141,7 @@ func _physics_process(delta: float) -> void:
 	context.area_effects.update(delta)
 	context.shards.update(delta)                                                      # 8 조각·구급함 줍기
 	context.health_packs.update(delta)
+	context.pickups.update(delta)
 	_extraction.update(delta)                                                         # 9 규칙
 	_open_choice_panels_if_due()
 	context.lighting.update(delta)                                                    # 10 빛·그리기
@@ -166,11 +168,11 @@ func _wants_skill() -> bool:
 	return Input.is_key_pressed(KEY_SPACE) or _hud.consume_skill_press()
 
 
-## 전직을 먼저, 그다음 레벨 업 카드. 헬기 버티기 중이나 보스 공격 중엔 미룬다 (흐름 끊지 않게 — 문서 13).
+## 전직 → 보물 상자 → 레벨 업 카드 차례. 헬기 버티기 중이나 보스 공격 중엔 미룬다 (흐름 끊지 않게 — 문서 13).
 func _open_choice_panels_if_due() -> void:
 	if _is_over or get_tree().paused or _extraction.phase == "landed" or _boss_director.is_boss_attacking():
 		return
-	if _promotion.open_choice_if_waiting() or _level_up.open_next_choice():
+	if _promotion.open_choice_if_waiting() or _rewards.open_pending_chest() or _level_up.open_next_choice():
 		get_tree().paused = true
 
 
@@ -201,8 +203,6 @@ func _on_zombie_died(zombie: Zombie) -> void:
 	context.health_packs.maybe_drop(zombie.position)
 	context.effects.burst(zombie.position, Color("6f9a52") if randf() < 0.5 else Color("a5c46a"), 5)
 	context.play_sound("zombie_die")
-	if zombie.is_elite:
-		_rewards.on_elite_killed(zombie)
 
 
 func _on_level_changed(new_level: int) -> void:

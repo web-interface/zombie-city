@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="Script" path="res://scripts/run/run.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ground.gd" id="2"]
@@ -25,6 +25,7 @@
 [ext_resource type="Script" path="res://scripts/world/health_packs.gd" id="23"]
 [ext_resource type="Script" path="res://scripts/world/hazards.gd" id="24"]
 [ext_resource type="Script" path="res://scripts/systems/horde_events.gd" id="25"]
+[ext_resource type="Script" path="res://scripts/world/pickups.gd" id="26"]
 
 [node name="Run" type="Node2D"]
 editor_description = "[파일] scenes/run.tscn
@@ -53,6 +54,9 @@ script = ExtResource("23")
 
 [node name="Hazards" type="Node2D" parent="World"]
 script = ExtResource("24")
+
+[node name="Pickups" type="Node2D" parent="World"]
+script = ExtResource("26")
 
 [node name="Props" type="Node2D" parent="World"]
 y_sort_enabled = true

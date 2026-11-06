@@ -18,6 +18,8 @@ var weapon_rack: WeaponRack
 var camera: RunCamera
 ## 침·산성 웅덩이·해머 예고 원처럼 생존자를 노리는 것들 (scripts/world/hazards.gd)
 var hazards: Hazards
+## 바닥의 보물 상자·자석·폭탄·냉각 스프레이 (scripts/world/pickups.gd)
+var pickups: Pickups
 ## 몇째 밤인지와 그 밤의 세기 배율 (scripts/systems/night_cycle.gd)
 var night_cycle: NightCycle
 ## 빛과 어둠 숫자 (data/run_rules.json lighting)
