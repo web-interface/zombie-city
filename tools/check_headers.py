@@ -48,8 +48,8 @@ def project_files() -> list[Path]:
     for path in PROJECT.rglob("*"):
         if path.is_dir() or any(part in SKIP_FOLDERS for part in path.relative_to(PROJECT).parts):
             continue
-        if path.suffix in {".import", ".uid", ".pyc"} or path.name in {".gitignore", "project.godot"}:
-            continue
+        if path.suffix in {".import", ".uid", ".pyc"} or path.name in {".gitignore", ".gdignore", "project.godot", "export_presets.cfg"}:
+            continue   # Godot 이 저장할 때 주석을 지우는 설정 파일 → 설명은 문서 07
         if "LICENSE" in path.name:
             continue   # 남이 만든 사용 조건 원문은 고치지 않는다 — 폴더 README 에 설명
         files.append(path)
