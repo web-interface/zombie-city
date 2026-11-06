@@ -15,6 +15,8 @@ var _countdown_label: Label
 var _window: PanelContainer
 var _promotion: Promotion
 var _rack: WeaponRack
+## 다른 창(카드·전직)이 열려 있나 — 열려 있으면 카운트다운이 끝나도 멈춤을 풀지 않는다 (Hud 가 넣어 줌)
+var is_other_window_open: Callable = func() -> bool: return false
 
 
 func setup(promotion: Promotion, rack: WeaponRack) -> void:
@@ -23,11 +25,11 @@ func setup(promotion: Promotion, rack: WeaponRack) -> void:
 	PixelUi.full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	var pause_button := PixelUi.button("II", PixelUi.MUTED)
+	var pause_button := PixelUi.button("멈춤", PixelUi.MUTED)
 	pause_button.pressed.connect(open)
 	add_child(pause_button)
 	pause_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	pause_button.offset_left = -22.0
+	pause_button.offset_left = -34.0
 	pause_button.offset_top = 34.0
 	pause_button.offset_right = -4.0
 	pause_button.offset_bottom = 50.0
@@ -97,4 +99,5 @@ func _process(delta: float) -> void:
 	_countdown_label.text = str(ceili(_countdown_left))
 	if _countdown_left <= 0.0:
 		_countdown_label.visible = false
-		get_tree().paused = false
+		if not is_other_window_open.call():
+			get_tree().paused = false

@@ -24,7 +24,12 @@ const SHADOW := Color(0.04, 0.04, 0.07, 0.85)
 static func label(text: String, color: Color = INK, is_small: bool = false, is_bold: bool = false) -> Label:
 	var new_label := Label.new()
 	new_label.text = text
-	new_label.add_theme_font_override("font", FONT_SMALL if is_small else (FONT_BOLD if is_bold else FONT_REGULAR))
+	var font := FONT_REGULAR
+	if is_small:
+		font = FONT_SMALL
+	elif is_bold:
+		font = FONT_BOLD
+	new_label.add_theme_font_override("font", font)
 	new_label.add_theme_font_size_override("font_size", SIZE_SMALL if is_small else SIZE_REGULAR)
 	new_label.add_theme_color_override("font_color", color)
 	new_label.add_theme_color_override("font_shadow_color", SHADOW)
@@ -90,6 +95,24 @@ static func centered(child: Control) -> CenterContainer:
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	center.add_child(child)
 	return center
+
+
+## 띄어쓰기 단위로만 줄을 바꾼다. Godot 기본 줄바꿈은 한글 글자 사이에서도 끊어서
+## "휘두른 / 다" 처럼 낱말이 쪼개지기 때문 (검수 지적). 너비는 글꼴로 실제로 잰다.
+static func wrap_words(text: String, font: Font, font_size: int, max_width: float) -> String:
+	var lines: Array[String] = []
+	var current := ""
+	for word: String in text.split(" "):
+		var candidate := word if current.is_empty() else current + " " + word
+		if font.get_string_size(candidate, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x <= max_width or current.is_empty():
+			current = candidate
+		else:
+			lines.append(current)
+			current = word
+	if not current.is_empty():
+		lines.append(current)
+	return "
+".join(lines)
 
 
 static func format_time(seconds: float) -> String:

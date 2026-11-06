@@ -5,7 +5,8 @@
 class_name SurvivorAnimator
 extends Sprite2D
 
-const WALK_FRAMES_PER_SECOND := 9.0
+## 걷기 4장의 길이: 발을 내딛는 장면(0·2)은 길게, 떼는 장면(1·3)은 짧게 — 무게가 실린 걸음 (06 AI 티 안 나게)
+const WALK_FRAME_SECONDS: Array[float] = [0.13, 0.085, 0.13, 0.085]
 const IDLE_FRAMES_PER_SECOND := 2.0
 const DEATH_FRAMES_PER_SECOND := 6.0
 
@@ -52,9 +53,24 @@ func animate(delta: float, moving_direction: Vector2, facing: Vector2) -> void:
 		_is_facing_left = facing.x < 0.0
 	flip_h = _last_direction_name == "side" and _is_facing_left
 	var is_moving := moving_direction.length() > 0.05
-	var action := ("walk_" if is_moving else "idle_") + _last_direction_name
-	var speed := WALK_FRAMES_PER_SECOND if is_moving else IDLE_FRAMES_PER_SECOND
-	frame = SpriteSheetLayout.frame_index(SpriteSheetLayout.HUMAN_ROWS, action, int(_animation_time * speed))
+	if is_moving:
+		var walk_action: String = SpriteSheetLayout.WALK_ACTIONS[_last_direction_name]
+		frame = SpriteSheetLayout.frame_index(SpriteSheetLayout.HUMAN_ROWS, walk_action, _walk_frame_number())
+	else:
+		frame = SpriteSheetLayout.frame_index(SpriteSheetLayout.HUMAN_ROWS, "idle_" + _last_direction_name, int(_animation_time * IDLE_FRAMES_PER_SECOND))
+
+
+## 장면마다 길이가 다른 걸음: 한 바퀴 시간 안에서 지금 몇 번째 장면인지
+func _walk_frame_number() -> int:
+	var cycle := 0.0
+	for seconds: float in WALK_FRAME_SECONDS:
+		cycle += seconds
+	var into_cycle := fmod(_animation_time, cycle)
+	for index: int in range(WALK_FRAME_SECONDS.size()):
+		into_cycle -= WALK_FRAME_SECONDS[index]
+		if into_cycle < 0.0:
+			return index
+	return 0
 
 
 func _update_flash(delta: float) -> void:

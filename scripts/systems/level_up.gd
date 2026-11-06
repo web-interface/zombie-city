@@ -1,5 +1,5 @@
 ## [파일] scripts/systems/level_up.gd
-## [하는 일] 경험치와 레벨: 백신 조각을 모아 레벨을 올리고(다음 레벨까지 5 × 지금 레벨), 레벨마다 카드 3장(새 무기·무기 강화·새 장비·장비 강화)을 뽑아 보여 달라고 알린다. 고른 카드를 무기 칸에 적용한다. 다시 뽑기·건너뛰기(체력 조금 회복)도 맡는다. 보스 보상으로 카드 한 번 더 받기.
+## [하는 일] 경험치와 레벨: 백신 조각을 모아 레벨을 올리고(다음 레벨까지 기본 + 레벨당 양 × 지금 레벨 — data/run_rules.json experience), 레벨마다 카드 3장(새 무기·무기 강화·새 장비·장비 강화)을 뽑아 보여 달라고 알린다. 고른 카드를 무기 칸에 적용한다. 다시 뽑기·건너뛰기(체력 조금 회복)도 맡는다. 보스 보상으로 카드 한 번 더 받기.
 ## [쓰는 곳] scenes/run.tscn 의 Systems/LevelUp. 조각(vaccine_shard_field.gd)이 add_experience() 를, 레벨 업 창(scripts/ui/level_up_panel.gd)이 choose()·reroll()·skip() 을 부른다.
 ## [근거 문서] 02 §5 성장과 조합, 03 §5 레벨과 경험치, data/run_rules.json build·experience
 class_name LevelUp
@@ -27,7 +27,7 @@ func setup(context: RunContext, rack: WeaponRack) -> void:
 	rerolls_left = int(_build_rules["rerolls_per_run"])
 
 
-## 다음 레벨까지: 2 + 3 × 지금 레벨 (레벨 10 ≈ 1:30, 레벨 20 ≈ 3:30 — 문서 13 디자인 분석)
+## 다음 레벨까지: shards_needed_base + shards_needed_per_level × 지금 레벨 (목표 레벨 10 ≈ 1:30, 레벨 20 ≈ 3:30 — 문서 13)
 func experience_needed() -> float:
 	var rules := GameData.rules("experience")
 	return float(rules["shards_needed_base"]) + float(rules["shards_needed_per_level"]) * level
@@ -67,7 +67,7 @@ func choose(card: Dictionary) -> void:
 		"new_gear", "gear_upgrade":
 			_rack.add_or_upgrade_gear(String(card["id"]))
 		"heal":
-			_context.survivor.heal(float(_build_rules["skip_card_heal_ratio"]) * 2.0)
+			_context.survivor.heal(_heal_card_ratio())
 	_finish_choice(card)
 
 
@@ -97,8 +97,14 @@ func _draw_cards() -> Array:
 	pool.shuffle()
 	var cards := pool.slice(0, int(_build_rules["cards_per_level_up"]))
 	if cards.is_empty():
-		cards.append({"kind": "heal", "id": "heal", "name": "구급상자", "icon": "icon_first_aid", "description": "체력 30% 회복", "level_text": ""})
+		var heal_text := "체력 %d%% 회복" % roundi(_heal_card_ratio() * 100.0)
+		cards.append({"kind": "heal", "id": "heal", "name": "구급상자", "icon": "icon_first_aid", "description": heal_text, "level_text": ""})
 	return cards
+
+
+## 고를 게 없을 때 나오는 구급상자: 건너뛰기 회복의 2배 (고르는 쪽이 더 이득이게)
+func _heal_card_ratio() -> float:
+	return float(_build_rules["skip_card_heal_ratio"]) * 2.0
 
 
 func _possible_cards() -> Array:

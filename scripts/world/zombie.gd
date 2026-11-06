@@ -94,8 +94,9 @@ func tick_effects(delta: float) -> float:
 	slow_time_left = maxf(slow_time_left - delta, 0.0)
 	if slow_time_left <= 0.0:
 		slow_speed_ratio = 1.0
-	for key: String in hit_cooldowns.keys():
-		hit_cooldowns[key] = float(hit_cooldowns[key]) - delta
+	if not hit_cooldowns.is_empty():   # 대부분의 좀비는 비어 있다 — 빈 걸 훑느라 매번 배열을 만들지 않게
+		for key: String in hit_cooldowns.keys():
+			hit_cooldowns[key] = float(hit_cooldowns[key]) - delta
 	position += knockback_velocity * delta
 	knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_velocity.length() * KNOCKBACK_SETTLE_SPEED * delta)
 	if poison_time_left <= 0.0:

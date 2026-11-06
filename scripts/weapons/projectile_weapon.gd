@@ -18,8 +18,8 @@ func attack() -> bool:
 ## aim 방향을 가운데로 발 수만큼 퍼뜨려 쏜다.
 func fire_volley(aim: Vector2) -> void:
 	var stats := numbers()
-	var count := int(stats.get("projectile_count", 1)) + int(context.survivor.stats.value("extra_projectiles"))
-	var spread := deg_to_rad(float(stats.get("spread_degrees", 0.0)))
+	var count := int(stats["projectile_count"]) + int(context.survivor.stats.value("extra_projectiles"))
+	var spread := deg_to_rad(float(stats["spread_degrees"]))
 	var start_angle := aim.angle() - spread * 0.5 * float(count - 1) / maxf(1.0, float(count - 1))
 	var step := spread / maxf(1.0, float(count - 1)) if count > 1 else 0.0
 	var speed := float(stats["projectile_speed"])
@@ -30,7 +30,7 @@ func fire_volley(aim: Vector2) -> void:
 		context.projectiles.launch(weapon_id, context.survivor.position + Vector2(0, -4), direction * speed, {
 			"damage": damage["amount"],
 			"is_crit": damage["is_crit"],
-			"pierce": int(stats.get("pierce", 0)),
+			"pierce": int(stats["pierce"]),
 			"life_seconds": life,
 			"knockback": float(stats.get("knockback", 1.5)),
 			"poison_damage_per_second": float(stats.get("poison_damage_per_second", 0.0)),

@@ -76,15 +76,18 @@ func sample(alive_zombies: int) -> void:
 		max_zombies_after_four_minutes = maxi(max_zombies_after_four_minutes, alive_zombies)
 
 
-func build_result(is_escaped: bool, level: int, branch_name: String) -> Dictionary:
+## end_reason: "escaped" · "died" · "helicopter_left" · "gave_up" (결과 화면 문구가 이유마다 다름)
+func build_result(end_reason: String, level: int, branch_name: String) -> Dictionary:
+	var is_escaped := end_reason == "escaped"
 	var result := {
+		"end_reason": end_reason,
 		"survivor": _context.survivor.survivor_id,
 		"branch": branch_name,
 		"is_escaped": is_escaped,
 		"survived_seconds": snappedf(_context.elapsed_seconds, 0.1),
 		"kills": kills,
 		"level": level,
-		"death_cause": "" if is_escaped else _context.survivor.last_damage_source,
+		"death_cause": _context.survivor.last_damage_source if end_reason == "died" else "",
 		"level_up_times": level_up_times,
 		"near_death_saves": near_death_saves,
 		"kills_by_minute": kills_by_minute,

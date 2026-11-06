@@ -16,6 +16,7 @@ var _context: RunContext
 var _skill_runner: SkillRunner
 var _first_level: int
 var _second_level: int
+var _current_level: int = 1
 
 
 func setup(context: RunContext, skill_runner: SkillRunner) -> void:
@@ -27,6 +28,7 @@ func setup(context: RunContext, skill_runner: SkillRunner) -> void:
 
 
 func on_level_changed(new_level: int) -> void:
+	_current_level = new_level
 	if new_level >= _first_level and stage == 0:
 		_waiting_for_first = true
 	if new_level >= _second_level and stage == 1:
@@ -49,6 +51,8 @@ func choose_branch(branch_id: String) -> void:
 	_waiting_for_first = false
 	is_choosing = false
 	_apply_stage(branch_id, 1)
+	if _current_level >= _second_level:
+		_apply_stage(branch_id, 2)   # 고르기 전에 이미 레벨 20 이 됐으면 각성도 바로 (검수 지적)
 
 
 func branch_name() -> String:

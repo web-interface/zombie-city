@@ -29,10 +29,6 @@ func max_level() -> int:
 	return levels.size()
 
 
-func is_max_level() -> bool:
-	return level >= max_level()
-
-
 func level_up() -> void:
 	level = mini(level + 1, max_level())
 
@@ -42,7 +38,7 @@ func update(delta: float) -> void:
 	if _cooldown_left > 0.0:
 		return
 	if attack():
-		_cooldown_left = float(numbers().get("interval_seconds", 1.0))
+		_cooldown_left = float(numbers()["interval_seconds"])
 
 
 ## 이어받는 무기가 쓴다. 실제로 공격했으면 true (목표가 없으면 false → 다음 프레임에 다시 시도)
@@ -51,10 +47,10 @@ func attack() -> bool:
 
 
 ## 무기가 따로 그릴 것이 있으면 (예: 도는 드론) 이어받아 쓴다.
-func draw_on(canvas: CanvasItem) -> void:
+func draw_on(_canvas: CanvasItem) -> void:
 	pass
 
 
 ## 사거리 능력치(저격수 전직 등)를 반영한 거리
 func effective_range() -> float:
-	return float(numbers().get("range", 100.0)) * context.survivor.stats.value("range_multiplier")
+	return float(numbers()["range"]) * context.survivor.stats.value("range_multiplier")

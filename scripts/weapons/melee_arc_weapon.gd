@@ -36,6 +36,6 @@ func _swing(direction: Vector2, radius: float, nearby: Array[Zombie], stats: Dic
 		context.horde.hit(zombie, damage["amount"], {
 			"is_crit": damage["is_crit"],
 			"knockback_from": survivor_position,
-			"knockback": float(stats.get("knockback", 6.0)),
+			"knockback": float(stats["knockback"]),
 			"source": weapon_id,
 		})

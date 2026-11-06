@@ -9,12 +9,14 @@ signal closed
 
 const CARD_SIZE := Vector2(164, 62)
 const PREVIEW_FRAME_SECONDS := 0.12
+const INPUT_GUARD_MILLISECONDS := 280.0 # 뜬 직후엔 눌러도 안 고름 (잘못 골리지 않게)
 
 var _promotion: Promotion
 var _card_box: VBoxContainer
 var _branch_ids: Array[String] = []
 var _previews: Array[Sprite2D] = []
 var _preview_time: float = 0.0
+var _opened_at_msec: int = 0
 
 
 func setup(promotion: Promotion) -> void:
@@ -41,7 +43,7 @@ func setup(promotion: Promotion) -> void:
 
 
 func choose(index: int) -> void:
-	if index >= 0 and index < _branch_ids.size():
+	if visible and index >= 0 and index < _branch_ids.size():
 		_pick(_branch_ids[index])
 
 
@@ -53,13 +55,14 @@ func branch_ids() -> Array[String]:
 	return _branch_ids
 
 
-func _show_branches(branch_ids: Array[String]) -> void:
-	_branch_ids = branch_ids
+func _show_branches(shown_branch_ids: Array[String]) -> void:
+	_branch_ids = shown_branch_ids
 	_previews.clear()
 	for child: Node in _card_box.get_children():
 		child.queue_free()
-	for branch_id: String in branch_ids:
+	for branch_id: String in shown_branch_ids:
 		_card_box.add_child(_build_card(branch_id))
+	_opened_at_msec = Time.get_ticks_msec()
 	visible = true
 
 
@@ -81,16 +84,16 @@ func _build_card(branch_id: String) -> Button:
 	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texts.add_child(PixelUi.label("%s — %s" % [branch["name"], branch["summary"]], PixelUi.GOLD))
 	for line: String in [String(branch["stage_1"]["text"]), "각성: " + String(branch["stage_2"]["text"])]:
-		var description := PixelUi.label(line, PixelUi.INK if not line.begins_with("각성") else PixelUi.MUTED, true)
-		description.custom_minimum_size = Vector2(CARD_SIZE.x - 44, 0)
-		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		texts.add_child(description)
+		var wrapped := PixelUi.wrap_words(line, PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, CARD_SIZE.x - 44.0)
+		texts.add_child(PixelUi.label(wrapped, PixelUi.INK if not line.begins_with("각성") else PixelUi.MUTED, true))
 	card_button.add_child(texts)
 	card_button.pressed.connect(_pick.bind(branch_id))
 	return card_button
 
 
 func _pick(branch_id: String) -> void:
+	if Time.get_ticks_msec() - _opened_at_msec < INPUT_GUARD_MILLISECONDS:
+		return
 	visible = false
 	_promotion.choose_branch(branch_id)
 	closed.emit()

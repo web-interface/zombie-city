@@ -9,16 +9,23 @@ signal zombie_died(zombie: Zombie)
 
 const GRID_CELL_SIZE := 16.0
 const CONTACT_MARGIN := 4.0          # 생존자 몸 크기 (좀비 반경에 더해 닿았는지 봄)
-const RECYCLE_DISTANCE := 260.0      # 이보다 멀어진 좀비는 앞쪽 화면 밖으로 옮겨 다시 씀
+const RECYCLE_DISTANCE := 260.0      # 이보다 멀어진 좀비는 원래 있던 쪽 화면 밖 고리로 당겨 와 다시 씀
 const DEATH_SHOW_SECONDS := 0.6      # 쓰러지는 동작을 보여 주는 시간
 const WALK_FRAMES_PER_SECOND := 6.0
 const HIDDEN_ZOMBIE_REVEAL_DISTANCE := 40.0
 ## 어둠 속 기어다니는 좀비도 아주 흐린 윤곽은 남긴다 — 어둠은 분위기, 적은 늘 보이게 (국내 조사, 문서 13)
 const HIDDEN_ZOMBIE_MIN_ALPHA := 0.18
+const HIT_FLASH_SECONDS := 0.06
+const DASH_HIT_INTERVAL_SECONDS := 0.4
+const BASE_WALK_SPEED := 13.0        # 이 빠르기의 좀비가 기본 걸음 박자, 더 빠르면 다리를 더 빨리 놀린다
+## 독 피해처럼 자주 들어오는 피해는 숫자·소리를 내지 않는다 (매번 새 묶음을 만들지 않게 상수로)
+const QUIET_POISON_HIT := {"source": "poison", "show_number": false}
+const SILENT_SOURCES: Array[String] = ["poison", "fire"]
 
 var zombies: Array[Zombie] = []
 var _dying: Array[Zombie] = []
 var _grid := SpatialGrid.new(GRID_CELL_SIZE)
+var _nearby_buffer: Array[int] = []      # 근처 찾기 결과를 담는 재사용 그릇 (매번 새로 만들지 않게)
 var _sprite_pool: Array[Sprite2D] = []
 var _textures: Dictionary = {}       # 그림 이름 → [보통, 하얀 실루엣]
 var _context: RunContext
@@ -41,7 +48,7 @@ func update(delta: float) -> void:
 	for zombie: Zombie in zombies:
 		var poison_damage := zombie.tick_effects(delta)
 		if poison_damage > 0.0:
-			hit(zombie, poison_damage, {"source": "poison", "show_number": false})
+			hit(zombie, poison_damage, QUIET_POISON_HIT)
 		if zombie.is_dead:
 			continue
 		_move_toward_survivor(zombie, delta)
@@ -59,7 +66,7 @@ func hit(zombie: Zombie, amount: float, options: Dictionary = {}) -> void:
 	var light_bonus: float = float(_context.light_rules["zombie_damage_taken_in_light"]) if in_light else 1.0
 	var final_amount: float = amount * light_bonus
 	zombie.health -= final_amount
-	zombie.flash_time_left = 0.06
+	zombie.flash_time_left = HIT_FLASH_SECONDS
 	if options.has("knockback_from") and float(options.get("knockback", 0.0)) > 0.0:
 		var away: Vector2 = zombie.position - Vector2(options["knockback_from"])
 		zombie.push(away, float(options["knockback"]) * _context.survivor.stats.value("knockback_multiplier"))
@@ -68,14 +75,18 @@ func hit(zombie: Zombie, amount: float, options: Dictionary = {}) -> void:
 	var is_notable: bool = is_crit or zombie.is_boss or final_amount >= float(_context.juice_rules["damage_number_min_amount"])
 	if bool(options.get("show_number", true)) and is_notable:
 		_context.effects.show_damage_number(zombie.position, final_amount, is_crit)
+	var source := String(options.get("source", ""))
+	if not SILENT_SOURCES.has(source):
+		_context.play_sound("boss_hit" if zombie.is_boss else "zombie_hit")
 	if zombie.health <= 0.0:
-		_kill(zombie, String(options.get("source", "")))
+		_kill(zombie, source)
 
 
 func nearest(from_position: Vector2, max_distance: float) -> Zombie:
 	var best: Zombie = null
 	var best_distance := max_distance
-	for index: int in _grid.nearby_indexes(from_position, max_distance):
+	_grid.collect_nearby(from_position, max_distance, _nearby_buffer)
+	for index: int in _nearby_buffer:
 		var zombie := zombies[index]
 		var distance := zombie.position.distance_to(from_position)
 		if not zombie.is_dead and distance < best_distance and _is_visible_target(zombie):
@@ -86,7 +97,8 @@ func nearest(from_position: Vector2, max_distance: float) -> Zombie:
 
 func in_radius(center: Vector2, radius: float) -> Array[Zombie]:
 	var found: Array[Zombie] = []
-	for index: int in _grid.nearby_indexes(center, radius + 12.0):
+	_grid.collect_nearby(center, radius + 12.0, _nearby_buffer)
+	for index: int in _nearby_buffer:
 		var zombie := zombies[index]
 		if not zombie.is_dead and zombie.position.distance_to(center) <= radius + zombie.radius:
 			found.append(zombie)
@@ -114,7 +126,7 @@ func _touch_survivor(zombie: Zombie, survivor: Survivor, delta: float) -> void:
 	if zombie.position.distance_to(survivor.position) > zombie.radius + CONTACT_MARGIN:
 		return
 	if survivor.is_dashing() and survivor.dash_contact_damage > 0.0:
-		if zombie.try_take_hit_from("dash", 0.4):
+		if zombie.try_take_hit_from("dash", DASH_HIT_INTERVAL_SECONDS):
 			hit(zombie, survivor.dash_contact_damage, {"knockback_from": survivor.position, "knockback": survivor.dash_knockback, "source": "dash"})
 		return
 	if not zombie.is_stunned():
@@ -125,7 +137,8 @@ func _touch_survivor(zombie: Zombie, survivor: Survivor, delta: float) -> void:
 func _separate_neighbors() -> void:
 	for index: int in range(zombies.size()):
 		var zombie := zombies[index]
-		for other_index: int in _grid.nearby_indexes(zombie.position, zombie.radius * 2.0):
+		_grid.collect_nearby(zombie.position, zombie.radius * 2.0, _nearby_buffer)
+		for other_index: int in _nearby_buffer:
 			if other_index <= index:
 				continue
 			var other := zombies[other_index]
@@ -149,7 +162,7 @@ func _kill(zombie: Zombie, source: String) -> void:
 
 
 func _remove_dead_and_animate(delta: float) -> void:
-	zombies.assign(zombies.filter(func(zombie: Zombie) -> bool: return not zombie.is_dead))
+	_keep_only(zombies, func(zombie: Zombie) -> bool: return not zombie.is_dead)
 	for zombie: Zombie in zombies:
 		_animate(zombie, delta)
 	for zombie: Zombie in _dying:
@@ -162,7 +175,17 @@ func _remove_dead_and_animate(delta: float) -> void:
 		zombie.sprite.modulate.a = clampf(zombie.death_time_left / DEATH_SHOW_SECONDS * 2.0, 0.0, 1.0)
 		if zombie.death_time_left <= 0.0:
 			_return_sprite(zombie.sprite)
-	_dying.assign(_dying.filter(func(zombie: Zombie) -> bool: return zombie.death_time_left > 0.0))
+	_keep_only(_dying, func(zombie: Zombie) -> bool: return zombie.death_time_left > 0.0)
+
+
+## 배열을 새로 만들지 않고 그 자리에서 남길 것만 앞으로 당긴다 (매 프레임 300마리 — 성능)
+func _keep_only(list: Array[Zombie], should_keep: Callable) -> void:
+	var write_index := 0
+	for zombie: Zombie in list:
+		if should_keep.call(zombie):
+			list[write_index] = zombie
+			write_index += 1
+	list.resize(write_index)
 
 
 func _animate(zombie: Zombie, delta: float) -> void:
@@ -171,8 +194,8 @@ func _animate(zombie: Zombie, delta: float) -> void:
 	var sprite := zombie.sprite
 	sprite.position = zombie.position.round()
 	sprite.flip_h = direction_name == "side" and zombie.facing.x < 0.0
-	var speed_factor := zombie.move_speed / 13.0   # 빠른 좀비일수록 다리를 빨리 놀린다
-	sprite.frame = SpriteSheetLayout.frame_index(_rows_for(zombie), "walk_" + direction_name, int(zombie.animation_time * WALK_FRAMES_PER_SECOND * speed_factor))
+	var speed_factor := zombie.move_speed / BASE_WALK_SPEED
+	sprite.frame = SpriteSheetLayout.frame_index(_rows_for(zombie), SpriteSheetLayout.WALK_ACTIONS[direction_name], int(zombie.animation_time * WALK_FRAMES_PER_SECOND * speed_factor))
 	sprite.texture = _textures[zombie.info["sprite"]][1 if zombie.flash_time_left > 0.0 else 0]
 	var target_alpha := 1.0
 	if zombie.is_hidden_in_dark and not _context.lighting.is_in_light(zombie.position):

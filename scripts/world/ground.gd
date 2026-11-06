@@ -19,7 +19,7 @@ const CURB_COLOR := Color("555b66")
 var _block_spacing: float
 var _road_half_width: float
 var _view_center: Vector2 = Vector2.ZERO
-var _view_size: Vector2 = Vector2(180, 320)
+var _view_size: Vector2 = Vector2.ZERO   # 0 으로 시작해 첫 프레임에 반드시 그리게
 
 
 func setup(city_layout: Dictionary) -> void:
@@ -28,13 +28,17 @@ func setup(city_layout: Dictionary) -> void:
 	z_index = -10
 
 
+## 카메라가 한 점이라도 움직였을 때만 다시 그린다 (타일 수백 장을 매 프레임 그리지 않게 — 검수 지적)
 func update(view_center: Vector2, view_size: Vector2) -> void:
-	_view_center = view_center.round()
+	var rounded_center := view_center.round()
+	if rounded_center == _view_center and view_size == _view_size:
+		return
+	_view_center = rounded_center
 	_view_size = view_size
 	queue_redraw()
 
 
-## 이 자리가 인도(블록 안)인가 — 소품·착륙 지점 고를 때도 씀
+## 이 자리가 인도(블록 안)인가 — 바닥 타일 고를 때 씀
 func is_sidewalk(at_position: Vector2) -> bool:
 	var inside_x := fposmod(at_position.x, _block_spacing)
 	var inside_y := fposmod(at_position.y, _block_spacing)
@@ -75,15 +79,20 @@ func _tile_kind(tile_x: int, tile_y: int, world_position: Vector2) -> int:
 
 func _draw_lanes(top_left: Vector2, bottom_right: Vector2) -> void:
 	for column: int in range(floori(top_left.x / _block_spacing), ceili(bottom_right.x / _block_spacing) + 1):
-		var x := column * _block_spacing
-		for y: int in range(floori(top_left.y / 12.0) * 12, int(bottom_right.y), 12):
-			if absf(fposmod(y + _block_spacing * 0.5, _block_spacing) - _block_spacing * 0.5) > _road_half_width + 12.0:
-				draw_rect(Rect2(x - 1, y, 2, 6), LANE_COLOR)
+		var lane_x := column * _block_spacing
+		for dash_y: int in range(floori(top_left.y / 12.0) * 12, int(bottom_right.y), 12):
+			if _is_away_from_crossing(dash_y):
+				draw_rect(Rect2(lane_x - 1, dash_y, 2, 6), LANE_COLOR)
 	for row: int in range(floori(top_left.y / _block_spacing), ceili(bottom_right.y / _block_spacing) + 1):
-		var y := row * _block_spacing
-		for x: int in range(floori(top_left.x / 12.0) * 12, int(bottom_right.x), 12):
-			if absf(fposmod(x + _block_spacing * 0.5, _block_spacing) - _block_spacing * 0.5) > _road_half_width + 12.0:
-				draw_rect(Rect2(x, y - 1, 6, 2), LANE_COLOR)
+		var lane_y := row * _block_spacing
+		for dash_x: int in range(floori(top_left.x / 12.0) * 12, int(bottom_right.x), 12):
+			if _is_away_from_crossing(dash_x):
+				draw_rect(Rect2(dash_x, lane_y - 1, 6, 2), LANE_COLOR)
+
+
+## 교차로 한가운데에는 차선을 그리지 않는다
+func _is_away_from_crossing(coordinate: float) -> bool:
+	return absf(fposmod(coordinate + _block_spacing * 0.5, _block_spacing) - _block_spacing * 0.5) > _road_half_width + 12.0
 
 
 func _draw_crosswalks_and_curbs(top_left: Vector2, bottom_right: Vector2) -> void:

@@ -12,6 +12,8 @@ signal died
 const HURT_FLASH_SECONDS := 0.08
 const HURT_FLASH_GAP_SECONDS := 0.25   # 계속 닿아 있을 때 화면이 하얗게 번쩍거리지 않게
 const LAST_STAND_GUARD_SECONDS := 1.5
+## 체력이 이 비율 밑이면 '위험' (체력 막대 빨강·음악 긴장 — 한곳에서 정함)
+const LOW_HEALTH_RATIO := 0.35
 
 var survivor_id: String = ""
 var stats: SurvivorStats

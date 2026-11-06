@@ -5,6 +5,13 @@
 extends Control
 
 const COUNT_UP_SECONDS := 0.8
+## 끝난 이유마다 큰 글씨 (이유 모를 실패가 없게 — 문서 12 §6)
+const HEADLINES := {
+	"escaped": "구조 성공!",
+	"died": "물렸어요…",
+	"helicopter_left": "헬기를 놓쳤어요…",
+	"gave_up": "포기했어요",
+}
 
 var _result: Dictionary = {}
 var _rows: Array[Dictionary] = []
@@ -22,13 +29,14 @@ func _ready() -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 4)
 	column.custom_minimum_size = Vector2(150, 0)
-	var headline := PixelUi.label("구조 성공!" if is_escaped else "물렸어요…", PixelUi.GOOD if is_escaped else PixelUi.ALERT, false, true)
+	var end_reason := String(_result.get("end_reason", "died"))
+	var headline := PixelUi.label(String(HEADLINES.get(end_reason, "물렸어요…")), PixelUi.GOOD if is_escaped else PixelUi.ALERT, false, true)
 	headline.add_theme_font_size_override("font_size", 22)
 	headline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(headline)
-	var cause := String(_result.get("death_cause", ""))
-	if not is_escaped and not cause.is_empty():
-		var cause_label := PixelUi.label("%s에게 당함" % cause, PixelUi.MUTED, true)
+	var cause := _cause_text(end_reason, String(_result.get("death_cause", "")))
+	if not cause.is_empty():
+		var cause_label := PixelUi.label(cause, PixelUi.MUTED, true)
 		cause_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		column.add_child(cause_label)
 	_add_count_row(column, "버틴 시간", float(_result.get("survived_seconds", 0.0)), true)
@@ -39,6 +47,15 @@ func _ready() -> void:
 	column.add_child(_row_label("아슬아슬 생존", "%d번" % int(_result.get("near_death_saves", 0))))
 	column.add_child(_build_buttons())
 	add_child(PixelUi.centered(column))
+
+
+func _cause_text(end_reason: String, death_cause: String) -> String:
+	match end_reason:
+		"died":
+			return "%s에게 당함" % death_cause if not death_cause.is_empty() else ""
+		"helicopter_left":
+			return "5:30까지 착륙 지점에 못 탔어요"
+	return ""
 
 
 func _add_count_row(column: VBoxContainer, title: String, target: float, is_time: bool) -> void:

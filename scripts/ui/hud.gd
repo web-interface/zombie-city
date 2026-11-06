@@ -5,6 +5,9 @@
 class_name Hud
 extends CanvasLayer
 
+## 일시정지 창에서 '포기하기'를 눌렀다 (run.gd 가 판을 끝낸다)
+signal give_up_requested
+
 const SKILL_BUTTON_MARGIN := Vector2(8, 16)
 ## 첫 판 안내: (보여 줄 때, 사라질 때, 글) — 글 설명 대신 처음 몇 초에 자연스럽게 (문서 02 §12)
 const FIRST_RUN_HINTS: Array[Array] = [
@@ -42,6 +45,7 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	root.add_child(_arrow)
 	_arrow.setup(context, extraction)
 	_banner = Banner.new()
+	_banner.process_mode = Node.PROCESS_MODE_PAUSABLE   # 창이 떠 있는 동안 알림 시간이 흘러 못 보고 지나가지 않게
 	root.add_child(_banner)
 	_skill_button = SkillButton.new()
 	root.add_child(_skill_button)
@@ -54,7 +58,8 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	_pause_menu = PauseMenu.new()
 	root.add_child(_pause_menu)
 	_pause_menu.setup(promotion, rack)
-	_pause_menu.give_up_requested.connect(func() -> void: context.survivor.take_damage(99999.0, "포기"))
+	_pause_menu.give_up_requested.connect(func() -> void: give_up_requested.emit())
+	_pause_menu.is_other_window_open = _is_choice_window_open
 	level_up_panel = LevelUpPanel.new()
 	root.add_child(level_up_panel)
 	level_up_panel.setup(level_up)
@@ -80,7 +85,10 @@ func start_first_run_hints(_skill_runner: SkillRunner) -> void:
 
 
 func _process(delta: float) -> void:
-	if _hint_time < 0.0 or get_tree().paused:
+	if _hint_time < 0.0:
+		return
+	_hint_label.visible = not get_tree().paused   # 카드 창 위에 안내 글이 겹쳐 보이지 않게
+	if get_tree().paused:
 		return
 	_hint_time += delta
 	var shown := ""
@@ -110,9 +118,16 @@ func show_banner(text: String, style_name: String) -> void:
 	_banner.show_message(text, style_name)
 
 
+## 카드·전직 창이 떠 있으면 이미 멈춰 있으니 일시정지 창을 겹쳐 열지 않는다 (검수 지적)
 func show_pause_menu() -> void:
+	if _is_choice_window_open():
+		return
 	_joystick.release()
 	_pause_menu.open()
+
+
+func _is_choice_window_open() -> bool:
+	return level_up_panel.is_open() or promotion_panel.is_open()
 
 
 func choose_card(index: int) -> void:

@@ -51,4 +51,4 @@ func _draw_edge_arrow(to_zone: Vector2, screen_size: Vector2, half: Vector2) -> 
 	var side := direction.orthogonal() * 4.0
 	draw_colored_polygon(PackedVector2Array([tip, tip - direction * 8.0 + side, tip - direction * 8.0 - side]), ARROW_COLOR)
 	var meters := int(to_zone.length() / 4.0)   # 화면 점 4개 ≈ 1m 로 친다
-	draw_string(PixelUi.FONT_SMALL, tip - direction * 18.0 - Vector2(20, -3), "%dm" % meters, HORIZONTAL_ALIGNMENT_CENTER, 40, PixelUi.SIZE_SMALL, ARROW_COLOR)
+	draw_string(PixelUi.FONT_SMALL, tip - direction * 18.0 - Vector2(20, -3), "%d미터" % meters, HORIZONTAL_ALIGNMENT_CENTER, 40, PixelUi.SIZE_SMALL, ARROW_COLOR)

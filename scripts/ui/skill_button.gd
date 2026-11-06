@@ -29,6 +29,8 @@ func consume_press() -> bool:
 
 
 func _gui_input(event: InputEvent) -> void:
+	if get_tree().paused:
+		return   # 멈춘 동안 누른 건 기억하지 않는다 (다시 시작할 때 저절로 나가지 않게)
 	var is_touch_down := event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed
 	var is_click_down := event is InputEventMouseButton and (event as InputEventMouseButton).pressed
 	if is_touch_down or is_click_down:

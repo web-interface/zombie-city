@@ -33,11 +33,6 @@ func is_autoplay() -> bool:
 	return test_options.has("autoplay")
 
 
-func go_to_title() -> void:
-	get_tree().paused = false
-	get_tree().change_scene_to_file(TITLE_SCENE)
-
-
 func go_to_survivor_select() -> void:
 	get_tree().paused = false
 	get_tree().change_scene_to_file(SURVIVOR_SELECT_SCENE)
@@ -57,11 +52,18 @@ func finish_run(result: Dictionary) -> void:
 		finished_test_runs += 1
 		var wanted_runs := int(test_options.get("runs", 1))
 		if finished_test_runs >= wanted_runs:
-			get_tree().quit()
+			_quit_quietly()
 			return
 		get_tree().change_scene_to_file(RUN_SCENE)
 		return
 	get_tree().change_scene_to_file(RESULT_SCENE)
+
+
+## 소리를 모두 멈추고 한 프레임 뒤에 끈다 (재생 중인 소리 때문에 '자원이 남음' 경고가 뜨지 않게 — 검수 지적)
+func _quit_quietly() -> void:
+	SoundPlayer.stop_everything()
+	await get_tree().process_frame
+	get_tree().quit()
 
 
 func _read_test_options() -> Dictionary:

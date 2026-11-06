@@ -48,7 +48,7 @@ func _draw() -> void:
 	draw_rect(Rect2(0, SAFE_TOP, width * experience_ratio, 3), PixelUi.GOOD)
 	var font := PixelUi.FONT_REGULAR
 	var level_y := SAFE_TOP + 16.0 - _level_bump * 2.0
-	_draw_text(font, "Lv %d" % _level_up.level, Vector2(4, level_y), HORIZONTAL_ALIGNMENT_LEFT, PixelUi.GOOD)
+	_draw_text(font, "레벨 %d" % _level_up.level, Vector2(4, level_y), HORIZONTAL_ALIGNMENT_LEFT, PixelUi.GOOD)
 	_draw_text(PixelUi.FONT_BOLD, PixelUi.format_time(_remaining_seconds), Vector2(width * 0.5, SAFE_TOP + 16.0), HORIZONTAL_ALIGNMENT_CENTER, _timer_color())
 	_draw_text(PixelUi.FONT_SMALL, "구조까지", Vector2(width * 0.5, SAFE_TOP + 26.0), HORIZONTAL_ALIGNMENT_CENTER, PixelUi.MUTED, PixelUi.SIZE_SMALL)
 	_draw_text(font, "처치 %d" % _kills, Vector2(width - 4, SAFE_TOP + 16.0 - _kill_bump * 1.5), HORIZONTAL_ALIGNMENT_RIGHT, PixelUi.INK)
@@ -63,14 +63,14 @@ func _timer_color() -> Color:
 
 
 func _draw_slots(top: float) -> void:
-	var x := 4.0
+	var slot_left := 4.0
 	for weapon: Weapon in _rack.weapons:
-		_draw_slot(String(weapon.info["icon"]), weapon.level, Vector2(x, top))
-		x += SLOT_SIZE + 2.0
-	x = size.x - 4.0 - (SLOT_SIZE + 2.0) * maxi(_rack.gear_levels.size(), 0)
+		_draw_slot(String(weapon.info["icon"]), weapon.level, Vector2(slot_left, top))
+		slot_left += SLOT_SIZE + 2.0
+	slot_left = size.x - 4.0 - (SLOT_SIZE + 2.0) * _rack.gear_levels.size()
 	for gear_id: String in _rack.gear_levels.keys():
-		_draw_slot(String(GameData.entry("gear", gear_id)["icon"]), int(_rack.gear_levels[gear_id]), Vector2(x, top))
-		x += SLOT_SIZE + 2.0
+		_draw_slot(String(GameData.entry("gear", gear_id)["icon"]), int(_rack.gear_levels[gear_id]), Vector2(slot_left, top))
+		slot_left += SLOT_SIZE + 2.0
 
 
 func _draw_slot(icon_name: String, level: int, top_left: Vector2) -> void:
@@ -88,7 +88,7 @@ func _draw_health_bar(width: float) -> void:
 	var ratio := survivor.health_ratio()
 	var bar := Rect2(width * 0.5 - 30.0, get_viewport_rect().size.y - 10.0, 60.0, 3.0)
 	draw_rect(bar.grow(1.0), Color(0.05, 0.05, 0.08, 0.8))
-	draw_rect(Rect2(bar.position, Vector2(bar.size.x * ratio, bar.size.y)), PixelUi.ALERT if ratio < 0.35 else Color("e05252"))
+	draw_rect(Rect2(bar.position, Vector2(bar.size.x * ratio, bar.size.y)), PixelUi.ALERT if ratio < Survivor.LOW_HEALTH_RATIO else Color("e05252"))
 	if survivor.is_guarding():
 		draw_rect(bar.grow(2.0), Color("8fd3ff"), false, 1.0)
 

@@ -11,6 +11,9 @@ const MAX_SHARDS := 300
 const COLLECT_DISTANCE := 5.0
 const PICKUP_SOUND_STEPS := 5          # 줍는 소리 높이 단계 (shard_pickup_1~5)
 const PICKUP_COMBO_RESET_SECONDS := 0.6
+const MAGNET_ACCELERATION := 3.0      # 끌려오는 조각이 점점 빨라지는 정도 (빨려 오는 손맛)
+const LARGE_SHARD_VALUE := 20
+const MEDIUM_SHARD_VALUE := 5
 const TEXTURES := {
 	"small": preload("res://art/sprites/shard_small.png"),
 	"medium": preload("res://art/sprites/shard_medium.png"),
@@ -32,7 +35,7 @@ func setup(context: RunContext) -> void:
 func drop(at_position: Vector2, amount: int) -> void:
 	var remaining := amount
 	while remaining > 0:
-		var piece := 20 if remaining >= 20 else (5 if remaining >= 5 else 1)
+		var piece := _piece_size(remaining)
 		remaining -= piece
 		var scatter := Vector2(randf_range(-4.0, 4.0), randf_range(-4.0, 4.0)) if amount > 1 else Vector2.ZERO
 		_shards.append({"position": at_position + scatter, "value": piece, "is_pulled": false, "speed": 0.0})
@@ -68,7 +71,7 @@ func update(delta: float) -> void:
 		if to_survivor.length() <= pickup_radius:
 			shard["is_pulled"] = true
 		if shard["is_pulled"]:
-			shard["speed"] = float(shard["speed"]) + magnet_speed * 3.0 * delta   # 점점 빨라지며 빨려 옴
+			shard["speed"] = float(shard["speed"]) + magnet_speed * MAGNET_ACCELERATION * delta
 			shard["position"] = Vector2(shard["position"]) + to_survivor.normalized() * minf(float(shard["speed"]) * delta, to_survivor.length())
 		if to_survivor.length() <= COLLECT_DISTANCE:
 			gained += float(shard["value"])
@@ -103,8 +106,23 @@ func _merge_far_shards() -> void:
 func _draw() -> void:
 	var is_bright := int(_blink_time * 6.0) % 2 == 0
 	for shard: Dictionary in _shards:
-		var value := int(shard["value"])
-		var size_name := "large" if value >= 20 else ("medium" if value >= 5 else "small")
-		var texture: Texture2D = TEXTURES[size_name]
-		var position := Vector2(shard["position"]).round() - texture.get_size() * 0.5
-		draw_texture(texture, position, Color(1, 1, 1, 1.0 if is_bright else 0.8))
+		var texture: Texture2D = TEXTURES[_size_name(int(shard["value"]))]
+		var draw_position := Vector2(shard["position"]).round() - texture.get_size() * 0.5
+		draw_texture(texture, draw_position, Color(1, 1, 1, 1.0 if is_bright else 0.8))
+
+
+## 남은 양에서 떼어 낼 조각 크기 (큰 조각부터)
+func _piece_size(remaining: int) -> int:
+	if remaining >= LARGE_SHARD_VALUE:
+		return LARGE_SHARD_VALUE
+	if remaining >= MEDIUM_SHARD_VALUE:
+		return MEDIUM_SHARD_VALUE
+	return 1
+
+
+func _size_name(value: int) -> String:
+	if value >= LARGE_SHARD_VALUE:
+		return "large"
+	if value >= MEDIUM_SHARD_VALUE:
+		return "medium"
+	return "small"

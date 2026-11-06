@@ -6,6 +6,8 @@ extends Node
 
 const DANGER_RADIUS := 70.0
 const SHARD_SEARCH_RADIUS := 70.0
+const MELEE_KEEP_DISTANCE := 18.0     # 근접 무기는 좀비와 이 정도 거리를 유지해야 닿는다
+const MELEE_BRAVE_HEALTH_RATIO := 0.5 # 체력이 이보다 많을 때만 다가간다
 const CAPTURE_SECONDS: Array[float] = [4.0, 45.0, 95.0, 150.0, 215.0, 268.0, 302.0]
 
 var skill_level: String = "보통"
@@ -41,7 +43,11 @@ func move_direction() -> Vector2:
 	var survivor := _context.survivor
 	var is_extracting := _extraction.phase in ["revealed", "landed"]
 	var escape_weight := 0.7 if is_extracting else 1.6   # 탈출 때는 좀비를 뚫고라도 착륙 지점으로
-	var wanted := _danger_escape() * escape_weight + _goal_pull() + Vector2.from_angle(_wander_angle) * 0.25
+	var melee_pull := Vector2.ZERO
+	if _is_melee_fighter() and not is_extracting and _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO:
+		escape_weight = 0.5   # 근접 무기는 피하기만 하면 안 닿는다 (검수 지적: 소방관 통계가 실제보다 나쁨)
+		melee_pull = _melee_approach()
+	var wanted := _danger_escape() * escape_weight + _goal_pull() + melee_pull + Vector2.from_angle(_wander_angle) * 0.25
 	if skill_level == "초보":
 		_reaction_timer -= get_physics_process_delta_time()
 		if _reaction_timer <= 0.0:
@@ -98,6 +104,22 @@ func _danger_escape() -> Vector2:
 		var offset := survivor_position - zombie.position
 		away += offset.normalized() / maxf(offset.length() * offset.length(), 16.0) * 400.0 * (3.0 if zombie.is_boss else 1.0)
 	return away.limit_length(1.5)
+
+
+func _is_melee_fighter() -> bool:
+	for weapon: Weapon in _context.weapon_rack.weapons:
+		if weapon is MeleeArcWeapon:
+			return true
+	return false
+
+
+## 가장 가까운 좀비와 근접 거리를 유지하도록 다가가거나 물러선다
+func _melee_approach() -> Vector2:
+	var target := _context.horde.nearest(_context.survivor.position, 90.0)
+	if target == null:
+		return Vector2.ZERO
+	var to_target := target.position - _context.survivor.position
+	return to_target.normalized() * clampf((to_target.length() - MELEE_KEEP_DISTANCE) / 20.0, -1.0, 1.0)
 
 
 ## 목표: 착륙 지점 → 없으면 가까운 백신 조각
@@ -169,9 +191,9 @@ func _card_score(card: Dictionary) -> float:
 
 func _pick_branch_index() -> int:
 	var option := String(SceneRouter.test_options.get("branch", "random"))
-	if option.is_valid_int():
-		return int(option)
 	var ids := _hud.promotion_panel.branch_ids()
+	if option.is_valid_int():
+		return clampi(int(option), 0, maxi(ids.size() - 1, 0))   # 범위 밖 번호여도 창이 닫히게
 	if ids.has(option):
 		return ids.find(option)
 	return randi() % maxi(ids.size(), 1)

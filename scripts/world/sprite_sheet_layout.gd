@@ -28,6 +28,10 @@ const BOSS_ROWS := {
 }
 
 
+## 방향 → 걷기 동작 이름 (매 프레임 글자를 이어 붙이지 않게 미리 만들어 둠)
+const WALK_ACTIONS := {"down": "walk_down", "up": "walk_up", "side": "walk_side"}
+
+
 ## 움직이는 방향으로 그림 방향을 고른다. 옆모습은 오른쪽 그림을 좌우로 뒤집어 왼쪽에 쓴다.
 static func direction_name(direction: Vector2) -> String:
 	if absf(direction.x) > absf(direction.y):
@@ -39,10 +43,5 @@ static func direction_name(direction: Vector2) -> String:
 static func frame_index(rows: Dictionary, action_name: String, frame_number: int) -> int:
 	var row_info: Array = rows[action_name]
 	var row_index: int = row_info[0]
-	var frame_count: int = row_info[1]
-	return row_index * COLUMNS + (frame_number % frame_count)
-
-
-static func frame_count(rows: Dictionary, action_name: String) -> int:
-	var row_info: Array = rows[action_name]
-	return row_info[1]
+	var frames_in_row: int = row_info[1]
+	return row_index * COLUMNS + (frame_number % frames_in_row)

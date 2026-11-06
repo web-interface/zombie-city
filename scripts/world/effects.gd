@@ -34,6 +34,15 @@ func show_damage_number(at_position: Vector2, amount: float, is_crit: bool) -> v
 	_numbers.append({"position": at_position + Vector2(0, -10) + jitter, "text": str(maxi(1, roundi(amount))), "time": 0.0, "is_crit": is_crit})
 
 
+## 회복하면 초록 '+숫자' (회복 효과가 눈에 보이게)
+func show_heal_number(at_position: Vector2, amount: float) -> void:
+	if amount < 1.0:
+		return
+	if _numbers.size() >= _max_numbers:
+		_numbers.pop_front()
+	_numbers.append({"position": at_position + Vector2(0, -14), "text": "+%d" % roundi(amount), "time": 0.0, "is_crit": false, "is_heal": true})
+
+
 func burst(at_position: Vector2, color: Color, count: int, speed: float = 40.0) -> void:
 	for index: int in range(count):
 		var direction := Vector2.from_angle(randf() * TAU)
@@ -111,10 +120,12 @@ func _draw_line_item(line_item: Dictionary) -> void:
 
 func _draw_number(number: Dictionary) -> void:
 	var age := float(number["time"])
-	var position := Vector2(number["position"]) + Vector2(0, -NUMBER_RISE_SPEED * age)
+	var draw_position := Vector2(number["position"]) + Vector2(0, -NUMBER_RISE_SPEED * age)
 	var is_crit := bool(number["is_crit"])
 	var color := Color("ffd166") if is_crit else Color.WHITE
+	if bool(number.get("is_heal", false)):
+		color = Color("8ff59a")
 	var size := NUMBER_FONT_SIZE + (3 if is_crit else 0)
 	var fade := 1.0 - maxf(0.0, age - NUMBER_SECONDS * 0.6) / (NUMBER_SECONDS * 0.4)
-	draw_string_outline(_font, position.round(), number["text"], HORIZONTAL_ALIGNMENT_CENTER, -1, size, 2, Color(0.06, 0.06, 0.09, fade))
-	draw_string(_font, position.round(), number["text"], HORIZONTAL_ALIGNMENT_CENTER, -1, size, Color(color, fade))
+	draw_string_outline(_font, draw_position.round(), number["text"], HORIZONTAL_ALIGNMENT_CENTER, -1, size, 2, Color(0.06, 0.06, 0.09, fade))
+	draw_string(_font, draw_position.round(), number["text"], HORIZONTAL_ALIGNMENT_CENTER, -1, size, Color(color, fade))

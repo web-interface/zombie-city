@@ -66,8 +66,8 @@ func _draw() -> void:
 	for projectile: Dictionary in _projectiles:
 		var look: Dictionary = LOOKS.get(projectile["look"], LOOKS["pistol"])
 		var size: Vector2 = look["size"]
-		var position := Vector2(projectile["position"]).round()
+		var draw_position := Vector2(projectile["position"]).round()
 		var color: Color = look["color"]
-		var trail := position - Vector2(projectile["velocity"]).normalized() * 3.0
+		var trail := draw_position - Vector2(projectile["velocity"]).normalized() * 3.0
 		draw_rect(Rect2(trail.round(), Vector2.ONE), Color(color, 0.35))
-		draw_rect(Rect2(position - size * 0.5, size), Color(color, OWN_ATTACK_ALPHA))
+		draw_rect(Rect2(draw_position - size * 0.5, size), Color(color, OWN_ATTACK_ALPHA))

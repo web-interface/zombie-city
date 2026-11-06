@@ -5,9 +5,10 @@
 extends Node2D
 
 const END_DELAY_SECONDS := 1.6        # 쓰러지거나 탈출한 뒤 결과 화면까지 (연출 보여 줄 시간)
-const DANGER_HEALTH_RATIO := 0.35
 const DEATH_SLOW_MOTION_SECONDS := 0.9
 const DEATH_SLOW_MOTION_SCALE := 0.3
+const BIG_HIT_DAMAGE := 10.0          # 이보다 큰 한 방이면 흔들림·잠깐 멈춤·아픈 소리 (계속 닿는 작은 피해와 구분)
+const BUSY_HORDE_SIZE := 150          # 좀비가 이보다 많으면 음악이 한 단계 긴장
 
 var context := RunContext.new()
 var _is_over: bool = false
@@ -60,6 +61,7 @@ func _build_context() -> void:
 	context.shards = world.get_node("VaccineShards")
 	context.area_effects = world.get_node("AreaEffects")
 	context.props = world.get_node("Props")
+	context.weapon_rack = _rack
 	context.camera = $Camera
 	context.light_rules = GameData.rules("lighting")
 	context.juice_rules = GameData.rules("juice")
@@ -87,9 +89,11 @@ func _connect_signals() -> void:
 	_boss_director.boss_defeated.connect(_on_boss_defeated)
 	_survivor.damaged.connect(_on_survivor_damaged)
 	_survivor.died.connect(_on_survivor_died)
+	_survivor.healed.connect(func(amount: float) -> void: context.effects.show_heal_number(_survivor.position, amount))
+	_hud.give_up_requested.connect(_end_run.bind("gave_up"))
 	_extraction.landing_zone_revealed.connect(_on_landing_zone_revealed)
 	_extraction.helicopter_arrived.connect(_on_helicopter_arrived)
-	_extraction.extracted.connect(_end_run.bind(true))
+	_extraction.extracted.connect(_end_run.bind("escaped"))
 	_extraction.helicopter_left.connect(_on_helicopter_left)
 	_skill_runner.used.connect(func(_skill_id: String) -> void: _recorder.note_event())
 
@@ -140,22 +144,10 @@ func _wants_skill() -> bool:
 
 ## 전직을 먼저, 그다음 레벨 업 카드. 헬기 버티기 중이나 보스 돌진 중엔 미룬다 (흐름 끊지 않게 — 문서 13).
 func _open_choice_panels_if_due() -> void:
-	if get_tree().paused or _extraction.phase == "landed" or _is_boss_attacking():
+	if _is_over or get_tree().paused or _extraction.phase == "landed" or _boss_director.is_boss_attacking():
 		return
 	if _promotion.open_choice_if_waiting() or _level_up.open_next_choice():
 		get_tree().paused = true
-
-
-func _is_boss_attacking() -> bool:
-	for zombie: Zombie in _horde.zombies:
-		if zombie.is_boss and (zombie.boss_state.get("is_warning", false) or zombie.boss_state.get("is_charging", false)):
-			return true
-	return false
-
-
-## 창에서 고르고 나면 HUD 가 부른다.
-func resume_after_choice() -> void:
-	get_tree().paused = false
 
 
 func _update_view(delta: float) -> void:
@@ -168,9 +160,9 @@ func _update_view(delta: float) -> void:
 
 func _update_music_danger() -> void:
 	var danger := 0
-	if _boss_director.alive_boss_count() > 0 or _horde.alive_count() > 150:
+	if _boss_director.alive_boss_count() > 0 or _horde.alive_count() > BUSY_HORDE_SIZE:
 		danger = 1
-	if _survivor.health_ratio() < DANGER_HEALTH_RATIO or _extraction.phase == "landed":
+	if _survivor.health_ratio() < Survivor.LOW_HEALTH_RATIO or _extraction.phase == "landed":
 		danger = 2
 	SoundPlayer.set_music_danger(danger)
 
@@ -201,7 +193,6 @@ func _on_boss_appeared(banner_text: String) -> void:
 
 func _on_boss_defeated(seconds_to_kill: float) -> void:
 	_recorder.note_boss_kill(seconds_to_kill)
-	_level_up.grant_bonus_choice()
 	_spawner.start_calm()
 	_hud.show_banner("도살자 처치! 카드 한 장 더", "good")
 	context.play_sound("explosion")
@@ -212,11 +203,12 @@ func _on_boss_defeated(seconds_to_kill: float) -> void:
 func _play_boss_kill_moment() -> void:
 	await _play_hit_stop(float(context.juice_rules["hit_stop_on_boss_kill_seconds"]), 0.0)
 	await _play_hit_stop(float(context.juice_rules["slow_motion_after_boss_kill_seconds"]), float(context.juice_rules["slow_motion_scale"]))
+	_level_up.grant_bonus_choice()   # 연출이 끝난 뒤에 카드 (창 뒤로 연출이 묻히지 않게 — 검수 지적)
 
 
 func _on_survivor_damaged(amount: float) -> void:
 	_recorder.note_survivor_damaged(_extraction.phase == "landed")
-	if amount >= 10.0:
+	if amount >= BIG_HIT_DAMAGE:
 		context.shake("survivor_big_hit")
 		_play_hit_stop(float(context.juice_rules["hit_stop_on_survivor_big_hit_seconds"]), 0.0)
 		context.play_sound("survivor_hurt")
@@ -228,7 +220,7 @@ func _on_survivor_died() -> void:
 	_hud.show_banner("물렸어요…", "alert")
 	context.play_sound("game_over")
 	_play_hit_stop(DEATH_SLOW_MOTION_SECONDS, DEATH_SLOW_MOTION_SCALE)   # 쓰러지는 순간을 느리게 보여 준다
-	_end_run(false)
+	_end_run("died")
 
 
 func _on_landing_zone_revealed(_zone_position: Vector2) -> void:
@@ -244,16 +236,17 @@ func _on_helicopter_arrived() -> void:
 
 func _on_helicopter_left() -> void:
 	_hud.show_banner("헬기가 떠났어요…", "alert")
-	_end_run(false)
+	_end_run("helicopter_left")
 
 
-func _end_run(is_escaped: bool) -> void:
+## end_reason: "escaped"(탈출) · "died"(쓰러짐) · "helicopter_left"(헬기 놓침) · "gave_up"(포기)
+func _end_run(end_reason: String) -> void:
 	if _is_over:
 		return
 	_is_over = true
-	if is_escaped:
+	if end_reason == "escaped":
 		_hud.show_banner("구조 성공!", "good")
-	var result := _recorder.build_result(is_escaped, _level_up.level, _promotion.branch_name())
+	var result := _recorder.build_result(end_reason, _level_up.level, _promotion.branch_name())
 	var delay := 0.05 if SceneRouter.is_autoplay() else END_DELAY_SECONDS
 	await get_tree().create_timer(delay, true, false, true).timeout
 	Engine.time_scale = _base_time_scale
@@ -262,11 +255,16 @@ func _end_run(is_escaped: bool) -> void:
 
 
 ## 잠깐 멈춤(scale 0)이나 느린 화면(scale 0.3)을 seconds 동안. 실제 시간으로 잰다 (게임 시간은 멈춰 있으니까).
-func _play_hit_stop(seconds: float, scale: float) -> void:
+func _play_hit_stop(seconds: float, speed_scale: float) -> void:
 	if SceneRouter.is_autoplay() or seconds <= 0.0:
 		return
-	Engine.time_scale = _base_time_scale * maxf(scale, 0.01)
+	Engine.time_scale = _base_time_scale * maxf(speed_scale, 0.01)
 	await get_tree().create_timer(seconds, true, false, true).timeout
+	Engine.time_scale = _base_time_scale
+
+
+## 장면이 다른 길로 닫혀도 느린 화면이 다음 화면까지 남지 않게 (검수 지적 — 보험)
+func _exit_tree() -> void:
 	Engine.time_scale = _base_time_scale
 
 

@@ -119,6 +119,13 @@ func play_single_music(track_name: String) -> void:
 		_single_music.play()
 
 
+func stop_everything() -> void:
+	stop_music()
+	for voice: AudioStreamPlayer in _voices:
+		voice.stop()
+	_important_voice.stop()
+
+
 func stop_music() -> void:
 	for layer: AudioStreamPlayer in _music_layers:
 		layer.queue_free()

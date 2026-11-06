@@ -25,7 +25,7 @@ tools: Read, Grep, Glob, Bash
 1. 규칙 위반 — 파일:줄 단위로
 2. 지도(문서 11)와 실제가 다른 곳 — 없는 파일, 지도에 없는 파일, 이름이 다른 신호·데이터
 3. 도구: `py -3 tools/check_headers.py` 실행 결과 (있으면), Godot 검사:
-   `"C:/Users/kbs/Godot/Godot_v4.7.2-stable_win64_console.exe" --headless --path . --quit-after 5` 의 오류·경고
+   `"C:/Users/kbs/Godot/Godot_v4.7.2-stable_win64_console.exe" --headless -d --path . res://scenes/run.tscn --fixed-fps 60 --quit-after 1200 -- --autoplay=보통` 의 오류·경고 (`-d` 를 붙여야 스크립트 경고가 보임)
 4. 버그 위험, 5. 성능 위험, 6. AI 티, 7. 품질 기준
 
 ## 규칙

@@ -56,10 +56,6 @@ func push_out(at_position: Vector2, radius: float) -> Vector2:
 	return at_position
 
 
-func is_blocked(at_position: Vector2, radius: float) -> bool:
-	return push_out(at_position, radius) != at_position
-
-
 func _build_block(block: Vector2i) -> Dictionary:
 	var random := RandomNumberGenerator.new()
 	random.seed = hash(block)

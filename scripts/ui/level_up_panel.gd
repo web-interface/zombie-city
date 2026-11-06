@@ -8,12 +8,14 @@ extends Control
 signal closed
 
 const CARD_SIZE := Vector2(164, 50)
+const APPEAR_MILLISECONDS := 250.0      # 나타나는 시간 (실제 시간 — 보스 처치 느린 화면 중에도 똑같이)
+const INPUT_GUARD_MILLISECONDS := 280.0 # 뜬 직후엔 눌러도 안 고름 (전투 중 두드리던 손에 잘못 골리지 않게 — 검수 지적)
 
 var _level_up: LevelUp
 var _card_box: VBoxContainer
 var _reroll_button: Button
 var _cards: Array = []
-var _appear_time: float = 1.0
+var _opened_at_msec: int = 0
 
 
 func setup(level_up: LevelUp) -> void:
@@ -39,7 +41,7 @@ func setup(level_up: LevelUp) -> void:
 
 ## 자동 플레이가 고를 때도 쓴다.
 func choose(index: int) -> void:
-	if index >= 0 and index < _cards.size():
+	if visible and index >= 0 and index < _cards.size():
 		_pick(_cards[index])
 
 
@@ -60,7 +62,9 @@ func _build_bottom_row() -> HBoxContainer:
 	row.add_child(_reroll_button)
 	var skip_button := PixelUi.button("건너뛰기", PixelUi.MUTED)
 	skip_button.custom_minimum_size = Vector2(80, 22)
-	skip_button.pressed.connect(func() -> void: _close_after(func() -> void: _level_up.skip()))
+	skip_button.pressed.connect(func() -> void:
+		if not _is_input_guarded():
+			_close_after(func() -> void: _level_up.skip()))
 	row.add_child(skip_button)
 	return row
 
@@ -73,7 +77,8 @@ func _show_cards(cards: Array) -> void:
 		_card_box.add_child(_build_card(card))
 	_reroll_button.text = "다시 뽑기 (%d)" % _level_up.rerolls_left
 	_reroll_button.disabled = _level_up.rerolls_left <= 0
-	_appear_time = 0.0
+	_opened_at_msec = Time.get_ticks_msec()
+	modulate.a = 0.0
 	visible = true
 
 
@@ -90,9 +95,7 @@ func _build_card(card: Dictionary) -> Button:
 	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var name_line := PixelUi.label("%s  %s" % [card["name"], card["level_text"]], PixelUi.INK)
 	texts.add_child(name_line)
-	var description := PixelUi.label(String(card["description"]), PixelUi.MUTED, true)
-	description.custom_minimum_size = Vector2(CARD_SIZE.x - 40, 0)
-	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var description := PixelUi.label(PixelUi.wrap_words(String(card["description"]), PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, CARD_SIZE.x - 40.0), PixelUi.MUTED, true)
 	texts.add_child(description)
 	row.add_child(texts)
 	card_button.add_child(row)
@@ -101,7 +104,13 @@ func _build_card(card: Dictionary) -> Button:
 
 
 func _pick(card: Dictionary) -> void:
+	if _is_input_guarded():
+		return
 	_close_after(func() -> void: _level_up.choose(card))
+
+
+func _is_input_guarded() -> bool:
+	return Time.get_ticks_msec() - _opened_at_msec < INPUT_GUARD_MILLISECONDS
 
 
 func _close_after(action: Callable) -> void:
@@ -110,8 +119,7 @@ func _close_after(action: Callable) -> void:
 	closed.emit()
 
 
-func _process(delta: float) -> void:
-	if visible and _appear_time < 1.0:
-		_appear_time = minf(_appear_time + delta * 4.0, 1.0)   # 0.25초 동안 아래에서 올라옴
-		_card_box.position.y = (1.0 - _appear_time) * 12.0
-		modulate.a = _appear_time
+## 서서히 나타난다. 위치는 상자가 정하게 두고 투명도만 바꾼다 (제목을 가리지 않게 — 검수 지적)
+func _process(_delta: float) -> void:
+	if visible and modulate.a < 1.0:
+		modulate.a = clampf((Time.get_ticks_msec() - _opened_at_msec) / APPEAR_MILLISECONDS, 0.0, 1.0)

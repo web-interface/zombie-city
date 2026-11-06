@@ -18,6 +18,7 @@ var lighting: Lighting
 var shards: VaccineShardField
 var area_effects: AreaEffects
 var props: Props
+var weapon_rack: WeaponRack
 var camera: RunCamera
 ## 빛과 어둠 숫자 (data/run_rules.json lighting)
 var light_rules: Dictionary = {}
