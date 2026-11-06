@@ -19,7 +19,7 @@
     "radius": 4,
     "max_health": 12,
     "move_speed": 15,
-    "contact_damage_per_second": 14,
+    "contact_damage_per_second": 17,
     "shard_value": 1,
     "sprite": "zombie_walker",
     "frame_size": 16
@@ -70,10 +70,11 @@
       "warning_seconds": 1.0,
       "speed": 95,
       "duration_seconds": 0.9,
-      "hit_damage": 30,
+      "hit_damage": 50,
       "first_delay_seconds": 3.0,
       "push_distance": 14,
       "hit_margin": 5
     }
-  }
+  },
+  "_2차_근거": "난이도 테스터 2차(2026-11-07): 걷는 좀비 피해 14→17, 도살자 돌진 피해 30→50 (보스가 고비가 되게, 고수 봇은 예고선을 피함). docs/balance_log.md"
 }

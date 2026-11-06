@@ -15,7 +15,7 @@
   },
   "experience": {
     "shards_needed_base": 2,
-    "shards_needed_per_level": 2.5,
+    "shards_needed_per_level": 3.2,
     "shard_magnet_speed": 130
   },
   "build": {
@@ -102,5 +102,6 @@
   "music": {
     "busy_horde_size": 150
   },
-  "_max_zombies_hurting_근거": "총책임관(2026-11-07): 둘러싸이면 1~2초 만에 죽어 '아슬아슬 생존'이 0번 — 한 번에 무는 좀비를 가장 가까운 3마리로 제한해 빠져나갈 틈을 준다 (억울한 죽음 금지, 문서 12 §6)"
+  "_max_zombies_hurting_근거": "총책임관(2026-11-07): 둘러싸이면 1~2초 만에 죽어 '아슬아슬 생존'이 0번 — 한 번에 무는 좀비를 가장 가까운 3마리로 제한해 빠져나갈 틈을 준다 (억울한 죽음 금지, 문서 12 §6)",
+  "_experience_근거": "난이도 테스터 2차(2026-11-07): 좀비가 많아져 조각도 늘어난 만큼 레벨당 조각 2.5→3.2 (레벨 10 ≈ 96초·레벨 20 ≈ 192초 유지). docs/balance_log.md"
 }

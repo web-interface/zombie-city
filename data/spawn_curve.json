@@ -15,26 +15,26 @@
     {
       "from_second": 60,
       "to_second": 120,
-      "per_second_start": 3.0,
-      "per_second_end": 4.2
+      "per_second_start": 3.6,
+      "per_second_end": 5.4
     },
     {
       "from_second": 120,
       "to_second": 180,
-      "per_second_start": 4.2,
-      "per_second_end": 5.5
+      "per_second_start": 5.4,
+      "per_second_end": 7.2
     },
     {
       "from_second": 180,
       "to_second": 240,
-      "per_second_start": 5.5,
-      "per_second_end": 7.0
+      "per_second_start": 7.2,
+      "per_second_end": 8.6
     },
     {
       "from_second": 240,
       "to_second": 330,
-      "per_second_start": 7.0,
-      "per_second_end": 9.0
+      "per_second_start": 8.6,
+      "per_second_end": 9.6
     }
   ],
   "kinds": [
@@ -86,8 +86,9 @@
   "calm_spawn_multiplier": 0.4,
   "_보스_숨돌리기_근거": "보스를 잡은 뒤 18초는 좀비가 40%만 나온다 — 몰아치기와 숨 돌리기의 파도 (L4D AI 감독, 문서 13). 마지막 보스는 4:00 (헬기 버티기와 안 겹치게)",
   "extraction_spawn_multiplier": 1.6,
-  "spawn_ahead_chance": 0.35,
+  "spawn_ahead_chance": 0.55,
   "spawn_ahead_spread_radians": 0.8,
   "max_stored_spawns": 5,
-  "boss_spawn_distance": 150
+  "boss_spawn_distance": 150,
+  "_나오는속도_근거": "난이도 테스터 2차(2026-11-07): 봇을 고친 뒤 보통 봇 탈출 72%로 너무 쉬워서, 좀비 체력 대신 1:00 뒤 나오는 수(약 +25%)와 가는 쪽 앞에서 나올 확률(0.35→0.55)을 올렸다. 첫 1분은 그대로 (docs/balance_log.md)"
 }
