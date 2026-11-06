@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/pause_menu.gd
-## [하는 일] 일시정지: 오른쪽 위 작은 버튼(II)과, 누르면(또는 앱을 나갔다 오면) 뜨는 창 — 지금 생존자·전직·무기/장비 목록, 계속하기(3초 세고 다시 시작), 포기하기.
+## [하는 일] 일시정지: 오른쪽 위 작은 '멈춤' 버튼과, 누르면(또는 앱을 나갔다 오면) 뜨는 창 — 지금 생존자·전직·무기/장비 목록, 계속하기(3초 세고 다시 시작), 포기하기.
 ## [쓰는 곳] scripts/ui/hud.gd 가 만든다. run.gd 가 앱을 나갈 때 Hud.show_pause_menu() 로 연다.
 ## [근거 문서] 05 화면 목록(일시정지), 13 (앱 전환·전화에도 판이 안 날아가게, 돌아오면 3초 카운트)
 class_name PauseMenu
@@ -8,8 +8,10 @@ extends Control
 signal give_up_requested
 
 const RESUME_COUNTDOWN_SECONDS := 3.0
+const INFO_WIDTH := 140.0   # 창 안 목록 글 너비
 
-var _info_label: Label
+var _info_box: VBoxContainer
+var _pause_button: Button
 var _countdown_left: float = 0.0
 var _countdown_label: Label
 var _window: PanelContainer
@@ -25,14 +27,14 @@ func setup(promotion: Promotion, rack: WeaponRack) -> void:
 	PixelUi.full_rect(self)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	var pause_button := PixelUi.button("멈춤", PixelUi.MUTED)
-	pause_button.pressed.connect(open)
-	add_child(pause_button)
-	pause_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	pause_button.offset_left = -34.0
-	pause_button.offset_top = 50.0   # 맨 위 무기·장비 칸 줄(34~46) 아래로 — 겹치지 않게
-	pause_button.offset_right = -4.0
-	pause_button.offset_bottom = 66.0
+	_pause_button = PixelUi.button("멈춤", PixelUi.MUTED)
+	_pause_button.pressed.connect(open)
+	add_child(_pause_button)
+	_pause_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	_pause_button.offset_left = -34.0
+	_pause_button.offset_top = 50.0   # 맨 위 무기·장비 칸 줄(34~46) 아래로 — 겹치지 않게
+	_pause_button.offset_right = -4.0
+	_pause_button.offset_bottom = 66.0
 	_window = _build_window()
 	add_child(PixelUi.centered(_window))
 	_countdown_label = PixelUi.label("", PixelUi.GOLD, false, true)
@@ -44,10 +46,17 @@ func open() -> void:
 	if _window.visible:
 		return
 	get_tree().paused = true
-	_info_label.text = _build_info_text()
+	for child: Node in _info_box.get_children():
+		child.queue_free()
+	_info_box.add_child(PixelUi.small_lines(_build_info_text(), PixelUi.MUTED, INFO_WIDTH))
 	_window.visible = true
 	_countdown_left = 0.0
 	_countdown_label.visible = false
+
+
+## 판이 끝나 결과 화면으로 넘어가는 동안엔 멈춤 버튼을 숨긴다 (마지막 검수: 쓰러진 뒤 1.6초 동안 창이 떴음)
+func hide_button() -> void:
+	_pause_button.visible = false
 
 
 func _build_window() -> PanelContainer:
@@ -60,10 +69,9 @@ func _build_window() -> PanelContainer:
 	var title := PixelUi.label("잠깐 멈춤", PixelUi.INK, false, true)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(title)
-	_info_label = PixelUi.label("", PixelUi.MUTED, true)
-	_info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_info_label.custom_minimum_size = Vector2(140, 0)
-	column.add_child(_info_label)
+	_info_box = VBoxContainer.new()
+	_info_box.custom_minimum_size = Vector2(INFO_WIDTH, 0)
+	column.add_child(_info_box)
 	var resume_button := PixelUi.button("계속하기", PixelUi.GOOD)
 	resume_button.pressed.connect(_start_countdown)
 	column.add_child(resume_button)

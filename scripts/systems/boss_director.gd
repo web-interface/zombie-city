@@ -98,7 +98,7 @@ func _continue_charge(boss: Zombie, charge: Dictionary, delta: float) -> void:
 	var survivor := _context.survivor
 	if not bool(state["has_hit"]) and boss.position.distance_to(survivor.position) < boss.radius + float(charge["hit_margin"]):
 		state["has_hit"] = true
-		survivor.take_damage(float(charge["hit_damage"]), "%s의 돌진" % boss.info["name"])
+		survivor.take_damage(float(charge["hit_damage"]), "%s 돌진" % boss.info["name"])
 		survivor.position += direction * float(charge["push_distance"])
 		_context.shake("survivor_big_hit")
 	if float(state["charge_left"]) <= 0.0:

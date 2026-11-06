@@ -8,6 +8,7 @@ extends Node
 const NEAR_DEATH_RATIO := 0.3
 const RECOVERED_RATIO := 0.5
 const BORING_GAP_SECONDS := 20.0
+const FOUR_MINUTES_SECONDS := 240.0   # '4분대 화면 좀비 수' 지표를 재기 시작하는 때 (문서 12 §5)
 
 var level_up_times: Array[float] = []
 var kills_by_minute: Array[int] = [0, 0, 0, 0, 0, 0]
@@ -76,7 +77,7 @@ func sample(alive_zombies: int) -> void:
 	elif _is_in_danger and ratio > RECOVERED_RATIO:
 		_is_in_danger = false
 		near_death_saves += 1
-	if _context.elapsed_seconds >= 240.0:
+	if _context.elapsed_seconds >= FOUR_MINUTES_SECONDS:
 		max_zombies_after_four_minutes = maxi(max_zombies_after_four_minutes, alive_zombies)
 
 

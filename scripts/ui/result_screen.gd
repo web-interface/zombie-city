@@ -52,9 +52,12 @@ func _ready() -> void:
 func _cause_text(end_reason: String, death_cause: String) -> String:
 	match end_reason:
 		"died":
-			return "%s에게 당함" % death_cause if not death_cause.is_empty() else ""
+			if death_cause.is_empty():
+				return ""
+			# 좀비에게는 '에게', 돌진 같은 공격에는 '에' ("도살자 돌진에게"는 어색함 — 마지막 검수)
+			return "%s%s 당함" % [death_cause, "에" if death_cause.ends_with("돌진") else "에게"]
 		"helicopter_left":
-			return "5:30까지 착륙 지점에 못 탔어요"
+			return "헬기가 떠날 때까지 착륙 지점에 못 탔어요"   # 시각을 박아 두면 data 가 바뀔 때 틀려짐
 	return ""
 
 

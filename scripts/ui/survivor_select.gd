@@ -7,6 +7,7 @@ extends Control
 const PREVIEW_SCALE := 3.0
 const BRANCH_PREVIEW_TOP := 168.0
 const WALK_FRAME_SECONDS := 0.12
+const INFO_WIDTH := 112.0   # 오른쪽 소개 글 너비 (넘으면 낱말 단위로 줄바꿈)
 
 var _survivor_ids: Array[String] = []
 var _selected_id: String = ""
@@ -89,8 +90,9 @@ func _build_start_button() -> Button:
 
 
 func _select(survivor_id: String) -> void:
+	if not _selected_id.is_empty():   # 화면을 처음 열 때는 소리 없이 (누른 적이 없는데 소리가 나면 어색함)
+		SoundPlayer.play("card_select")
 	_selected_id = survivor_id
-	SoundPlayer.play("card_select")
 	var info := GameData.entry("survivors", survivor_id)
 	_preview.texture = load("res://art/sprites/survivor_%s.png" % info["outfit"])
 	for id: String in _portrait_buttons.keys():
@@ -139,11 +141,8 @@ func _add_info(control: Control) -> void:
 	_info_box.add_child(control)
 
 
-func _wrapped(text: String, color: Color) -> Label:
-	var line := PixelUi.label(text, color, true)
-	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	line.custom_minimum_size = Vector2(112, 0)
-	return line
+func _wrapped(text: String, color: Color) -> VBoxContainer:
+	return PixelUi.small_lines(text, color, INFO_WIDTH)
 
 
 func _process(delta: float) -> void:

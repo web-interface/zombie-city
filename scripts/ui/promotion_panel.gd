@@ -85,8 +85,8 @@ func _build_card(branch_id: String) -> Button:
 	texts.add_child(PixelUi.label(String(branch["name"]), PixelUi.GOLD, false, true))
 	# 1차 효과는 2줄까지, 각성은 1줄 맛보기 (카드 밖으로 넘치지 않게)
 	var text_width := CARD_SIZE.x - 44.0
-	texts.add_child(PixelUi.label(PixelUi.wrap_words(String(branch["stage_1"]["text"]), PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, text_width, 2), PixelUi.INK, true))
-	texts.add_child(PixelUi.label(PixelUi.wrap_words("각성: " + String(branch["stage_2"]["text"]), PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, text_width, 1), PixelUi.MUTED, true))
+	texts.add_child(PixelUi.small_lines(String(branch["stage_1"]["text"]), PixelUi.INK, text_width, 2))
+	texts.add_child(PixelUi.small_lines("각성: " + String(branch["stage_2"]["text"]), PixelUi.MUTED, text_width, 1))
 	card_button.add_child(texts)
 	card_button.pressed.connect(_pick.bind(branch_id))
 	return card_button

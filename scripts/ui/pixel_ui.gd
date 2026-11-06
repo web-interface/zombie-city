@@ -35,8 +35,7 @@ static func label(text: String, color: Color = INK, is_small: bool = false, is_b
 	new_label.add_theme_color_override("font_shadow_color", SHADOW)
 	new_label.add_theme_constant_override("shadow_offset_x", 1)
 	new_label.add_theme_constant_override("shadow_offset_y", 1)
-	if is_small:
-		new_label.add_theme_constant_override("line_spacing", -3)   # 작은 픽셀 글꼴은 기본 줄 간격이 넓어 카드가 넘침
+	# 줄 간격은 글꼴 그대로 둔다 (Galmuri9 10크기 = 줄 높이 11점). 예전에 -3 으로 줄였더니 두 줄짜리 글이 서로 포개졌음 (마지막 검수)
 	new_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return new_label
 
@@ -99,6 +98,18 @@ static func centered(child: Control) -> CenterContainer:
 	return center
 
 
+## 여러 줄 작은 글: 줄마다 Label 하나씩 쌓는다. Label 하나에 여러 줄을 넣으면 엔진 기본 줄 간격 때문에
+## 화면마다 줄이 겹치거나 벌어져 보였다 (마지막 검수). 줄바꿈(\n)은 그대로 살리고, 긴 줄은 낱말 단위로 감싼다.
+static func small_lines(text: String, color: Color, max_width: float, max_lines: int = 0) -> VBoxContainer:
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 0)
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for paragraph: String in text.split("\n"):
+		for line: String in wrap_words(paragraph, FONT_SMALL, SIZE_SMALL, max_width, max_lines).split("\n"):
+			column.add_child(label(line, color, true))
+	return column
+
+
 ## 띄어쓰기 단위로만 줄을 바꾼다. Godot 기본 줄바꿈은 한글 글자 사이에서도 끊어서
 ## "휘두른 / 다" 처럼 낱말이 쪼개지기 때문 (검수 지적). 너비는 글꼴로 실제로 잰다.
 ## max_lines 를 넘으면 마지막 줄 끝을 '…' 로 줄인다 (0 이면 줄 수 제한 없음).
@@ -117,8 +128,7 @@ static func wrap_words(text: String, font: Font, font_size: int, max_width: floa
 	if max_lines > 0 and lines.size() > max_lines:
 		lines.resize(max_lines)
 		lines[max_lines - 1] = lines[max_lines - 1].left(maxi(lines[max_lines - 1].length() - 1, 0)) + "…"
-	return "
-".join(lines)
+	return "\n".join(lines)   # 글자 그대로 줄을 바꿔 적으면 파일 줄바꿈(\r\n)이 따라와 빈 줄이 하나 더 생김
 
 
 static func format_time(seconds: float) -> String:

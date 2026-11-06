@@ -11,6 +11,7 @@ const DEATH_SLOW_MOTION_SCALE := 0.3
 var context := RunContext.new()
 var _is_over: bool = false
 var _base_time_scale: float = 1.0
+var _time_effects: Array[Dictionary] = []   # 지금 걸려 있는 멈춤·느린 화면들 {scale}
 var _autoplay: Node = null
 
 @onready var _survivor: Survivor = $World/Survivor
@@ -248,27 +249,42 @@ func _end_run(end_reason: String) -> void:
 	if _is_over:
 		return
 	_is_over = true
+	_hud.on_run_over()
 	if end_reason == "escaped":
 		_hud.show_banner("구조 성공!", "good")
 	var result := _recorder.build_result(end_reason, _level_up.level, _promotion.branch_name())
 	var delay := 0.05 if SceneRouter.is_autoplay() else END_DELAY_SECONDS
 	await get_tree().create_timer(delay, true, false, true).timeout
+	_time_effects.clear()
 	Engine.time_scale = _base_time_scale
 	SoundPlayer.stop_music()
 	SceneRouter.finish_run(result)
 
 
 ## 잠깐 멈춤(scale 0)이나 느린 화면(scale 0.3)을 seconds 동안. 실제 시간으로 잰다 (게임 시간은 멈춰 있으니까).
+## 여러 개가 겹치면 그중 가장 느린 것을 따르고, 하나가 끝나도 남은 것은 이어진다
+## (마지막 검수: 짧은 멈춤이 끝나며 1.0 으로 돌려 쓰러짐 느린 화면을 끊어 먹었음)
 func _play_hit_stop(seconds: float, speed_scale: float) -> void:
 	if SceneRouter.is_autoplay() or seconds <= 0.0:
 		return
-	Engine.time_scale = _base_time_scale * maxf(speed_scale, 0.01)
+	var effect := {"scale": maxf(speed_scale, 0.01)}
+	_time_effects.append(effect)
+	_apply_slowest_time_effect()
 	await get_tree().create_timer(seconds, true, false, true).timeout
-	Engine.time_scale = _base_time_scale
+	_time_effects.erase(effect)
+	_apply_slowest_time_effect()
+
+
+func _apply_slowest_time_effect() -> void:
+	var slowest := 1.0
+	for effect: Dictionary in _time_effects:
+		slowest = minf(slowest, float(effect["scale"]))
+	Engine.time_scale = _base_time_scale * slowest
 
 
 ## 장면이 다른 길로 닫혀도 느린 화면이 다음 화면까지 남지 않게 (검수 지적 — 보험)
 func _exit_tree() -> void:
+	_time_effects.clear()
 	Engine.time_scale = _base_time_scale
 
 

@@ -15,6 +15,12 @@ const FIRST_RUN_HINTS: Array[Array] = [
 	[5.2, 9.2, "공격은 자동! 오른쪽 아래는 스킬"],
 	[10.0, 14.0, "초록 조각을 모으면 강해져요"],
 ]
+## 터치 화면이 없는 PC 에서 보여 줄 안내 (키보드도 된다는 걸 알려 줌 — 마지막 검수)
+const PC_RUN_HINTS: Array[Array] = [
+	[0.6, 4.6, "WASD·방향키·끌기로 움직여요"],
+	[5.2, 9.2, "공격은 자동! 스페이스는 스킬"],
+	[10.0, 14.0, "초록 조각을 모으면 강해져요"],
+]
 
 var level_up_panel: LevelUpPanel
 var promotion_panel: PromotionPanel
@@ -27,6 +33,7 @@ var _arrow: ExtractionArrow
 var _run_seconds: float = 300.0
 var _hint_label: Label
 var _hint_time: float = -1.0
+var _hints: Array[Array] = FIRST_RUN_HINTS
 
 
 func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: Promotion, skill_runner: SkillRunner, extraction: Extraction) -> void:
@@ -75,6 +82,7 @@ func start_first_run_hints(_skill_runner: SkillRunner) -> void:
 	if SceneRouter.has_seen_first_run_hints or SceneRouter.is_autoplay():
 		return
 	SceneRouter.has_seen_first_run_hints = true
+	_hints = FIRST_RUN_HINTS if DisplayServer.is_touchscreen_available() else PC_RUN_HINTS
 	_hint_label = PixelUi.label("", PixelUi.INK)
 	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hint_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
@@ -92,12 +100,12 @@ func _process(delta: float) -> void:
 		return
 	_hint_time += delta
 	var shown := ""
-	for hint: Array in FIRST_RUN_HINTS:
+	for hint: Array in _hints:
 		if _hint_time >= float(hint[0]) and _hint_time < float(hint[1]):
 			shown = String(hint[2])
 	_hint_label.text = shown
 	_hint_label.modulate.a = 0.6 + 0.4 * absf(sin(_hint_time * 3.0))
-	if _hint_time > float(FIRST_RUN_HINTS.back()[1]):
+	if _hint_time > float(_hints.back()[1]):
 		_hint_label.queue_free()
 		_hint_time = -1.0
 
@@ -124,6 +132,11 @@ func show_pause_menu() -> void:
 		return
 	_joystick.release()
 	_pause_menu.open()
+
+
+## 판이 끝나면 run.gd 가 부른다: 결과 화면으로 넘어가는 동안 멈춤 버튼을 숨김
+func on_run_over() -> void:
+	_pause_menu.hide_button()
 
 
 func _is_choice_window_open() -> bool:
