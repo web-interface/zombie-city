@@ -1,0 +1,20 @@
+{
+  "_설명": {
+    "파일": "data/city_decor.json",
+    "하는 일": "도심 블록마다 놓는 동네 소품(분리수거함·배달 오토바이·드럼통·고깔·타이어)의 나올 확률과 놓는 자리. 막히지 않는 장식이라 게임 숫자(밸런스)에는 영향이 없다.",
+    "쓰는 곳": "scripts/world/props.gd 가 블록을 만들 때 읽는다. 그림은 art/sprites/<sprite>.png.",
+    "근거 문서": "04 §6 지역(도심 도로), 06 AI 티 안 나게(한국 동네 디테일), 13 국내 조사(익숙한 동네 풍경)"
+  },
+  "_놓는_자리": {
+    "sidewalk_corner": "인도 모서리 (가로등 옆)",
+    "curb": "도로 가장자리 (인도 바로 옆 차도)",
+    "road": "차도 아무 데"
+  },
+  "decorations": [
+    { "sprite": "trash_bin", "chance_percent": 60, "place": "sidewalk_corner" },
+    { "sprite": "bike", "chance_percent": 35, "place": "curb" },
+    { "sprite": "barrel", "chance_percent": 25, "place": "road" },
+    { "sprite": "cone", "chance_percent": 30, "place": "road" },
+    { "sprite": "tire", "chance_percent": 30, "place": "road" }
+  ]
+}

@@ -1,5 +1,5 @@
 ## [파일] scripts/world/props.gd
-## [하는 일] 도시 소품: 블록마다 같은 규칙(위치 숫자로 정한 무작위)으로 버려진 차·고깔·타이어·가로등을 놓는다. 차는 막히는 장애물이라 생존자·좀비가 통과하지 못하고(push_out), 가로등 위치는 빛 담당에게 넘긴다. 카메라 근처 블록만 만들고 멀어지면 치운다.
+## [하는 일] 도시 소품: 블록마다 같은 규칙(위치 숫자로 정한 무작위)으로 버려진 차·가로등과 동네 소품(분리수거함·배달 오토바이·드럼통·고깔·타이어 — data/city_decor.json)을 놓는다. 차는 막히는 장애물이라 생존자·좀비가 통과하지 못하고(push_out), 가로등 위치는 빛 담당에게 넘긴다. 카메라 근처 블록만 만들고 멀어지면 치운다.
 ## [쓰는 곳] scenes/run.tscn 의 World/Props. run.gd 가 update() 를, 생존자·좀비 이동 뒤 push_out() 을 부른다.
 ## [근거 문서] 04 §6 지역(도심 도로), 02 §8 지형, data/run_rules.json city_layout
 class_name Props
@@ -13,7 +13,7 @@ var _context: RunContext
 var _block_spacing: float
 var _road_half_width: float
 var _car_chance: int
-var _cone_chance: int
+var _decorations: Array = []
 var _blocks: Dictionary = {}              # Vector2i 블록 → {"nodes": [...], "cars": [Rect2…], "lamps": [Vector2…]}
 var _textures: Dictionary = {}
 
@@ -23,7 +23,7 @@ func setup(context: RunContext, city_layout: Dictionary) -> void:
 	_block_spacing = float(city_layout["block_spacing"])
 	_road_half_width = float(city_layout["road_half_width"])
 	_car_chance = int(city_layout["car_chance_percent"])
-	_cone_chance = int(city_layout["cone_chance_percent"])
+	_decorations = GameData.table("city_decor")["decorations"]
 	y_sort_enabled = true
 
 
@@ -65,14 +65,26 @@ func _build_block(block: Vector2i) -> Dictionary:
 		_add_car(built, corner + Vector2(_road_half_width - 14.0, _road_half_width + 30.0 + random.randf_range(0.0, 80.0)))
 	if random.randi_range(1, 100) <= _car_chance:
 		_add_car(built, corner + Vector2(_block_spacing * 0.5 + random.randf_range(-30.0, 30.0), _block_spacing - _road_half_width + 14.0))
-	if random.randi_range(1, 100) <= _cone_chance:
-		_add_sprite(built, "cone", corner + Vector2(10.0, _block_spacing * 0.5 + random.randf_range(-20.0, 20.0)))
-	if random.randi_range(1, 100) <= _cone_chance:
-		_add_sprite(built, "tire", corner + Vector2(_block_spacing * 0.5 + random.randf_range(-40.0, 40.0), 16.0))
+	for decoration: Dictionary in _decorations:
+		if random.randi_range(1, 100) <= int(decoration["chance_percent"]):
+			_add_sprite(built, String(decoration["sprite"]), corner + _decoration_offset(String(decoration["place"]), random))
 	for lamp_offset: Vector2 in [Vector2(_road_half_width + 6.0, _road_half_width + 6.0), Vector2(_block_spacing - _road_half_width - 6.0, _block_spacing - _road_half_width - 6.0)]:
 		_add_sprite(built, "lamp", corner + lamp_offset)
 		built["lamps"].append(corner + lamp_offset)
 	return built
+
+
+## 놓는 자리 종류(data/city_decor.json _놓는_자리)마다 블록 모서리에서의 위치
+func _decoration_offset(place: String, random: RandomNumberGenerator) -> Vector2:
+	match place:
+		"sidewalk_corner":
+			return Vector2(_road_half_width + 16.0 + random.randf_range(0.0, 6.0), _road_half_width + 6.0)
+		"curb":
+			return Vector2(_block_spacing - _road_half_width + 8.0, _block_spacing * 0.5 + random.randf_range(-50.0, 50.0))
+		"road":
+			return Vector2(random.randf_range(-_road_half_width + 8.0, _road_half_width - 8.0), _block_spacing * 0.5 + random.randf_range(-60.0, 60.0))
+	push_error("data/city_decor.json: 모르는 놓는 자리 '%s'" % place)
+	return Vector2.ZERO
 
 
 func _add_car(built: Dictionary, center: Vector2) -> void:

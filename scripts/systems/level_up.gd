@@ -98,7 +98,7 @@ func _draw_cards() -> Array:
 	var cards := pool.slice(0, int(_build_rules["cards_per_level_up"]))
 	if cards.is_empty():
 		var heal_text := "체력 %d%% 회복" % roundi(_heal_card_ratio() * 100.0)
-		cards.append({"kind": "heal", "id": "heal", "name": "구급상자", "icon": "icon_first_aid", "description": heal_text, "level_text": ""})
+		cards.append({"kind": "heal", "id": "heal", "name": "구급상자", "icon": "icon_first_aid", "description": heal_text, "level_text": "", "flavor": String(GameData.table("flavor_texts")["heal"])})
 	return cards
 
 
@@ -130,4 +130,6 @@ func _possible_cards() -> Array:
 
 
 func _card(kind: String, item_id: String, info: Dictionary, level_text: String) -> Dictionary:
-	return {"kind": kind, "id": item_id, "name": info["name"], "icon": info["icon"], "description": info["description"], "level_text": level_text}
+	var flavor_group := "weapons" if kind.contains("weapon") else "gear"
+	var flavor := String(GameData.table("flavor_texts")[flavor_group].get(item_id, ""))
+	return {"kind": kind, "id": item_id, "name": info["name"], "icon": info["icon"], "description": info["description"], "level_text": level_text, "flavor": flavor}

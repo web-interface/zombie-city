@@ -7,7 +7,7 @@ extends Control
 
 signal closed
 
-const CARD_SIZE := Vector2(164, 56)
+const CARD_SIZE := Vector2(164, 64)
 const APPEAR_MILLISECONDS := 250.0      # 나타나는 시간 (실제 시간 — 보스 처치 느린 화면 중에도 똑같이)
 const INPUT_GUARD_MILLISECONDS := 280.0 # 뜬 직후엔 눌러도 안 고름 (전투 중 두드리던 손에 잘못 골리지 않게 — 검수 지적)
 
@@ -95,8 +95,11 @@ func _build_card(card: Dictionary) -> Button:
 	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var name_line := PixelUi.label("%s  %s" % [card["name"], card["level_text"]], PixelUi.INK)
 	texts.add_child(name_line)
-	var description := PixelUi.label(PixelUi.wrap_words(String(card["description"]), PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, CARD_SIZE.x - 40.0), PixelUi.MUTED, true)
+	var description := PixelUi.label(PixelUi.wrap_words(String(card["description"]), PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, CARD_SIZE.x - 40.0, 2), PixelUi.MUTED, true)
 	texts.add_child(description)
+	var flavor := String(card.get("flavor", ""))
+	if not flavor.is_empty():   # 사람 냄새 나는 한 줄 (06 AI 티 안 나게)
+		texts.add_child(PixelUi.label(PixelUi.wrap_words(flavor, PixelUi.FONT_SMALL, PixelUi.SIZE_SMALL, CARD_SIZE.x - 40.0, 1), Color(PixelUi.MUTED, 0.6), true))
 	row.add_child(texts)
 	card_button.add_child(row)
 	card_button.pressed.connect(_pick.bind(card))
