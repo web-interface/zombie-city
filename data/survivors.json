@@ -38,7 +38,7 @@
     "role": "택배기사",
     "intro": "배달하던 동네라 골목을 다 안다",
     "difficulty_stars": 2,
-    "max_health": 90,
+    "max_health": 100,
     "move_speed": 66,
     "start_weapon": "nail_gun",
     "skill": "sprint",
@@ -60,5 +60,6 @@
     "trait_text": "초당 체력 1 회복, 백신 조각 +15%",
     "trait": { "add": { "regen_per_second": 1.0, "shard_bonus_ratio": 0.15 } },
     "branches": ["nurse_emergency", "nurse_epidemiology", "nurse_surgeon"]
-  }
+  },
+  "_3차_근거": "난이도 테스터 3차(2026-11-07): 택배기사 체력 90→100 — 탈출이 네 명 중 가장 낮아서(38%) 경찰과 같게 (100 으로 50%, 판 수가 적어 확실하지 않음). 소방관 체력 140→115 는 시험했지만 그대로 8/8 탈출이라 되돌림. docs/balance_log.md"
 }

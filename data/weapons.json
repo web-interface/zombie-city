@@ -136,8 +136,8 @@
         "spread_degrees": 0
       },
       {
-        "damage": 7,
-        "interval_seconds": 0.35,
+        "damage": 8.5,
+        "interval_seconds": 0.33,
         "range": 100,
         "projectile_count": 1,
         "projectile_speed": 230,
@@ -145,8 +145,8 @@
         "spread_degrees": 0
       },
       {
-        "damage": 7.5,
-        "interval_seconds": 0.31,
+        "damage": 9.5,
+        "interval_seconds": 0.3,
         "range": 105,
         "projectile_count": 1,
         "projectile_speed": 240,
@@ -154,17 +154,17 @@
         "spread_degrees": 0
       },
       {
-        "damage": 7.5,
-        "interval_seconds": 0.31,
+        "damage": 9.5,
+        "interval_seconds": 0.3,
         "range": 105,
-        "projectile_count": 1,
+        "projectile_count": 2,
         "projectile_speed": 240,
         "pierce": 4,
-        "spread_degrees": 0
+        "spread_degrees": 6
       },
       {
-        "damage": 8.5,
-        "interval_seconds": 0.27,
+        "damage": 11,
+        "interval_seconds": 0.26,
         "range": 110,
         "projectile_count": 2,
         "projectile_speed": 250,
@@ -344,5 +344,6 @@
         "knockback": 2
       }
     ]
-  }
+  },
+  "_3차_근거": "난이도 테스터 3차(2026-11-07): 네일건 2~5단계를 올림 (피해 7·7.5·7.5·8.5 → 8.5·9.5·9.5·11, 간격 조금 짧게, 4단계부터 못 2개) — 2~4단계 초당 피해가 권총의 절반(20~24 vs 40~76)이었다. 택배기사 탈출률에 효과가 있었는지는 판 수가 적어 확인 못 함 (택배기사가 약한 주된 까닭은 봇이 보스와 너무 멀리 떨어지는 것으로 보임). docs/balance_log.md"
 }
