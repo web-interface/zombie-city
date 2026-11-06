@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/pixel_ui.gd
-## [하는 일] 픽셀 스타일 화면 부품을 만드는 공통 도구: 글꼴 3종(Galmuri11·Bold·Galmuri9), 색, 각진 패널·버튼 모양, 글자·아이콘 만들기. 모든 화면이 같은 모양을 쓰게 한곳에 모았다.
+## [하는 일] 픽셀 스타일 화면 부품을 만드는 공통 도구: 글꼴 3종(Galmuri11·Bold·Galmuri9), 색, 각진 패널·버튼 모양, 글자·아이콘 만들기(아직 없는 아이콘은 원래 무기 아이콘이나 '?' 기본 아이콘으로). 모든 화면이 같은 모양을 쓰게 한곳에 모았다.
 ## [쓰는 곳] scripts/ui/*.gd 가 PixelUi.label() · PixelUi.button() 처럼 부른다.
 ## [근거 문서] 05 화면 원칙(픽셀 글꼴·각진 테두리), 06 색, 13 (영어 라벨·이모지·둥근 버튼 = AI 티)
 class_name PixelUi
@@ -19,6 +19,9 @@ const ALERT := Color("ff6b6b")
 const PANEL := Color("171a22")
 const PANEL_EDGE := Color("3a4152")
 const SHADOW := Color(0.04, 0.04, 0.07, 0.85)
+const ICON_SIZE := 10   # 아이콘 그림 한 변(점)
+
+static var _missing_icon: Texture2D = null
 
 
 static func label(text: String, color: Color = INK, is_small: bool = false, is_bold: bool = false) -> Label:
@@ -57,7 +60,11 @@ static func panel(background: Color = PANEL, edge: Color = PANEL_EDGE) -> PanelC
 
 
 static func button(text: String, accent: Color = INK) -> Button:
-	var new_button := Button.new()
+	return style_button(Button.new(), text, accent)
+
+
+## 이미 만든 버튼(예: 스크립트가 붙은 카드 버튼)에 같은 픽셀 버튼 모양을 입힌다
+static func style_button(new_button: Button, text: String, accent: Color = INK) -> Button:
 	new_button.text = text
 	new_button.add_theme_font_override("font", FONT_REGULAR)
 	new_button.add_theme_font_size_override("font_size", SIZE_REGULAR)
@@ -75,12 +82,37 @@ static func button(text: String, accent: Color = INK) -> Button:
 ## 10×10 아이콘을 2배로 (art/sprites/icons/<이름>.png)
 static func icon(icon_name: String, scale: int = 2) -> TextureRect:
 	var rect := TextureRect.new()
-	rect.texture = load("res://art/sprites/icons/%s.png" % icon_name)
-	rect.custom_minimum_size = Vector2(10, 10) * scale
+	rect.texture = icon_texture(icon_name)
+	rect.custom_minimum_size = Vector2(ICON_SIZE, ICON_SIZE) * scale
 	rect.stretch_mode = TextureRect.STRETCH_SCALE
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return rect
+
+
+## 아이콘 그림. 아직 안 그린 아이콘이면: 진화 아이콘(icon_x_evolved)은 원래 무기 아이콘(icon_x)으로,
+## 그것도 없으면 '?' 기본 아이콘으로 (그림 담당이 동시에 만드는 중이라 없어도 오류 없이 돌게).
+static func icon_texture(icon_name: String) -> Texture2D:
+	for candidate: String in [icon_name, icon_name.trim_suffix("_evolved")]:
+		var path := "res://art/sprites/icons/%s.png" % candidate
+		if ResourceLoader.exists(path):
+			return load(path)
+	return _fallback_icon()
+
+
+## 각진 테두리 안에 물음표 — 코드로 한 번만 만들어 둔다
+static func _fallback_icon() -> Texture2D:
+	if _missing_icon != null:
+		return _missing_icon
+	var image := Image.create(ICON_SIZE, ICON_SIZE, false, Image.FORMAT_RGBA8)
+	var last := ICON_SIZE - 1
+	for index: int in range(ICON_SIZE):
+		for edge: Vector2i in [Vector2i(index, 0), Vector2i(index, last), Vector2i(0, index), Vector2i(last, index)]:
+			image.set_pixelv(edge, MUTED)
+	for pixel: Vector2i in [Vector2i(4, 2), Vector2i(5, 2), Vector2i(6, 3), Vector2i(5, 4), Vector2i(4, 5), Vector2i(4, 7)]:
+		image.set_pixelv(pixel, GOLD)
+	_missing_icon = ImageTexture.create_from_image(image)
+	return _missing_icon
 
 
 ## 부모 크기에 꽉 차게 (기준점과 여백을 함께 맞춰야 크기가 0 이 되지 않는다)

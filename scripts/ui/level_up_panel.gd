@@ -1,21 +1,25 @@
 ## [파일] scripts/ui/level_up_panel.gd
-## [하는 일] 레벨 업 창: 카드 3장(아이콘·이름·단계·설명)을 보여 주고, 탭 한 번으로 고르게 한다. 다시 뽑기(남은 횟수 표시)·건너뛰기(체력 조금 회복) 버튼. 카드는 아래에서 살짝 올라오며 나타난다.
-## [쓰는 곳] scripts/ui/hud.gd 가 만들고, LevelUp.cards_ready 신호를 받아 열린다. 고르면 LevelUp.choose() 를 부르고 닫힌다.
-## [근거 문서] 02 §5 성장과 조합, 05 화면 목록(레벨 업), 13 (탭 한 번으로 고르기)
+## [하는 일] 레벨 업 창: 카드 3장(UpgradeCard — 새로 얻기·강화·진화·금색 히든)을 보여 주고, 탭 한 번으로 고르게 한다. 다시 뽑기(남은 횟수)·빼 버리기(남은 횟수, 누르고 카드를 고르면 그 판에서 다시 안 나옴)·건너뛰기(체력 조금 회복) 버튼. 카드는 서서히 나타나고, 히든 카드가 뜨면 전용 소리.
+## [쓰는 곳] scripts/ui/hud.gd 가 만들고, LevelUp.cards_ready 신호를 받아 열린다. 고르면 LevelUp.choose() 를, 빼 버리기는 LevelUp.banish() 를 부르고 닫힌다.
+## [근거 문서] 02 §5 성장과 조합, 05 화면 목록(레벨 업), 13 (탭 한 번으로 고르기), 14 §2-1 빼 버리기·§2-5 히든 카드
 class_name LevelUpPanel
 extends Control
 
 signal closed
 
-const CARD_SIZE := Vector2(164, 64)
 const APPEAR_MILLISECONDS := 250.0      # 나타나는 시간 (실제 시간 — 보스 처치 느린 화면 중에도 똑같이)
 const INPUT_GUARD_MILLISECONDS := 280.0 # 뜬 직후엔 눌러도 안 고름 (전투 중 두드리던 손에 잘못 골리지 않게 — 검수 지적)
+const BUTTON_SIZE := Vector2(80, 22)
 
 var _level_up: LevelUp
+var _title: Label
 var _card_box: VBoxContainer
 var _reroll_button: Button
+var _banish_button: Button
 var _cards: Array = []
 var _opened_at_msec: int = 0
+var _is_banishing: bool = false
+var _was_hidden_shown: bool = false
 
 
 func setup(level_up: LevelUp) -> void:
@@ -30,13 +34,13 @@ func setup(level_up: LevelUp) -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 5)
 	add_child(PixelUi.centered(column))
-	var title := PixelUi.label("레벨 업!", PixelUi.GOOD, false, true)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(title)
+	_title = PixelUi.label("레벨 업!", PixelUi.GOOD, false, true)
+	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(_title)
 	_card_box = VBoxContainer.new()
 	_card_box.add_theme_constant_override("separation", 5)
 	column.add_child(_card_box)
-	column.add_child(_build_bottom_row())
+	column.add_child(_build_bottom_rows())
 
 
 ## 자동 플레이가 고를 때도 쓴다.
@@ -53,62 +57,81 @@ func current_cards() -> Array:
 	return _cards
 
 
-func _build_bottom_row() -> HBoxContainer:
+## 아래 버튼 두 줄: [다시 뽑기][빼 버리기] / [건너뛰기]
+func _build_bottom_rows() -> VBoxContainer:
+	var rows := VBoxContainer.new()
+	rows.add_theme_constant_override("separation", 4)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 4)
-	_reroll_button = PixelUi.button("다시 뽑기", PixelUi.GOLD)
-	_reroll_button.custom_minimum_size = Vector2(80, 22)
-	_reroll_button.pressed.connect(func() -> void:
-		if not _is_input_guarded():   # 창이 뜬 직후 손가락이 닿아 다시 뽑기가 눌리지 않게 (카드·건너뛰기와 같게)
-			_level_up.reroll())
+	_reroll_button = _bottom_button("다시 뽑기", PixelUi.GOLD, func() -> void: _level_up.reroll())
 	row.add_child(_reroll_button)
-	var skip_button := PixelUi.button("건너뛰기", PixelUi.MUTED)
-	skip_button.custom_minimum_size = Vector2(80, 22)
-	skip_button.pressed.connect(func() -> void:
+	_banish_button = _bottom_button("빼 버리기", PixelUi.ALERT, _toggle_banish)
+	row.add_child(_banish_button)
+	rows.add_child(row)
+	var skip_button := _bottom_button("건너뛰기", PixelUi.MUTED, func() -> void: _close_after(func() -> void: _level_up.skip()))
+	skip_button.custom_minimum_size = Vector2(BUTTON_SIZE.x * 2.0 + 4.0, BUTTON_SIZE.y)
+	rows.add_child(skip_button)
+	return rows
+
+
+## 창이 뜬 직후 손가락이 닿아 눌리지 않게 (카드와 같은 막기)
+func _bottom_button(text: String, accent: Color, action: Callable) -> Button:
+	var new_button := PixelUi.button(text, accent)
+	new_button.custom_minimum_size = BUTTON_SIZE
+	new_button.pressed.connect(func() -> void:
 		if not _is_input_guarded():
-			_close_after(func() -> void: _level_up.skip()))
-	row.add_child(skip_button)
-	return row
+			action.call())
+	return new_button
 
 
 func _show_cards(cards: Array) -> void:
 	_cards = cards
+	_is_banishing = false
 	for child: Node in _card_box.get_children():
 		child.queue_free()
+	var has_hidden := false
 	for card: Dictionary in cards:
-		_card_box.add_child(_build_card(card))
+		var card_button := UpgradeCard.new()
+		card_button.setup(card)
+		card_button.pressed.connect(_pick.bind(card))
+		_card_box.add_child(card_button)
+		has_hidden = has_hidden or card["kind"] == "hidden_skill"
+	if has_hidden and not _was_hidden_shown:
+		SoundPlayer.play("hidden_card_appear")   # 다시 뽑기로 남은 히든 카드엔 또 울리지 않게
+	_was_hidden_shown = has_hidden
 	_reroll_button.text = "다시 뽑기 (%d)" % _level_up.rerolls_left
 	_reroll_button.disabled = _level_up.rerolls_left <= 0
+	_refresh_banish_mode()
 	_opened_at_msec = Time.get_ticks_msec()
 	modulate.a = 0.0
 	visible = true
 
 
-func _build_card(card: Dictionary) -> Button:
-	var card_button := PixelUi.button("", PixelUi.GOOD if String(card["kind"]).begins_with("new") else PixelUi.INK)
-	card_button.custom_minimum_size = CARD_SIZE
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 6)
-	row.position = Vector2(5, 5)
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_child(PixelUi.icon(String(card["icon"]), 2))
-	var texts := VBoxContainer.new()
-	texts.add_theme_constant_override("separation", 0)
-	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var name_line := PixelUi.label("%s  %s" % [card["name"], card["level_text"]], PixelUi.INK)
-	texts.add_child(name_line)
-	texts.add_child(PixelUi.small_lines(String(card["description"]), PixelUi.MUTED, CARD_SIZE.x - 40.0, 2))
-	var flavor := String(card.get("flavor", ""))
-	if not flavor.is_empty():   # 사람 냄새 나는 한 줄 (06 AI 티 안 나게)
-		texts.add_child(PixelUi.small_lines(flavor, Color(PixelUi.MUTED, 0.6), CARD_SIZE.x - 40.0, 1))
-	row.add_child(texts)
-	card_button.add_child(row)
-	card_button.pressed.connect(_pick.bind(card))
-	return card_button
+func _toggle_banish() -> void:
+	if _level_up.deck.banishes_left <= 0:
+		return
+	_is_banishing = not _is_banishing
+	SoundPlayer.play("ui_click")
+	_refresh_banish_mode()
+
+
+func _refresh_banish_mode() -> void:
+	_title.text = "뺄 카드를 고르세요" if _is_banishing else "레벨 업!"
+	_title.add_theme_color_override("font_color", PixelUi.ALERT if _is_banishing else PixelUi.GOOD)
+	_banish_button.text = "취소" if _is_banishing else "빼 버리기 (%d)" % _level_up.deck.banishes_left
+	_banish_button.disabled = _level_up.deck.banishes_left <= 0
+	for child: Node in _card_box.get_children():
+		var card_button := child as UpgradeCard
+		if card_button != null and not card_button.is_queued_for_deletion():
+			card_button.set_banish_mode(_is_banishing, _level_up.deck.can_banish(card_button.card))
 
 
 func _pick(card: Dictionary) -> void:
 	if _is_input_guarded():
+		return
+	if _is_banishing:
+		if not _level_up.banish(card):   # 진화·히든·구급상자는 뺄 수 없음 (새 카드는 cards_ready 로 다시 뜬다)
+			SoundPlayer.play("ui_back")
 		return
 	_close_after(func() -> void: _level_up.choose(card))
 
@@ -119,6 +142,7 @@ func _is_input_guarded() -> bool:
 
 func _close_after(action: Callable) -> void:
 	visible = false
+	_was_hidden_shown = false
 	action.call()
 	closed.emit()
 

@@ -1,9 +1,9 @@
 {
   "_설명": {
     "파일": "data/skills.json",
-    "하는 일": "스킬 버튼으로 쓰는 스킬. 스킬 하나 = 다시 쓰기 시간 + 효과 조각 목록(기절·밀기·회복·돌진·빛·불 장판 …). 전직은 이 조각의 숫자를 바꾸거나 조각을 더하거나 스킬을 통째로 바꾼다.",
+    "하는 일": "스킬 버튼으로 쓰는 스킬. 스킬 하나 = 다시 쓰기 시간 + 효과 조각 목록(기절·밀기·회복·돌진·빛·불 장판 …). 전직은 이 조각의 숫자를 바꾸거나 조각을 더하거나 스킬을 통째로 바꾼다. is_hidden = 히든 스킬(생존자마다 하나, 금색 카드로 아주 가끔 — 전직이 바꾼 스킬보다 우선).",
     "쓰는 곳": "scripts/skills/skill_runner.gd 가 효과 조각을 차례로 실행한다. scripts/ui/skill_button.gd 가 아이콘과 다시 쓰기 시간을 보여 준다.",
-    "근거 문서": "03 §1 생존자 스킬, 03 §1-2 전직"
+    "근거 문서": "03 §1 생존자 스킬, 03 §1-2 전직, 03 §4-2 히든 스킬, 14 §2-5"
   },
   "_효과_조각_종류": {
     "radial_stun": "반경 안 좀비 기절 (radius, seconds, damage)",
@@ -16,7 +16,11 @@
     "line_shot": "바라보는 쪽으로 화면 끝까지 꿰뚫는 한 발 (damage, width)",
     "fire_zone": "생존자 주변 불 장판 (radius, seconds, damage_per_second)",
     "poison_burst": "주변 좀비에 독 (radius, damage_per_second, seconds)",
-    "collect_all_shards": "화면의 백신 조각을 모두 끌어옴"
+    "collect_all_shards": "화면의 백신 조각을 모두 끌어옴",
+    "airstrike": "히든: 예고 원 뒤 폭격 (strikes 발을 seconds 동안, search_radius 안 좀비 쪽, 반경 radius·피해 damage)",
+    "backdraft": "히든: 몸에서 화염 고리 rings 번(ring_gap_seconds 간격, 반경 radius_start + radius_step × 번째, 피해 damage·밀기 push_distance) + 큰 불 장판(fire_radius·fire_seconds·fire_damage_per_second)",
+    "express": "히든: 무적 돌진 dashes 번(dash_seconds·gap_seconds·speed_multiplier, 부딪힘 contact_damage·knockback), 지나간 길에 blast_gap_seconds 마다 폭발(blast_radius·blast_damage)",
+    "miracle": "히든: 체력 heal_ratio 회복 + invulnerable_seconds 무적 + 주변 독(poison_radius·poison_damage_per_second·poison_seconds)"
   },
   "flashbang": {
     "name": "섬광탄",
@@ -75,6 +79,46 @@
     "effects": [
       { "type": "heal", "ratio": 0.4 },
       { "type": "radial_push", "radius": 40, "push_distance": 20, "damage": 0 }
+    ]
+  },
+  "hidden_airstrike": {
+    "name": "항공 지원 요청",
+    "icon": "icon_hidden_airstrike",
+    "is_hidden": true,
+    "description": "3초 동안 화면 곳곳에 폭격 20발",
+    "cooldown_seconds": 40,
+    "effects": [
+      { "type": "airstrike", "strikes": 20, "seconds": 3, "warning_seconds": 0.5, "search_radius": 110, "radius": 20, "damage": 60, "shake_trauma": 0.15 }
+    ]
+  },
+  "hidden_backdraft": {
+    "name": "백드래프트",
+    "icon": "icon_hidden_backdraft",
+    "is_hidden": true,
+    "description": "화염 폭발 고리 3번 + 큰 불 장판",
+    "cooldown_seconds": 35,
+    "effects": [
+      { "type": "backdraft", "rings": 3, "ring_gap_seconds": 0.35, "radius_start": 45, "radius_step": 18, "damage": 40, "push_distance": 30, "fire_radius": 55, "fire_seconds": 6, "fire_damage_per_second": 18, "shake_trauma": 0.35 }
+    ]
+  },
+  "hidden_express": {
+    "name": "총알 배송",
+    "icon": "icon_hidden_express",
+    "is_hidden": true,
+    "description": "무적 돌진 3번, 지나간 길이 터진다",
+    "cooldown_seconds": 30,
+    "effects": [
+      { "type": "express", "dashes": 3, "dash_seconds": 0.35, "gap_seconds": 0.08, "speed_multiplier": 4.5, "contact_damage": 30, "knockback": 30, "blast_gap_seconds": 0.07, "blast_radius": 16, "blast_damage": 25, "shake_trauma": 0.1 }
+    ]
+  },
+  "hidden_miracle": {
+    "name": "기적의 처방",
+    "icon": "icon_hidden_miracle",
+    "is_hidden": true,
+    "description": "체력 전부 회복 + 10초 무적 + 주변 좀비 독",
+    "cooldown_seconds": 60,
+    "effects": [
+      { "type": "miracle", "heal_ratio": 1.0, "invulnerable_seconds": 10, "poison_radius": 70, "poison_damage_per_second": 12, "poison_seconds": 6 }
     ]
   }
 }

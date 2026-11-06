@@ -88,7 +88,7 @@ func _build_info_text() -> String:
 	var branch := _promotion.branch_name()
 	lines.append("전직: %s" % (branch if not branch.is_empty() else "아직 (레벨 10)"))
 	for weapon: Weapon in _rack.weapons:
-		lines.append("· %s %d단계" % [weapon.info["name"], weapon.level])
+		lines.append("· %s %s" % [weapon.display_name(), "진화" if weapon.is_evolved else "%d단계" % weapon.level])
 	for gear_id: String in _rack.gear_levels.keys():
 		lines.append("· %s %d단계" % [GameData.entry("gear", gear_id)["name"], _rack.gear_levels[gear_id]])
 	return "\n".join(lines)

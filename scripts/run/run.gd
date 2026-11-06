@@ -98,6 +98,9 @@ func _connect_signals() -> void:
 	_extraction.extracted.connect(_end_run.bind("escaped"))
 	_extraction.helicopter_left.connect(_on_helicopter_left)
 	_skill_runner.used.connect(func(_skill_id: String) -> void: _recorder.note_event())
+	_level_up.evolved.connect(_on_weapon_evolved)
+	_level_up.hidden_skill_chosen.connect(_on_hidden_skill_chosen)
+	_skill_runner.hidden_skill_used.connect(_on_hidden_skill_used)
 
 
 ## 한 프레임에 도는 순서 (문서 11 §5) — 순서를 여기 한곳에서만 정한다.
@@ -208,6 +211,25 @@ func _play_boss_kill_moment() -> void:
 	await _play_hit_stop(float(context.juice_rules["hit_stop_on_boss_kill_seconds"]), 0.0)
 	await _play_hit_stop(float(context.juice_rules["slow_motion_after_boss_kill_seconds"]), float(context.juice_rules["slow_motion_scale"]))
 	_level_up.grant_bonus_choice()   # 연출이 끝난 뒤에 카드 (창 뒤로 연출이 묻히지 않게 — 검수 지적)
+
+
+## 진화 순간: 금색 "진화!" 띠 + 느린 화면 (문서 14 §2-7)
+func _on_weapon_evolved(weapon_id: String) -> void:
+	_hud.show_banner("진화! %s" % _rack.weapon_of(weapon_id).display_name(), "evolution")
+	context.play_sound("evolution")
+	context.shake("skill")
+	_play_hit_stop(float(GameData.rules("build")["evolution_slow_motion_seconds"]), float(context.juice_rules["slow_motion_scale"]))
+
+
+func _on_hidden_skill_chosen(skill_id: String) -> void:
+	_skill_runner.set_hidden_skill(skill_id)
+	_hud.show_banner("히든 스킬! %s" % GameData.entry("skills", skill_id)["name"], "hidden")
+
+
+## 히든 스킬을 쓰면 컷인(Hud)이 지나가는 동안 화면을 멈춘다
+func _on_hidden_skill_used(_skill_id: String) -> void:
+	context.play_sound("hidden_skill_cutin")
+	_play_hit_stop(float(GameData.rules("build")["hidden_skill_cutin_seconds"]), 0.0)
 
 
 func _on_survivor_damaged(amount: float) -> void:

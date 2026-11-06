@@ -65,7 +65,9 @@ func _timer_color() -> Color:
 func _draw_slots(top: float) -> void:
 	var slot_left := 4.0
 	for weapon: Weapon in _rack.weapons:
-		_draw_slot(String(weapon.info["icon"]), weapon.level, Vector2(slot_left, top))
+		_draw_slot(weapon.icon_name(), weapon.level, Vector2(slot_left, top))
+		if weapon.is_evolved:   # 진화 무기 칸은 금색 테두리 (문서 14 §2-7)
+			draw_rect(Rect2(Vector2(slot_left, top), Vector2.ONE * SLOT_SIZE), Weapon.EVOLVED_COLOR, false, 1.0)
 		slot_left += SLOT_SIZE + 2.0
 	slot_left = size.x - 4.0 - (SLOT_SIZE + 2.0) * _rack.gear_levels.size()
 	for gear_id: String in _rack.gear_levels.keys():
@@ -75,7 +77,7 @@ func _draw_slots(top: float) -> void:
 
 func _draw_slot(icon_name: String, level: int, top_left: Vector2) -> void:
 	if not _icon_cache.has(icon_name):
-		_icon_cache[icon_name] = load("res://art/sprites/icons/%s.png" % icon_name)
+		_icon_cache[icon_name] = PixelUi.icon_texture(icon_name)
 	draw_rect(Rect2(top_left, Vector2.ONE * SLOT_SIZE), Color(0.09, 0.1, 0.14, 0.75))
 	draw_texture(_icon_cache[icon_name], top_left + Vector2.ONE)
 	for pip: int in range(level):
