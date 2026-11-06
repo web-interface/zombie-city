@@ -59,7 +59,7 @@
       "weight": 0.15
     }
   ],
-  "health_growth_per_second": 0.01,
+  "health_growth_per_second": 0.035,
   "max_zombies_on_field": 300,
   "spawn_distance": 200,
   "bosses": [
