@@ -16,7 +16,8 @@ func _ready() -> void:
 	PixelUi.full_rect(self)
 	SoundPlayer.play_single_music("music_title")
 	if SceneRouter.is_autoplay():
-		SceneRouter.start_run(SceneRouter.selected_survivor_id)
+		# 장면이 막 붙는 중(_ready)에는 장면을 바꿀 수 없어서 한 박자 뒤에 (엔진 오류 'Parent node is busy')
+		SceneRouter.start_run.call_deferred(SceneRouter.selected_survivor_id)
 		return
 	_build()
 

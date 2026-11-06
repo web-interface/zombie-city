@@ -10,7 +10,9 @@ const ZONE_WAIT_DISTANCE := 45.0       # 헬기 오기 전엔 착륙 원 바깥 
 const ZONE_ENTER_SECONDS_BEFORE := 12.0 # 헬기 도착 이 초 전부터 원 안으로
 const HEAL_SEEK_HEALTH_RATIO := 0.6    # 체력이 이보다 낮으면 구급함을 먼저 주우러
 const MELEE_KEEP_DISTANCE := 18.0     # 근접 무기는 좀비와 이 정도 거리를 유지해야 닿는다
-const MELEE_BRAVE_HEALTH_RATIO := 0.5 # 체력이 이보다 많을 때만 다가간다
+const MELEE_BRAVE_HEALTH_RATIO := 0.5 # 체력이 이보다 많으면 과감하게, 적으면 조심스럽게 (그래도 싸움은 계속 — 도망만 치면 조각·구급함이 안 생겨 판 내내 못 살아남)
+const ZONE_SLOW_DOWN_DISTANCE := 30.0 # 기다리는 자리에 이만큼 가까워지면 끌림을 줄여 좀비 피하기가 이기게
+const NORMAL_REACTION_SECONDS := 0.15 # 보통은 방향을 0.15초마다 다시 정한다 (매 프레임 완벽하게 피하는 건 사람 같지 않음)
 const CAPTURE_SECONDS: Array[float] = [4.0, 45.0, 95.0, 150.0, 215.0, 268.0, 302.0]
 
 var skill_level: String = "보통"
@@ -43,26 +45,50 @@ func setup(context: RunContext, hud: Hud, level_up: LevelUp, promotion: Promotio
 
 ## 매 프레임 run.gd 가 묻는 이동 방향
 func move_direction() -> Vector2:
-	var survivor := _context.survivor
-	var is_extracting := _extraction.phase in ["revealed", "landed"]
-	var escape_weight := 0.7 if is_extracting else 1.1   # 탈출 때는 좀비를 뚫고라도 착륙 지점으로 (평소엔 피하면서도 조각을 주울 만큼만)
-	var melee_pull := Vector2.ZERO
-	if _is_melee_fighter() and not is_extracting and _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO:
-		escape_weight = 0.5   # 근접 무기는 피하기만 하면 안 닿는다 (검수 지적: 소방관 통계가 실제보다 나쁨)
-		melee_pull = _melee_approach()
-	var wanted := _danger_escape() * escape_weight + _goal_pull() + melee_pull + Vector2.from_angle(_wander_angle) * 0.25
-	if skill_level == "초보":
-		_reaction_timer -= get_physics_process_delta_time()
-		if _reaction_timer <= 0.0:
-			_reaction_timer = 0.5   # 초보는 반응이 0.5초 늦다
-			_reaction_direction = wanted if randf() > 0.1 else Vector2.ZERO
-		return _reaction_direction.limit_length(1.0)
+	if _context.survivor.is_dead:
+		return Vector2.ZERO
+	var wanted := _danger_escape() * _escape_weight() + _goal_pull() + Vector2.from_angle(_wander_angle) * 0.25
+	if _is_melee_fighter() and not _is_heading_to_zone():
+		wanted += _melee_approach() * (1.0 if _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO else 0.6)
 	if skill_level == "고수":
 		wanted += _boss_dodge() * 2.5 + _light_pull() * 0.5
 	_wander_angle += randf_range(-0.3, 0.3)
-	if survivor.is_dead:
-		return Vector2.ZERO
-	return wanted.normalized() if wanted.length() > 0.05 else Vector2.ZERO
+	match skill_level:
+		"초보":
+			return _react_late(wanted, 0.5, 0.1)   # 초보는 0.5초 늦고, 10%는 멍하니 선다
+		"보통":
+			return _react_late(wanted, NORMAL_REACTION_SECONDS, 0.0)
+		_:
+			return wanted.normalized() if wanted.length() > 0.05 else Vector2.ZERO
+
+
+## 좀비 피하기를 얼마나 세게 할지: 착륙 지점으로 뛰어들 땐 뚫고 가고, 근접 무기는 붙어야 닿으니 덜 피한다
+func _escape_weight() -> float:
+	if _is_heading_to_zone():
+		return 0.7
+	if _is_melee_fighter():
+		return 0.5 if _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO else 0.8
+	return 1.1
+
+
+## 착륙 원 안으로 들어가는 중인지 (헬기 도착 직전·착륙 뒤). 원 바깥에서 기다리는 동안은 아님.
+func _is_heading_to_zone() -> bool:
+	if _extraction.phase == "landed":
+		return true
+	if _extraction.phase != "revealed" or skill_level == "초보":
+		return false
+	var arrive_second := float(GameData.rules("extraction")["helicopter_arrive_second"])
+	return _context.elapsed_seconds >= arrive_second - ZONE_ENTER_SECONDS_BEFORE
+
+
+## 사람처럼 늦게 반응: 정해진 간격마다만 방향을 다시 정하고, 그 사이엔 같은 방향으로 간다
+func _react_late(wanted: Vector2, interval_seconds: float, idle_chance: float) -> Vector2:
+	_reaction_timer -= get_physics_process_delta_time()
+	if _reaction_timer <= 0.0:
+		_reaction_timer = interval_seconds
+		var is_idle := randf() < idle_chance or wanted.length() <= 0.05
+		_reaction_direction = Vector2.ZERO if is_idle else wanted.normalized()
+	return _reaction_direction
 
 
 func wants_skill() -> bool:
@@ -131,7 +157,10 @@ func _goal_pull() -> Vector2:
 	var zone_goal := _zone_goal()
 	if zone_goal != Vector2.INF:
 		var to_goal := zone_goal - survivor_position
-		return to_goal.normalized() * (2.5 if to_goal.length() > 8.0 else 0.0)
+		if _is_heading_to_zone():
+			return to_goal.normalized() * (2.5 if to_goal.length() > 8.0 else 0.0)
+		# 원 바깥에서 기다릴 땐 자리에 가까울수록 살살 끌어서, 좀비가 오면 피하는 쪽이 이기게 (2차: 기다리다 떼 속에서 쓰러짐)
+		return to_goal.normalized() * clampf(to_goal.length() / ZONE_SLOW_DOWN_DISTANCE, 0.0, 1.5)
 	var targets := _context.shards.positions()
 	if _context.survivor.health_ratio() < HEAL_SEEK_HEALTH_RATIO and not _context.health_packs.positions().is_empty():
 		targets = _context.health_packs.positions()   # 위험하면 구급함 먼저
@@ -147,13 +176,10 @@ func _goal_pull() -> Vector2:
 
 ## 착륙 지점 쪽 목표: 헬기 오기 직전까진 원 바깥에서 기다리고, 그때부터 원 안으로. 갈 곳이 없으면 INF.
 func _zone_goal() -> Vector2:
-	if _extraction.phase == "landed":
+	if _is_heading_to_zone():
 		return _extraction.zone_position
 	if _extraction.phase != "revealed" or skill_level == "초보":
 		return Vector2.INF
-	var arrive_second := float(GameData.rules("extraction")["helicopter_arrive_second"])
-	if _context.elapsed_seconds >= arrive_second - ZONE_ENTER_SECONDS_BEFORE:
-		return _extraction.zone_position
 	var from_zone := (_context.survivor.position - _extraction.zone_position).normalized()
 	return _extraction.zone_position + from_zone * ZONE_WAIT_DISTANCE
 
