@@ -1,6 +1,6 @@
 ## [파일] scripts/world/survivor.gd
 ## [하는 일] 생존자(플레이어): 이동, 체력, 맞기·회복, 능력치(SurvivorStats), 스킬이 거는 상태(돌진·보호막·마지막 버티기). 그림은 자식 SurvivorAnimator 가 그린다.
-## [쓰는 곳] scenes/run.tscn 의 World/Survivor. run.gd 가 매 프레임 move_step() 을 부르고, 좀비·스킬·시스템이 take_damage()·heal()·start_dash() 를 부른다.
+## [쓰는 곳] scenes/run.tscn 의 World/Survivor. run.gd 가 매 프레임 move_step() 을 부르고, 좀비·스킬·시스템이 take_damage()·heal()·start_dash() 를 부른다. 판 시작 때 은신처·오늘의 도전·감염도 바꾸기(RunModifiers)를 능력치에 얹는다.
 ## [근거 문서] 02 §2 조작, 03 §1 생존자, 11 §4·§6
 class_name Survivor
 extends Node2D
@@ -47,6 +47,7 @@ func setup(new_survivor_id: String) -> void:
 	base_values["move_speed"] = float(info["move_speed"])
 	stats = SurvivorStats.new(base_values)
 	stats.set_source("trait", [info["trait"]])
+	stats.set_source("meta", RunModifiers.survivor_stat_modifiers())   # 은신처 강화 + 오늘의 도전 규칙 (문서 14 §3)
 	health = stats.value("max_health")
 	_last_max_health = health
 	stats.changed.connect(_on_stats_changed)

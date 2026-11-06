@@ -1,0 +1,25 @@
+{
+  "_설명": {
+    "파일": "data/run_goals.json",
+    "하는 일": "판마다 무작위로 3개 뽑는 작은 목표. 조건(conditions)은 판 결과 숫자(run_metrics)로 판 끝에 확인하고, 이루면 scrap 만큼 고철을 더 준다.",
+    "쓰는 곳": "scripts/meta/run_goals.gd 가 판 시작 때 뽑고(SceneRouter.current_run_goals) 판 끝에 확인한다. 결과 화면(scripts/ui/result_details.gd)이 보여 준다.",
+    "근거 문서": "14 §4 판마다 작은 목표 3개"
+  },
+  "goals_per_run": 3,
+  "goals": {
+    "first_night": {"text": "첫째 밤 넘기기", "conditions": [{"key": "nights_survived", "at_least": 1}], "scrap": 25},
+    "second_night": {"text": "둘째 밤 넘기기", "conditions": [{"key": "nights_survived", "at_least": 2}], "scrap": 45},
+    "elite_3": {"text": "정예 3마리 잡기", "conditions": [{"key": "elite_kills", "at_least": 3}], "scrap": 25},
+    "boss_2": {"text": "보스 2마리 잡기", "conditions": [{"key": "boss_kills", "at_least": 2}], "scrap": 20},
+    "kills_700": {"text": "좀비 700마리", "conditions": [{"key": "kills", "at_least": 700}], "scrap": 20},
+    "combo_120": {"text": "연속 처치 120", "conditions": [{"key": "max_combo", "at_least": 120}], "scrap": 20},
+    "level_18": {"text": "레벨 18 찍기", "conditions": [{"key": "level", "at_least": 18}], "scrap": 15},
+    "awaken": {"text": "레벨 20 각성까지", "conditions": [{"key": "level", "at_least": 20}], "scrap": 25},
+    "no_skip_night": {"text": "카드 안 건너뛰고 첫째 밤", "conditions": [{"key": "nights_survived", "at_least": 1}, {"key": "skipped_cards", "at_most": 0}], "scrap": 30},
+    "healthy_night": {"text": "체력 반 넘게 지키며 첫째 밤", "conditions": [{"key": "nights_survived", "at_least": 1}, {"key": "lowest_health_ratio", "at_least": 0.5}], "scrap": 40},
+    "full_rack": {"text": "무기 4칸 채우기", "conditions": [{"key": "weapons_count", "at_least": 4}], "scrap": 15},
+    "evolve_1": {"text": "무기 하나 진화", "conditions": [{"key": "evolutions_count", "at_least": 1}], "scrap": 30},
+    "near_death_2": {"text": "아슬아슬 두 번 살아남기", "conditions": [{"key": "near_death_saves", "at_least": 2}], "scrap": 20},
+    "kinds_6": {"text": "좀비 6종 만나기", "conditions": [{"key": "zombie_kinds_count", "at_least": 6}], "scrap": 15}
+  }
+}

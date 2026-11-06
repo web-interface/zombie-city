@@ -10,12 +10,20 @@ const TABLE_NAMES: Array[String] = [
 	"flavor_texts", "city_decor",
 ]
 
+## 판 밖 성장 표 (저장·은신처·감염도·업적·판 목표 — 문서 14 §3). 판 안 표와 따로 적어 두면 함께 고칠 때 덜 부딪힌다.
+const META_TABLE_NAMES: Array[String] = ["meta_rules", "shelter", "infection", "achievements", "run_goals"]
+
 var _tables: Dictionary = {}
 
 
 func _ready() -> void:
-	for table_name: String in TABLE_NAMES:
+	for table_name: String in TABLE_NAMES + META_TABLE_NAMES:
 		_tables[table_name] = _load_table(table_name)
+
+
+## 이 이름의 표를 읽어 두었나 (도감처럼 아직 없을 수도 있는 표를 오류 없이 확인할 때)
+func has_table(table_name: String) -> bool:
+	return _tables.has(table_name)
 
 
 ## 표 전체 (설명 칸 포함). 규칙 표처럼 항목이 아닌 묶음을 꺼낼 때 쓴다.

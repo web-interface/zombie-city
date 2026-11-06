@@ -1,0 +1,40 @@
+{
+  "_설명": {
+    "파일": "data/infection.json",
+    "하는 일": "감염도 0~10: 단계마다 더해지는 규칙(앞 단계 규칙은 그대로 쌓임), 고철 보너스, 다음 단계가 열리는 조건. 배율 이름은 판 쪽(좀비 세기 계산)이 그대로 곱해 쓴다.",
+    "쓰는 곳": "scripts/meta/infection.gd 가 읽는다 → Infection.multipliers(level), RunModifiers.run_multipliers(). scripts/ui/infection_picker.gd 가 고르기 줄을 만든다.",
+    "근거 문서": "03 §10 감염도, 14 §3 (3분 밤에 맞게 헬기 규칙 바꿈)"
+  },
+  "max_level": 10,
+  "scrap_bonus_per_level": 0.15,
+  "unlock_nights_survived": 2,
+  "_unlock_설명": "고른 감염도로 둘째 밤을 넘기면(버틴 밤 2 이상) 다음 단계가 열림",
+  "default_multipliers": {
+    "zombie_health": 1.0,
+    "zombie_speed": 1.0,
+    "zombie_count": 1.0,
+    "zombie_contact_damage": 1.0,
+    "boss_health": 1.0,
+    "heal": 1.0,
+    "health_pack_chance": 1.0,
+    "reroll_count": 1.0
+  },
+  "default_additions": {
+    "special_zombie_earlier_seconds": 0.0,
+    "helicopter_hold_seconds_add": 0.0
+  },
+  "_배율_설명": "zombie_health 는 보스까지 모든 좀비, boss_health 는 보스에만 한 번 더 곱함. heal 은 모든 회복(구급함·카드·스킬·초당 회복). reroll_count 는 판마다 다시 뽑기 수에 곱함(0 이면 없음). default_additions 는 더하는 값(초)",
+  "levels": [
+    {"text": "좀비 체력 +20%", "multiply": {"zombie_health": 1.2}},
+    {"text": "새 좀비가 20초 일찍 나옴", "add": {"special_zombie_earlier_seconds": 20}},
+    {"text": "구급함이 반만 나옴", "multiply": {"health_pack_chance": 0.5}},
+    {"text": "좀비 속도 +10%", "multiply": {"zombie_speed": 1.1}},
+    {"text": "보스 체력 +40%", "multiply": {"boss_health": 1.4}},
+    {"text": "좀비가 더 세게 묾 +15%", "multiply": {"zombie_contact_damage": 1.15}},
+    {"text": "회복 효과 절반", "multiply": {"heal": 0.5}},
+    {"text": "좀비 수 +25%", "multiply": {"zombie_count": 1.25}},
+    {"text": "다시 뽑기 없음", "multiply": {"reroll_count": 0.0}},
+    {"text": "헬기 버티기 +2초, 모든 좀비 체력 +50%", "multiply": {"zombie_health": 1.5}, "add": {"helicopter_hold_seconds_add": 2}}
+  ],
+  "_levels_설명": "levels[0] = 감염도 1. 감염도 N 은 1~N 규칙을 모두 받음"
+}
