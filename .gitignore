@@ -4,3 +4,4 @@
 *.import.tmp
 # 시험 캡처·통계 결과
 tools/out/
+__pycache__/

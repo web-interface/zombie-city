@@ -275,6 +275,15 @@ def write_readme(made: list[tuple[str, str]]) -> None:
     ]
     lines += [f"| `{name}` | {description} |" for name, description in sorted(made)]
     (OUTPUT / "README.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    icon_lines = [
+        "# art/sprites/icons — 카드·스킬 아이콘 (직접 고치지 않음)",
+        "`tools/build_sprites.py` 가 `art/source/sprites.txt` 의 icon_* 그림으로 만든 10×10 아이콘. 원본을 고치고 도구를 다시 돌린다 (문서 10 §5).",
+        "",
+        "| 파일 | 무엇 |",
+        "|---|---|",
+    ]
+    icon_lines += [f"| `{name.removeprefix('icons/')}` | {description} |" for name, description in sorted(made) if name.startswith("icons/")]
+    (OUTPUT / "icons" / "README.md").write_text("\n".join(icon_lines) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
