@@ -7,7 +7,6 @@ extends Weapon
 
 const DRONE_TEXTURES: Array[Texture2D] = [preload("res://art/sprites/drone_a.png"), preload("res://art/sprites/drone_b.png")]
 const DRONE_HIT_RADIUS := 5.0
-const DRONE_KNOCKBACK := 2.0
 
 var _spin_angle: float = 0.0
 var _spin_time: float = 0.0
@@ -23,7 +22,7 @@ func update(delta: float) -> void:
 		for zombie: Zombie in context.horde.in_radius(drone_position, DRONE_HIT_RADIUS):
 			if zombie.try_take_hit_from(weapon_id, interval):
 				var damage := context.roll_damage(float(stats["damage"]))
-				context.horde.hit(zombie, damage["amount"], {"is_crit": damage["is_crit"], "knockback_from": context.survivor.position, "knockback": DRONE_KNOCKBACK, "source": weapon_id})
+				context.horde.hit(zombie, damage["amount"], {"is_crit": damage["is_crit"], "knockback_from": context.survivor.position, "knockback": float(stats["knockback"]), "source": weapon_id})
 				context.play_sound(String(info["sound"]))
 
 

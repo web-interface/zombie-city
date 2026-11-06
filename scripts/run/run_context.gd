@@ -5,17 +5,13 @@
 class_name RunContext
 extends RefCounted
 
-const POISON_SPREAD_TARGETS := 2
-const POISON_SPREAD_RADIUS := 30.0
-const POISON_SPREAD_DAMAGE_PER_SECOND := 3.0
-const POISON_SPREAD_SECONDS := 4.0
-
 var survivor: Survivor
 var horde: ZombieHorde
 var projectiles: ProjectilePool
 var effects: Effects
 var lighting: Lighting
 var shards: VaccineShardField
+var health_packs: HealthPacks
 var area_effects: AreaEffects
 var props: Props
 var weapon_rack: WeaponRack
@@ -23,6 +19,8 @@ var camera: RunCamera
 ## 빛과 어둠 숫자 (data/run_rules.json lighting)
 var light_rules: Dictionary = {}
 var juice_rules: Dictionary = {}
+## 독 옮기기·보스 기절 배율 등 (data/run_rules.json status_effects)
+var status_rules: Dictionary = {}
 var spawn_distance: float = 200.0
 ## 판이 시작되고 지난 초 (일시정지 시간 제외)
 var elapsed_seconds: float = 0.0
@@ -40,12 +38,12 @@ func roll_damage(base_damage: float) -> Dictionary:
 
 ## 역학조사관 전직: 독으로 쓰러진 좀비 주변 2마리에 독을 옮긴다.
 func spread_poison_from(dead_zombie: Zombie) -> void:
-	var neighbors := horde.in_radius(dead_zombie.position, POISON_SPREAD_RADIUS)
+	var neighbors := horde.in_radius(dead_zombie.position, float(status_rules["poison_spread_radius"]))
 	neighbors.sort_custom(func(first: Zombie, second: Zombie) -> bool:
 		return first.position.distance_to(dead_zombie.position) < second.position.distance_to(dead_zombie.position))
-	var poison_power := POISON_SPREAD_DAMAGE_PER_SECOND * survivor.stats.value("poison_damage_multiplier")
-	for neighbor: Zombie in neighbors.slice(0, POISON_SPREAD_TARGETS):
-		neighbor.apply_poison(poison_power, POISON_SPREAD_SECONDS)
+	var poison_power := float(status_rules["poison_spread_damage_per_second"]) * survivor.stats.value("poison_damage_multiplier")
+	for neighbor: Zombie in neighbors.slice(0, int(status_rules["poison_spread_targets"])):
+		neighbor.apply_poison(poison_power, float(status_rules["poison_spread_seconds"]))
 		effects.burst(neighbor.position, Color("b388ff"), 3)
 
 

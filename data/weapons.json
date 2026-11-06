@@ -22,69 +22,327 @@
     "spin_speed": "드론이 도는 빠르기 (초당 라디안)"
   },
   "pistol": {
-    "name": "권총", "icon": "icon_pistol", "behavior": "projectile", "sound": "pistol_shot",
+    "name": "권총",
+    "icon": "icon_pistol",
+    "behavior": "projectile",
+    "sound": "pistol_shot",
     "description": "가장 가까운 좀비를 쏜다",
     "levels": [
-      { "damage": 10, "interval_seconds": 0.6, "range": 110, "projectile_count": 1, "projectile_speed": 200, "pierce": 0, "spread_degrees": 8 },
-      { "damage": 10, "interval_seconds": 0.6, "range": 110, "projectile_count": 2, "projectile_speed": 200, "pierce": 0, "spread_degrees": 8 },
-      { "damage": 12.5, "interval_seconds": 0.55, "range": 115, "projectile_count": 2, "projectile_speed": 210, "pierce": 0, "spread_degrees": 8 },
-      { "damage": 12.5, "interval_seconds": 0.55, "range": 115, "projectile_count": 3, "projectile_speed": 210, "pierce": 0, "spread_degrees": 10 },
-      { "damage": 16, "interval_seconds": 0.5, "range": 120, "projectile_count": 3, "projectile_speed": 220, "pierce": 1, "spread_degrees": 10 }
+      {
+        "damage": 12,
+        "interval_seconds": 0.6,
+        "range": 110,
+        "projectile_count": 1,
+        "projectile_speed": 200,
+        "pierce": 1,
+        "spread_degrees": 8
+      },
+      {
+        "damage": 12,
+        "interval_seconds": 0.6,
+        "range": 110,
+        "projectile_count": 2,
+        "projectile_speed": 200,
+        "pierce": 1,
+        "spread_degrees": 8
+      },
+      {
+        "damage": 14,
+        "interval_seconds": 0.55,
+        "range": 115,
+        "projectile_count": 2,
+        "projectile_speed": 210,
+        "pierce": 2,
+        "spread_degrees": 8
+      },
+      {
+        "damage": 14,
+        "interval_seconds": 0.55,
+        "range": 115,
+        "projectile_count": 3,
+        "projectile_speed": 210,
+        "pierce": 2,
+        "spread_degrees": 10
+      },
+      {
+        "damage": 17,
+        "interval_seconds": 0.5,
+        "range": 120,
+        "projectile_count": 3,
+        "projectile_speed": 220,
+        "pierce": 3,
+        "spread_degrees": 10
+      }
     ]
   },
   "fire_axe": {
-    "name": "소방 도끼", "icon": "icon_fire_axe", "behavior": "melee_arc", "sound": "axe_swing",
+    "name": "소방 도끼",
+    "icon": "icon_fire_axe",
+    "behavior": "melee_arc",
+    "sound": "axe_swing",
     "description": "바라보는 쪽을 넓게 휘두른다",
     "levels": [
-      { "damage": 18, "interval_seconds": 1.0, "radius": 26, "knockback": 6, "both_sides": false },
-      { "damage": 21.6, "interval_seconds": 1.0, "radius": 29, "knockback": 7, "both_sides": false },
-      { "damage": 26, "interval_seconds": 0.95, "radius": 29, "knockback": 8, "both_sides": false },
-      { "damage": 26, "interval_seconds": 0.9, "radius": 33, "knockback": 9, "both_sides": false },
-      { "damage": 31, "interval_seconds": 0.85, "radius": 33, "knockback": 10, "both_sides": true }
+      {
+        "damage": 14,
+        "interval_seconds": 1.1,
+        "radius": 22,
+        "knockback": 6,
+        "both_sides": false
+      },
+      {
+        "damage": 16.5,
+        "interval_seconds": 1.1,
+        "radius": 24,
+        "knockback": 7,
+        "both_sides": false
+      },
+      {
+        "damage": 19.5,
+        "interval_seconds": 1.05,
+        "radius": 24,
+        "knockback": 8,
+        "both_sides": false
+      },
+      {
+        "damage": 19.5,
+        "interval_seconds": 1.0,
+        "radius": 27,
+        "knockback": 9,
+        "both_sides": false
+      },
+      {
+        "damage": 23,
+        "interval_seconds": 0.95,
+        "radius": 27,
+        "knockback": 10,
+        "both_sides": true
+      }
     ]
   },
   "nail_gun": {
-    "name": "네일건", "icon": "icon_nail_gun", "behavior": "projectile", "sound": "nail_shot",
+    "name": "네일건",
+    "icon": "icon_nail_gun",
+    "behavior": "projectile",
+    "sound": "nail_shot",
     "description": "빠르게 쏘고, 못이 좀비를 뚫는다",
     "levels": [
-      { "damage": 7, "interval_seconds": 0.35, "range": 100, "projectile_count": 1, "projectile_speed": 230, "pierce": 2, "spread_degrees": 0 },
-      { "damage": 7, "interval_seconds": 0.35, "range": 100, "projectile_count": 1, "projectile_speed": 230, "pierce": 3, "spread_degrees": 0 },
-      { "damage": 7.5, "interval_seconds": 0.31, "range": 105, "projectile_count": 1, "projectile_speed": 240, "pierce": 3, "spread_degrees": 0 },
-      { "damage": 7.5, "interval_seconds": 0.31, "range": 105, "projectile_count": 1, "projectile_speed": 240, "pierce": 4, "spread_degrees": 0 },
-      { "damage": 8.5, "interval_seconds": 0.27, "range": 110, "projectile_count": 2, "projectile_speed": 250, "pierce": 4, "spread_degrees": 6 }
+      {
+        "damage": 7,
+        "interval_seconds": 0.35,
+        "range": 100,
+        "projectile_count": 1,
+        "projectile_speed": 230,
+        "pierce": 2,
+        "spread_degrees": 0
+      },
+      {
+        "damage": 7,
+        "interval_seconds": 0.35,
+        "range": 100,
+        "projectile_count": 1,
+        "projectile_speed": 230,
+        "pierce": 3,
+        "spread_degrees": 0
+      },
+      {
+        "damage": 7.5,
+        "interval_seconds": 0.31,
+        "range": 105,
+        "projectile_count": 1,
+        "projectile_speed": 240,
+        "pierce": 3,
+        "spread_degrees": 0
+      },
+      {
+        "damage": 7.5,
+        "interval_seconds": 0.31,
+        "range": 105,
+        "projectile_count": 1,
+        "projectile_speed": 240,
+        "pierce": 4,
+        "spread_degrees": 0
+      },
+      {
+        "damage": 8.5,
+        "interval_seconds": 0.27,
+        "range": 110,
+        "projectile_count": 2,
+        "projectile_speed": 250,
+        "pierce": 4,
+        "spread_degrees": 6
+      }
     ]
   },
   "syringe_gun": {
-    "name": "주사기 총", "icon": "icon_syringe_gun", "behavior": "projectile", "sound": "syringe_shot",
+    "name": "주사기 총",
+    "icon": "icon_syringe_gun",
+    "behavior": "projectile",
+    "sound": "syringe_shot",
     "description": "맞은 좀비에 독이 퍼진다",
     "levels": [
-      { "damage": 5, "interval_seconds": 0.7, "range": 100, "projectile_count": 1, "projectile_speed": 160, "pierce": 0, "spread_degrees": 10, "poison_damage_per_second": 3, "poison_seconds": 4 },
-      { "damage": 5, "interval_seconds": 0.7, "range": 100, "projectile_count": 1, "projectile_speed": 160, "pierce": 0, "spread_degrees": 10, "poison_damage_per_second": 4, "poison_seconds": 4 },
-      { "damage": 5, "interval_seconds": 0.65, "range": 105, "projectile_count": 2, "projectile_speed": 170, "pierce": 0, "spread_degrees": 12, "poison_damage_per_second": 4, "poison_seconds": 4 },
-      { "damage": 5.5, "interval_seconds": 0.65, "range": 105, "projectile_count": 2, "projectile_speed": 170, "pierce": 0, "spread_degrees": 12, "poison_damage_per_second": 5, "poison_seconds": 4.5 },
-      { "damage": 6, "interval_seconds": 0.6, "range": 110, "projectile_count": 3, "projectile_speed": 180, "pierce": 1, "spread_degrees": 14, "poison_damage_per_second": 5, "poison_seconds": 5 }
+      {
+        "damage": 5,
+        "interval_seconds": 0.7,
+        "range": 100,
+        "projectile_count": 1,
+        "projectile_speed": 160,
+        "pierce": 1,
+        "spread_degrees": 10,
+        "poison_damage_per_second": 3,
+        "poison_seconds": 4
+      },
+      {
+        "damage": 5,
+        "interval_seconds": 0.7,
+        "range": 100,
+        "projectile_count": 1,
+        "projectile_speed": 160,
+        "pierce": 1,
+        "spread_degrees": 10,
+        "poison_damage_per_second": 4,
+        "poison_seconds": 4
+      },
+      {
+        "damage": 5,
+        "interval_seconds": 0.65,
+        "range": 105,
+        "projectile_count": 2,
+        "projectile_speed": 170,
+        "pierce": 1,
+        "spread_degrees": 12,
+        "poison_damage_per_second": 4,
+        "poison_seconds": 4
+      },
+      {
+        "damage": 5.5,
+        "interval_seconds": 0.65,
+        "range": 105,
+        "projectile_count": 2,
+        "projectile_speed": 170,
+        "pierce": 2,
+        "spread_degrees": 12,
+        "poison_damage_per_second": 5,
+        "poison_seconds": 4.5
+      },
+      {
+        "damage": 6,
+        "interval_seconds": 0.6,
+        "range": 110,
+        "projectile_count": 3,
+        "projectile_speed": 180,
+        "pierce": 2,
+        "spread_degrees": 14,
+        "poison_damage_per_second": 5,
+        "poison_seconds": 5
+      }
     ]
   },
   "shotgun": {
-    "name": "산탄총", "icon": "icon_shotgun", "behavior": "spread", "sound": "shotgun_shot",
+    "name": "산탄총",
+    "icon": "icon_shotgun",
+    "behavior": "spread",
+    "sound": "shotgun_shot",
     "description": "가까운 좀비에게 부채꼴로 쏟아붓는다",
     "levels": [
-      { "damage": 6, "interval_seconds": 1.1, "range": 60, "projectile_count": 5, "projectile_speed": 230, "pierce": 0, "spread_degrees": 40, "knockback": 3 },
-      { "damage": 6, "interval_seconds": 1.1, "range": 62, "projectile_count": 6, "projectile_speed": 230, "pierce": 0, "spread_degrees": 42, "knockback": 3 },
-      { "damage": 7, "interval_seconds": 1.0, "range": 64, "projectile_count": 6, "projectile_speed": 240, "pierce": 0, "spread_degrees": 42, "knockback": 4 },
-      { "damage": 7, "interval_seconds": 1.0, "range": 66, "projectile_count": 7, "projectile_speed": 240, "pierce": 1, "spread_degrees": 45, "knockback": 4 },
-      { "damage": 8, "interval_seconds": 0.9, "range": 70, "projectile_count": 8, "projectile_speed": 250, "pierce": 1, "spread_degrees": 48, "knockback": 5 }
+      {
+        "damage": 6,
+        "interval_seconds": 1.1,
+        "range": 60,
+        "projectile_count": 5,
+        "projectile_speed": 230,
+        "pierce": 1,
+        "spread_degrees": 40,
+        "knockback": 3
+      },
+      {
+        "damage": 6,
+        "interval_seconds": 1.1,
+        "range": 62,
+        "projectile_count": 6,
+        "projectile_speed": 230,
+        "pierce": 1,
+        "spread_degrees": 42,
+        "knockback": 3
+      },
+      {
+        "damage": 7,
+        "interval_seconds": 1.0,
+        "range": 64,
+        "projectile_count": 6,
+        "projectile_speed": 240,
+        "pierce": 1,
+        "spread_degrees": 42,
+        "knockback": 4
+      },
+      {
+        "damage": 7,
+        "interval_seconds": 1.0,
+        "range": 66,
+        "projectile_count": 7,
+        "projectile_speed": 240,
+        "pierce": 2,
+        "spread_degrees": 45,
+        "knockback": 4
+      },
+      {
+        "damage": 8,
+        "interval_seconds": 0.9,
+        "range": 70,
+        "projectile_count": 8,
+        "projectile_speed": 250,
+        "pierce": 2,
+        "spread_degrees": 48,
+        "knockback": 5
+      }
     ]
   },
   "saw_drone": {
-    "name": "톱날 드론", "icon": "icon_saw_drone", "behavior": "orbit", "sound": "saw_drone_hit",
+    "name": "톱날 드론",
+    "icon": "icon_saw_drone",
+    "behavior": "orbit",
+    "sound": "saw_drone_hit",
     "description": "몸 주위를 도는 톱날 드론",
     "levels": [
-      { "damage": 6, "drone_count": 2, "radius": 24, "hit_interval_seconds": 0.4, "spin_speed": 3.0 },
-      { "damage": 6, "drone_count": 3, "radius": 25, "hit_interval_seconds": 0.4, "spin_speed": 3.2 },
-      { "damage": 7.2, "drone_count": 3, "radius": 26, "hit_interval_seconds": 0.35, "spin_speed": 3.4 },
-      { "damage": 7.2, "drone_count": 4, "radius": 28, "hit_interval_seconds": 0.35, "spin_speed": 3.6 },
-      { "damage": 8.6, "drone_count": 4, "radius": 30, "hit_interval_seconds": 0.3, "spin_speed": 4.0 }
+      {
+        "damage": 6,
+        "drone_count": 2,
+        "radius": 24,
+        "hit_interval_seconds": 0.4,
+        "spin_speed": 3.0,
+        "knockback": 2
+      },
+      {
+        "damage": 6,
+        "drone_count": 3,
+        "radius": 25,
+        "hit_interval_seconds": 0.4,
+        "spin_speed": 3.2,
+        "knockback": 2
+      },
+      {
+        "damage": 7.2,
+        "drone_count": 3,
+        "radius": 26,
+        "hit_interval_seconds": 0.35,
+        "spin_speed": 3.4,
+        "knockback": 2
+      },
+      {
+        "damage": 7.2,
+        "drone_count": 4,
+        "radius": 28,
+        "hit_interval_seconds": 0.35,
+        "spin_speed": 3.6,
+        "knockback": 2
+      },
+      {
+        "damage": 8.6,
+        "drone_count": 4,
+        "radius": 30,
+        "hit_interval_seconds": 0.3,
+        "spin_speed": 4.0,
+        "knockback": 2
+      }
     ]
   }
 }

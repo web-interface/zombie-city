@@ -102,9 +102,9 @@ func _draw_cards() -> Array:
 	return cards
 
 
-## 고를 게 없을 때 나오는 구급상자: 건너뛰기 회복의 2배 (고르는 쪽이 더 이득이게)
+## 고를 게 없을 때 나오는 구급상자 (건너뛰기 회복보다 크게 — 고르는 쪽이 더 이득이게)
 func _heal_card_ratio() -> float:
-	return float(_build_rules["skip_card_heal_ratio"]) * 2.0
+	return float(_build_rules["heal_card_ratio"])
 
 
 func _possible_cards() -> Array:

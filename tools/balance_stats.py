@@ -81,6 +81,7 @@ def fun_table(runs: list[dict]) -> list[str]:
         ("레벨 20 도달 (2차 전직)", f"{mean(level20):.0f}초 ({len(level20)}판)", "약 210초"),
         ("지루한 구간 (20초+)", f"판당 {mean([r['boring_gaps'] for r in runs]):.1f}번", "0~1번"),
         ("아슬아슬 생존", f"판당 {mean([r['near_death_saves'] for r in runs]):.1f}번", "2~4번"),
+        ("가장 낮았던 체력 (탈출한 판)", f"{mean([r.get('lowest_health_ratio', 1.0) for r in runs if r['is_escaped']]):.0%}", "30% 밑으로 한 번은"),
         ("분당 처치 5분째 ÷ 1분째", f"{mean(kill_growth):.1f}배", "4배+"),
         ("4분대 화면 좀비 수 (최대)", f"{mean([r['max_zombies_after_four_minutes'] for r in runs]):.0f}", "120~300"),
         ("보스 처치 시간", f"{mean(boss_seconds):.0f}초 ({len(boss_seconds)}번)", "15~40초"),

@@ -122,7 +122,8 @@ func _run_effect(effect: Dictionary) -> void:
 
 func _stun_around(center: Vector2, radius: float, seconds: float, damage: float) -> void:
 	for zombie: Zombie in _context.horde.in_radius(center, radius):
-		zombie.stun(seconds * (0.4 if zombie.is_boss else 1.0))   # 보스는 짧게만 기절
+		var boss_multiplier := float(_context.status_rules["boss_stun_multiplier"])
+		zombie.stun(seconds * (boss_multiplier if zombie.is_boss else 1.0))   # 보스는 짧게만 기절
 		if damage > 0.0:
 			_context.horde.hit(zombie, _context.roll_damage(damage)["amount"], {"source": "skill"})
 	_context.effects.ring(center, radius, Color("ffffff"), 0.3)

@@ -5,9 +5,6 @@
 class_name ZombieSpawner
 extends Node
 
-## 탈출 버티기(헬기 착륙 지점) 동안 좀비가 이만큼 더 나온다
-const EXTRACTION_SPAWN_MULTIPLIER := 1.6
-
 var _context: RunContext
 var _curve: Dictionary = {}
 var _spawn_budget: float = 0.0
@@ -28,7 +25,7 @@ func start_calm() -> void:
 func update(delta: float) -> void:
 	var elapsed := _context.elapsed_seconds
 	_calm_seconds_left = maxf(_calm_seconds_left - delta, 0.0)
-	var rate := spawn_rate_at(elapsed) * (EXTRACTION_SPAWN_MULTIPLIER if is_extraction_rush else 1.0)
+	var rate := spawn_rate_at(elapsed) * (float(_curve["extraction_spawn_multiplier"]) if is_extraction_rush else 1.0)
 	if _calm_seconds_left > 0.0:
 		rate *= float(_curve["calm_spawn_multiplier"])
 	_spawn_budget += rate * delta
@@ -37,7 +34,7 @@ func update(delta: float) -> void:
 		_spawn_budget -= 1.0
 		room -= 1
 		_spawn_one(elapsed)
-	_spawn_budget = minf(_spawn_budget, 5.0)   # 꽉 찼을 때 쌓인 몫이 한꺼번에 쏟아지지 않게
+	_spawn_budget = minf(_spawn_budget, float(_curve["max_stored_spawns"]))   # 꽉 찼을 때 쌓인 몫이 한꺼번에 쏟아지지 않게
 
 
 ## 구간 안에서 시작값 → 끝값으로 고르게 늘어나는 초당 수
@@ -77,7 +74,8 @@ func _pick_kind(elapsed: float) -> String:
 func _spawn_position() -> Vector2:
 	var survivor := _context.survivor
 	var angle := randf() * TAU
-	if survivor.moving_direction.length() > 0.1 and randf() < 0.35:
-		angle = survivor.moving_direction.angle() + randf_range(-0.8, 0.8)
+	var spread := float(_curve["spawn_ahead_spread_radians"])
+	if survivor.moving_direction.length() > 0.1 and randf() < float(_curve["spawn_ahead_chance"]):
+		angle = survivor.moving_direction.angle() + randf_range(-spread, spread)
 	var spot := survivor.position + Vector2.from_angle(angle) * float(_curve["spawn_distance"])
 	return _context.props.push_out(spot, 6.0)

@@ -5,7 +5,10 @@
 extends Node
 
 const DANGER_RADIUS := 70.0
-const SHARD_SEARCH_RADIUS := 70.0
+const SHARD_SEARCH_RADIUS := 90.0
+const ZONE_WAIT_DISTANCE := 45.0       # 헬기 오기 전엔 착륙 원 바깥 이 거리에서 기다린다 (원 안 좀비 떼에 미리 갇히지 않게)
+const ZONE_ENTER_SECONDS_BEFORE := 12.0 # 헬기 도착 이 초 전부터 원 안으로
+const HEAL_SEEK_HEALTH_RATIO := 0.6    # 체력이 이보다 낮으면 구급함을 먼저 주우러
 const MELEE_KEEP_DISTANCE := 18.0     # 근접 무기는 좀비와 이 정도 거리를 유지해야 닿는다
 const MELEE_BRAVE_HEALTH_RATIO := 0.5 # 체력이 이보다 많을 때만 다가간다
 const CAPTURE_SECONDS: Array[float] = [4.0, 45.0, 95.0, 150.0, 215.0, 268.0, 302.0]
@@ -42,7 +45,7 @@ func setup(context: RunContext, hud: Hud, level_up: LevelUp, promotion: Promotio
 func move_direction() -> Vector2:
 	var survivor := _context.survivor
 	var is_extracting := _extraction.phase in ["revealed", "landed"]
-	var escape_weight := 0.7 if is_extracting else 1.6   # 탈출 때는 좀비를 뚫고라도 착륙 지점으로
+	var escape_weight := 0.7 if is_extracting else 1.1   # 탈출 때는 좀비를 뚫고라도 착륙 지점으로 (평소엔 피하면서도 조각을 주울 만큼만)
 	var melee_pull := Vector2.ZERO
 	if _is_melee_fighter() and not is_extracting and _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO:
 		escape_weight = 0.5   # 근접 무기는 피하기만 하면 안 닿는다 (검수 지적: 소방관 통계가 실제보다 나쁨)
@@ -125,18 +128,34 @@ func _melee_approach() -> Vector2:
 ## 목표: 착륙 지점 → 없으면 가까운 백신 조각
 func _goal_pull() -> Vector2:
 	var survivor_position := _context.survivor.position
-	var is_heading_to_zone := (_extraction.phase == "revealed" and skill_level != "초보") or _extraction.phase == "landed"
-	if is_heading_to_zone:
-		var to_zone := _extraction.zone_position - survivor_position
-		return to_zone.normalized() * (2.5 if to_zone.length() > 8.0 else 0.0)
+	var zone_goal := _zone_goal()
+	if zone_goal != Vector2.INF:
+		var to_goal := zone_goal - survivor_position
+		return to_goal.normalized() * (2.5 if to_goal.length() > 8.0 else 0.0)
+	var targets := _context.shards.positions()
+	if _context.survivor.health_ratio() < HEAL_SEEK_HEALTH_RATIO and not _context.health_packs.positions().is_empty():
+		targets = _context.health_packs.positions()   # 위험하면 구급함 먼저
 	var best := Vector2.ZERO
-	var best_distance := SHARD_SEARCH_RADIUS
-	for shard_position: Vector2 in _context.shards.positions():
+	var best_distance := SHARD_SEARCH_RADIUS * (2.0 if targets != _context.shards.positions() else 1.0)
+	for shard_position: Vector2 in targets:
 		var distance := survivor_position.distance_to(shard_position)
 		if distance < best_distance:
 			best_distance = distance
 			best = shard_position - survivor_position
-	return best.normalized() * 0.7
+	return best.normalized() * 1.0
+
+
+## 착륙 지점 쪽 목표: 헬기 오기 직전까진 원 바깥에서 기다리고, 그때부터 원 안으로. 갈 곳이 없으면 INF.
+func _zone_goal() -> Vector2:
+	if _extraction.phase == "landed":
+		return _extraction.zone_position
+	if _extraction.phase != "revealed" or skill_level == "초보":
+		return Vector2.INF
+	var arrive_second := float(GameData.rules("extraction")["helicopter_arrive_second"])
+	if _context.elapsed_seconds >= arrive_second - ZONE_ENTER_SECONDS_BEFORE:
+		return _extraction.zone_position
+	var from_zone := (_context.survivor.position - _extraction.zone_position).normalized()
+	return _extraction.zone_position + from_zone * ZONE_WAIT_DISTANCE
 
 
 ## 고수: 보스 예고선이 보이면 돌진 방향의 옆으로 비킨다
@@ -182,9 +201,11 @@ func _card_score(card: Dictionary) -> float:
 	var kind := String(card["kind"])
 	var score := {"weapon_upgrade": 5.0, "new_weapon": 4.0, "gear_upgrade": 2.5, "new_gear": 3.0, "heal": 1.0}.get(kind, 0.0) as float
 	if skill_level == "고수":
+		# 고수는 키우던 무기를 집중해서 올리고(진화를 노리는 사람처럼), 피해·체력 장비를 챙긴다
+		var owned := _context.weapon_rack.weapon_of(String(card["id"])) if kind == "weapon_upgrade" else null
+		if owned != null:
+			score += owned.level * 0.6
 		if card["id"] in ["ammo", "vest"]:
-			score += 1.5
-		if kind == "new_weapon" and card["id"] in ["saw_drone", "shotgun"]:
 			score += 1.0
 	return score + randf() * 0.5
 

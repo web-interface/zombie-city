@@ -7,8 +7,6 @@ extends Node2D
 const END_DELAY_SECONDS := 1.6        # 쓰러지거나 탈출한 뒤 결과 화면까지 (연출 보여 줄 시간)
 const DEATH_SLOW_MOTION_SECONDS := 0.9
 const DEATH_SLOW_MOTION_SCALE := 0.3
-const BIG_HIT_DAMAGE := 10.0          # 이보다 큰 한 방이면 흔들림·잠깐 멈춤·아픈 소리 (계속 닿는 작은 피해와 구분)
-const BUSY_HORDE_SIZE := 150          # 좀비가 이보다 많으면 음악이 한 단계 긴장
 
 var context := RunContext.new()
 var _is_over: bool = false
@@ -59,12 +57,14 @@ func _build_context() -> void:
 	context.effects = world.get_node("Effects")
 	context.lighting = world.get_node("Lighting")
 	context.shards = world.get_node("VaccineShards")
+	context.health_packs = world.get_node("HealthPacks")
 	context.area_effects = world.get_node("AreaEffects")
 	context.props = world.get_node("Props")
 	context.weapon_rack = _rack
 	context.camera = $Camera
 	context.light_rules = GameData.rules("lighting")
 	context.juice_rules = GameData.rules("juice")
+	context.status_rules = GameData.rules("status_effects")
 	context.spawn_distance = float(GameData.table("spawn_curve")["spawn_distance"])
 	context.camera.setup(context.juice_rules)
 	context.effects.setup(int(context.juice_rules["max_damage_numbers"]))
@@ -75,6 +75,7 @@ func _build_context() -> void:
 	_rack.setup(context)
 	context.projectiles.setup(context)
 	context.shards.setup(context)
+	context.health_packs.setup(context)
 	context.area_effects.setup(context)
 	world.get_node("Shadows").setup(context)
 
@@ -116,7 +117,8 @@ func _physics_process(delta: float) -> void:
 	_rack.update(delta)                                                               # 5 무기
 	context.projectiles.update(delta)                                                 # 6 투사체
 	context.area_effects.update(delta)
-	context.shards.update(delta)                                                      # 8 조각 줍기
+	context.shards.update(delta)                                                      # 8 조각·구급함 줍기
+	context.health_packs.update(delta)
 	_extraction.update(delta)                                                         # 9 규칙
 	_open_choice_panels_if_due()
 	context.lighting.update(delta)                                                    # 10 빛·그리기
@@ -160,7 +162,7 @@ func _update_view(delta: float) -> void:
 
 func _update_music_danger() -> void:
 	var danger := 0
-	if _boss_director.alive_boss_count() > 0 or _horde.alive_count() > BUSY_HORDE_SIZE:
+	if _boss_director.alive_boss_count() > 0 or _horde.alive_count() > int(GameData.rules("music")["busy_horde_size"]):
 		danger = 1
 	if _survivor.health_ratio() < Survivor.LOW_HEALTH_RATIO or _extraction.phase == "landed":
 		danger = 2
@@ -170,6 +172,7 @@ func _update_music_danger() -> void:
 func _on_zombie_died(zombie: Zombie) -> void:
 	_recorder.note_kill()
 	context.shards.drop(zombie.position, zombie.shard_value)
+	context.health_packs.maybe_drop(zombie.position)
 	context.effects.burst(zombie.position, Color("6f9a52") if randf() < 0.5 else Color("a5c46a"), 5)
 	context.play_sound("zombie_die")
 
@@ -208,7 +211,8 @@ func _play_boss_kill_moment() -> void:
 
 func _on_survivor_damaged(amount: float) -> void:
 	_recorder.note_survivor_damaged(_extraction.phase == "landed")
-	if amount >= BIG_HIT_DAMAGE:
+	# 이보다 큰 한 방이면 흔들림·잠깐 멈춤·아픈 소리 (계속 닿는 작은 피해와 구분)
+	if amount >= float(context.juice_rules["big_hit_damage"]):
 		context.shake("survivor_big_hit")
 		_play_hit_stop(float(context.juice_rules["hit_stop_on_survivor_big_hit_seconds"]), 0.0)
 		context.play_sound("survivor_hurt")

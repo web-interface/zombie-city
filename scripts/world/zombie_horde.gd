@@ -16,7 +16,6 @@ const HIDDEN_ZOMBIE_REVEAL_DISTANCE := 40.0
 ## 어둠 속 기어다니는 좀비도 아주 흐린 윤곽은 남긴다 — 어둠은 분위기, 적은 늘 보이게 (국내 조사, 문서 13)
 const HIDDEN_ZOMBIE_MIN_ALPHA := 0.18
 const HIT_FLASH_SECONDS := 0.06
-const DASH_HIT_INTERVAL_SECONDS := 0.4
 const BASE_WALK_SPEED := 13.0        # 이 빠르기의 좀비가 기본 걸음 박자, 더 빠르면 다리를 더 빨리 놀린다
 ## 독 피해처럼 자주 들어오는 피해는 숫자·소리를 내지 않는다 (매번 새 묶음을 만들지 않게 상수로)
 const QUIET_POISON_HIT := {"source": "poison", "show_number": false}
@@ -26,6 +25,9 @@ var zombies: Array[Zombie] = []
 var _dying: Array[Zombie] = []
 var _grid := SpatialGrid.new(GRID_CELL_SIZE)
 var _nearby_buffer: Array[int] = []      # 근처 찾기 결과를 담는 재사용 그릇 (매번 새로 만들지 않게)
+## 이번 프레임에 생존자를 문 좀비 수 — 한 번에 무는 수를 제한해 둘러싸여도 빠져나갈 틈을 준다 (억울한 죽음 금지)
+var _biters_this_frame: int = 0
+var _bite_limit: int = 3
 var _sprite_pool: Array[Sprite2D] = []
 var _textures: Dictionary = {}       # 그림 이름 → [보통, 하얀 실루엣]
 var _context: RunContext
@@ -45,6 +47,8 @@ func spawn(kind_id: String, at_position: Vector2, health_multiplier: float) -> Z
 func update(delta: float) -> void:
 	_rebuild_grid()
 	var survivor := _context.survivor
+	_biters_this_frame = 0
+	_bite_limit = int(_context.status_rules["max_zombies_hurting_at_once"])
 	for zombie: Zombie in zombies:
 		var poison_damage := zombie.tick_effects(delta)
 		if poison_damage > 0.0:
@@ -126,10 +130,11 @@ func _touch_survivor(zombie: Zombie, survivor: Survivor, delta: float) -> void:
 	if zombie.position.distance_to(survivor.position) > zombie.radius + CONTACT_MARGIN:
 		return
 	if survivor.is_dashing() and survivor.dash_contact_damage > 0.0:
-		if zombie.try_take_hit_from("dash", DASH_HIT_INTERVAL_SECONDS):
+		if zombie.try_take_hit_from("dash", float(_context.status_rules["dash_hit_interval_seconds"])):
 			hit(zombie, survivor.dash_contact_damage, {"knockback_from": survivor.position, "knockback": survivor.dash_knockback, "source": "dash"})
 		return
-	if not zombie.is_stunned():
+	if not zombie.is_stunned() and _biters_this_frame < _bite_limit:
+		_biters_this_frame += 1
 		survivor.take_damage(zombie.contact_damage_per_second * delta, String(zombie.info["name"]))
 
 

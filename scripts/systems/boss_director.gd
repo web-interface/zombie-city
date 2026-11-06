@@ -10,10 +10,6 @@ signal boss_defeated(seconds_to_kill: float)
 
 const WARNING_COLOR := Color("ff3b3b")
 const WARNING_LINE_LENGTH := 160.0
-const SPAWN_DISTANCE := 150.0          # 화면 끝쯤에서 걸어 들어오게
-const FIRST_CHARGE_DELAY := 3.0        # 나타나자마자 돌진하지 않게 (처음 보는 사람도 볼 시간)
-const CHARGE_HIT_MARGIN := 5.0
-const CHARGE_PUSH_DISTANCE := 14.0
 
 var _context: RunContext
 var _schedule: Array = []
@@ -50,9 +46,10 @@ func alive_boss_count() -> int:
 
 func _spawn_boss(plan: Dictionary) -> void:
 	var survivor := _context.survivor
-	var spot := survivor.position + Vector2.from_angle(randf() * TAU) * SPAWN_DISTANCE
+	var spot := survivor.position + Vector2.from_angle(randf() * TAU) * float(GameData.table("spawn_curve")["boss_spawn_distance"])
 	var boss := _context.horde.spawn(String(plan["kind"]), spot, float(plan["health_multiplier"]))
-	boss.boss_state = {"next_charge_in": FIRST_CHARGE_DELAY, "spawned_at": _context.elapsed_seconds}
+	# 나타나자마자 돌진하지 않게 (처음 보는 사람도 볼 시간)
+	boss.boss_state = {"next_charge_in": float(boss.info["charge"]["first_delay_seconds"]), "spawned_at": _context.elapsed_seconds}
 	_bosses.append(boss)
 	boss_appeared.emit(String(plan["banner"]))
 	_context.play_sound("boss_roar")
@@ -99,10 +96,10 @@ func _continue_charge(boss: Zombie, charge: Dictionary, delta: float) -> void:
 	boss.position = _context.props.push_out(boss.position, boss.radius)
 	state["charge_left"] = float(state["charge_left"]) - delta
 	var survivor := _context.survivor
-	if not bool(state["has_hit"]) and boss.position.distance_to(survivor.position) < boss.radius + CHARGE_HIT_MARGIN:
+	if not bool(state["has_hit"]) and boss.position.distance_to(survivor.position) < boss.radius + float(charge["hit_margin"]):
 		state["has_hit"] = true
 		survivor.take_damage(float(charge["hit_damage"]), "%s의 돌진" % boss.info["name"])
-		survivor.position += direction * CHARGE_PUSH_DISTANCE
+		survivor.position += direction * float(charge["push_distance"])
 		_context.shake("survivor_big_hit")
 	if float(state["charge_left"]) <= 0.0:
 		state["is_charging"] = false

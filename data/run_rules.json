@@ -24,7 +24,8 @@
     "max_item_level": 5,
     "cards_per_level_up": 3,
     "rerolls_per_run": 1,
-    "skip_card_heal_ratio": 0.15
+    "skip_card_heal_ratio": 0.15,
+    "heal_card_ratio": 0.3
   },
   "promotion": {
     "first_promotion_level": 10,
@@ -41,9 +42,7 @@
   "city_layout": {
     "block_spacing": 224,
     "road_half_width": 40,
-    "car_chance_percent": 45,
-    "cone_chance_percent": 30,
-    "lamps_per_block": 2
+    "car_chance_percent": 45
   },
   "juice": {
     "trauma_survivor_big_hit": 0.25,
@@ -60,7 +59,8 @@
     "slow_motion_after_boss_kill_seconds": 0.6,
     "slow_motion_scale": 0.3,
     "max_damage_numbers": 20,
-    "damage_number_min_amount": 45
+    "damage_number_min_amount": 45,
+    "big_hit_damage": 10
   },
   "survivor_base_stats": {
     "damage_multiplier": 1.0,
@@ -82,5 +82,25 @@
     "poison_spread": 0,
     "last_stand": 0
   },
-  "_juice_근거": "디자인 분석가 조사(2026-11-07): 흔들림은 충격 값 제곱·최대 3점, 잠깐 멈춤은 보스 처치 150ms+0.6초 30% 느리게, 피해 숫자는 치명타·30 이상·보스만 최대 20개 (문서 13)"
+  "_juice_근거": "디자인 분석가 조사(2026-11-07): 흔들림은 충격 값 제곱·최대 3점, 잠깐 멈춤은 보스 처치 150ms+0.6초 30% 느리게, 피해 숫자는 치명타·30 이상·보스만 최대 20개 (문서 13)",
+  "status_effects": {
+    "poison_spread_targets": 2,
+    "poison_spread_radius": 30,
+    "poison_spread_damage_per_second": 3,
+    "poison_spread_seconds": 4,
+    "poison_cloud_apply_seconds": 2,
+    "boss_stun_multiplier": 0.4,
+    "dash_hit_interval_seconds": 0.4,
+    "max_zombies_hurting_at_once": 3
+  },
+  "health_pack": {
+    "drop_chance": 0.008,
+    "heal_ratio": 0.2,
+    "max_on_field": 6
+  },
+  "_health_pack_근거": "난이도 테스터 1차(2026-11-07): 회복 수단이 없어 '아슬아슬 생존'이 0번 — 좀비가 가끔 편의점 구급함을 떨궈 위기에서 돌아올 길을 만든다",
+  "music": {
+    "busy_horde_size": 150
+  },
+  "_max_zombies_hurting_근거": "총책임관(2026-11-07): 둘러싸이면 1~2초 만에 죽어 '아슬아슬 생존'이 0번 — 한 번에 무는 좀비를 가장 가까운 3마리로 제한해 빠져나갈 틈을 준다 (억울한 죽음 금지, 문서 12 §6)"
 }

@@ -67,22 +67,27 @@
       "at_second": 90,
       "kind": "butcher",
       "health_multiplier": 1.0,
-      "banner": "도살자 등장!"
+      "banner": "[새벽시청] 도살자 출몰. 즉시 대피 바랍니다"
     },
     {
       "at_second": 180,
       "kind": "butcher",
       "health_multiplier": 1.8,
-      "banner": "더 큰 도살자가 온다!"
+      "banner": "[새벽시청] 더 큰 도살자 접근 중"
     },
     {
       "at_second": 240,
       "kind": "butcher",
       "health_multiplier": 2.6,
-      "banner": "마지막 도살자!"
+      "banner": "[새벽시청] 마지막 도살자. 헬기 곧 도착"
     }
   ],
   "calm_after_boss_seconds": 18,
   "calm_spawn_multiplier": 0.4,
-  "_보스_숨돌리기_근거": "보스를 잡은 뒤 18초는 좀비가 40%만 나온다 — 몰아치기와 숨 돌리기의 파도 (L4D AI 감독, 문서 13). 마지막 보스는 4:00 (헬기 버티기와 안 겹치게)"
+  "_보스_숨돌리기_근거": "보스를 잡은 뒤 18초는 좀비가 40%만 나온다 — 몰아치기와 숨 돌리기의 파도 (L4D AI 감독, 문서 13). 마지막 보스는 4:00 (헬기 버티기와 안 겹치게)",
+  "extraction_spawn_multiplier": 1.6,
+  "spawn_ahead_chance": 0.35,
+  "spawn_ahead_spread_radians": 0.8,
+  "max_stored_spawns": 5,
+  "boss_spawn_distance": 150
 }

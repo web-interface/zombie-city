@@ -18,6 +18,8 @@ var near_death_saves: int = 0
 var kills: int = 0
 var promotion_second: float = -1.0
 var took_damage_while_extracting: bool = false
+## 판 동안 가장 낮았던 체력 비율 (위기가 실제로 왔는지 — 난이도 조정용)
+var lowest_health_ratio: float = 1.0
 var _kill_times: Array[float] = []
 var _event_times: Array[float] = [0.0]
 var _is_in_danger: bool = false
@@ -67,6 +69,8 @@ func note_survivor_damaged(is_extracting: bool) -> void:
 ## 매 프레임: 아슬아슬 판정·화면 좀비 수
 func sample(alive_zombies: int) -> void:
 	var ratio := _context.survivor.health_ratio()
+	if not _context.survivor.is_dead:
+		lowest_health_ratio = minf(lowest_health_ratio, ratio)
 	if ratio < NEAR_DEATH_RATIO and not _context.survivor.is_dead:
 		_is_in_danger = true
 	elif _is_in_danger and ratio > RECOVERED_RATIO:
@@ -90,6 +94,7 @@ func build_result(end_reason: String, level: int, branch_name: String) -> Dictio
 		"death_cause": _context.survivor.last_damage_source if end_reason == "died" else "",
 		"level_up_times": level_up_times,
 		"near_death_saves": near_death_saves,
+		"lowest_health_ratio": snappedf(lowest_health_ratio, 0.01),
 		"kills_by_minute": kills_by_minute,
 		"max_zombies_after_four_minutes": max_zombies_after_four_minutes,
 		"boss_kill_seconds": boss_kill_seconds,
