@@ -80,39 +80,39 @@
     "icon": "icon_fire_axe",
     "behavior": "melee_arc",
     "sound": "axe_swing",
-    "description": "바라보는 쪽을 넓게 휘두른다",
+    "description": "가까운 좀비 쪽을 넓게 휘두른다",
     "levels": [
       {
-        "damage": 14,
-        "interval_seconds": 1.1,
+        "damage": 10.5,
+        "interval_seconds": 1.43,
         "radius": 22,
         "knockback": 6,
         "both_sides": false
       },
       {
-        "damage": 16.5,
-        "interval_seconds": 1.1,
+        "damage": 12.5,
+        "interval_seconds": 1.43,
         "radius": 24,
         "knockback": 7,
         "both_sides": false
       },
       {
-        "damage": 19.5,
-        "interval_seconds": 1.05,
+        "damage": 14.5,
+        "interval_seconds": 1.37,
         "radius": 24,
         "knockback": 8,
         "both_sides": false
       },
       {
-        "damage": 19.5,
-        "interval_seconds": 1.0,
+        "damage": 14.5,
+        "interval_seconds": 1.3,
         "radius": 27,
         "knockback": 9,
         "both_sides": false
       },
       {
-        "damage": 23,
-        "interval_seconds": 0.95,
+        "damage": 17,
+        "interval_seconds": 1.23,
         "radius": 27,
         "knockback": 10,
         "both_sides": true
@@ -345,5 +345,6 @@
       }
     ]
   },
-  "_3차_근거": "난이도 테스터 3차(2026-11-07): 네일건 2~5단계를 올림 (피해 7·7.5·7.5·8.5 → 8.5·9.5·9.5·11, 간격 조금 짧게, 4단계부터 못 2개) — 2~4단계 초당 피해가 권총의 절반(20~24 vs 40~76)이었다. 택배기사 탈출률에 효과가 있었는지는 판 수가 적어 확인 못 함 (택배기사가 약한 주된 까닭은 봇이 보스와 너무 멀리 떨어지는 것으로 보임). docs/balance_log.md"
+  "_3차_근거": "난이도 테스터 3차(2026-11-07): 네일건 2~5단계를 올림 (피해 7·7.5·7.5·8.5 → 8.5·9.5·9.5·11, 간격 조금 짧게, 4단계부터 못 2개) — 2~4단계 초당 피해가 권총의 절반(20~24 vs 40~76)이었다. 택배기사 탈출률에 효과가 있었는지는 판 수가 적어 확인 못 함 (택배기사가 약한 주된 까닭은 봇이 보스와 너무 멀리 떨어지는 것으로 보임). docs/balance_log.md",
+  "_4차_근거": "총책임관 4차(2026-11-07 새벽): 도끼가 가장 가까운 좀비 쪽으로 휘두르게 바뀌어(물러서면 헛스윙만 하던 '끼임' 해결) 소방관 보통 봇 8/8 탈출 → 도끼 피해 ×0.75(10.5·12.5·14.5·14.5·17), 휘두르는 간격 ×1.3(1.43·1.43·1.37·1.3·1.23). 밀어내기 절반은 시험만 하고 되돌림(92%로 거의 그대로, 손맛만 줄어서). 결과 소방관 보통 75%(20판) — 다른 셋보다 높지만 별 2개 '튼튼한 입문 캐릭터'로 둠. docs/balance_log.md"
 }

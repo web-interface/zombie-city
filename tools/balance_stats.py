@@ -76,7 +76,7 @@ def fun_table(runs: list[dict]) -> list[str]:
     extracting = [run for run in runs if run["survived_seconds"] >= 300]
     rows = [
         ("레벨 업 간격 (처음 1분)", f"{mean(early_gaps):.1f}초", "8~15초"),
-        ("레벨 업 간격 (2분 뒤)", f"{mean(late_gaps):.1f}초", "20~35초"),
+        ("레벨 업 간격 (2분 뒤)", f"{mean(late_gaps):.1f}초", "10~20초"),
         ("레벨 10 도달 (1차 전직)", f"{mean(level10):.0f}초 ({len(level10)}판)", "약 90초"),
         ("레벨 20 도달 (2차 전직)", f"{mean(level20):.0f}초 ({len(level20)}판)", "약 210초"),
         ("지루한 구간 (20초+)", f"판당 {mean([r['boring_gaps'] for r in runs]):.1f}번", "0~1번"),

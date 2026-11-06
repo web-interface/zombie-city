@@ -12,6 +12,7 @@ const HEAL_SEEK_HEALTH_RATIO := 0.6    # 체력이 이보다 낮으면 구급함
 const MELEE_KEEP_DISTANCE := 18.0     # 근접 무기는 좀비와 이 정도 거리를 유지해야 닿는다
 const MELEE_BRAVE_HEALTH_RATIO := 0.5 # 체력이 이보다 많으면 과감하게, 적으면 조심스럽게 (그래도 싸움은 계속 — 도망만 치면 조각·구급함이 안 생겨 판 내내 못 살아남)
 const ZONE_SLOW_DOWN_DISTANCE := 30.0 # 기다리는 자리에 이만큼 가까워지면 끌림을 줄여 좀비 피하기가 이기게
+const BOSS_ENGAGE_DISTANCE := 75.0    # 원거리 무기는 보스와 이 거리 안을 지킨다 (네일건 사거리 100 보다 안쪽)
 const NORMAL_REACTION_SECONDS := 0.15 # 보통은 방향을 0.15초마다 다시 정한다 (매 프레임 완벽하게 피하는 건 사람 같지 않음)
 const CAPTURE_SECONDS: Array[float] = [4.0, 45.0, 95.0, 150.0, 215.0, 268.0, 302.0]
 
@@ -50,6 +51,8 @@ func move_direction() -> Vector2:
 	var wanted := _danger_escape() * _escape_weight() + _goal_pull() + Vector2.from_angle(_wander_angle) * 0.25
 	if _is_melee_fighter() and not _is_heading_to_zone():
 		wanted += _melee_approach() * (1.0 if _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO else 0.6)
+	elif skill_level != "초보" and not _is_heading_to_zone():
+		wanted += _boss_engage() * 0.7
 	if skill_level == "고수":
 		wanted += _boss_dodge() * 2.5 + _light_pull() * 0.5
 	_wander_angle += randf_range(-0.3, 0.3)
@@ -182,6 +185,17 @@ func _zone_goal() -> Vector2:
 		return Vector2.INF
 	var from_zone := (_context.survivor.position - _extraction.zone_position).normalized()
 	return _extraction.zone_position + from_zone * ZONE_WAIT_DISTANCE
+
+
+## 원거리 무기: 보스가 사거리 밖으로 멀어지면 다시 다가간다 (3차: 빠른 택배기사가 보스를 피해 멀리만 돌아 보스 처치에 51~80초)
+## 돌진 예고 중에는 다가가지 않는다.
+func _boss_engage() -> Vector2:
+	for zombie: Zombie in _context.horde.zombies:
+		if zombie.is_boss and not bool(zombie.boss_state.get("is_warning", false)):
+			var to_boss := zombie.position - _context.survivor.position
+			if to_boss.length() > BOSS_ENGAGE_DISTANCE:
+				return to_boss.normalized()
+	return Vector2.ZERO
 
 
 ## 고수: 보스 예고선이 보이면 돌진 방향의 옆으로 비킨다
