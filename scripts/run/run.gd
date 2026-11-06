@@ -14,7 +14,8 @@ var _combo := KillCombo.new()
 var _time_effects := TimeEffects.new()
 var _night_flow := NightFlow.new()
 var _rewards := RunRewards.new()
-var _autoplay: Node = null
+var _input := RunInput.new()
+var _chatter := SurvivorChatter.new()
 
 @onready var _survivor: Survivor = $World/Survivor
 @onready var _horde: ZombieHorde = $World/ZombieHorde
@@ -54,10 +55,13 @@ func _ready() -> void:
 	_connect_signals()
 	SoundPlayer.start_run_music()
 	_hud.start_first_run_hints(_skill_runner)
+	var autoplay: Node = null
 	if SceneRouter.is_autoplay():
-		_autoplay = preload("res://tools/autoplay.gd").new()
-		add_child(_autoplay)
-		_autoplay.setup(context, _hud, _level_up, _promotion, _skill_runner, _extraction)
+		autoplay = preload("res://tools/autoplay.gd").new()
+		add_child(autoplay)
+		autoplay.setup(context, _hud, _level_up, _promotion, _skill_runner, _extraction)
+	_input.setup(_hud, autoplay)
+	_chatter.setup(context, $World/SpeechBubble, {"boss_director": _boss_director, "promotion": _promotion, "hud": _hud})
 
 
 func _build_context() -> void:
@@ -126,9 +130,9 @@ func _physics_process(delta: float) -> void:
 		return
 	context.elapsed_seconds += delta
 	context.run_seconds += delta
-	_survivor.move_step(delta, _read_move_input())                                   # 1·2 입력 → 생존자
+	_survivor.move_step(delta, _input.move_direction())                               # 1·2 입력 → 생존자
 	_survivor.position = context.props.push_out(_survivor.position, 4.0)
-	if _wants_skill():
+	if _input.wants_skill():
 		_skill_runner.try_use()
 	_skill_runner.update(delta)
 	_spawner.update(delta)                                                            # 3 좀비 나오기·이벤트
@@ -146,26 +150,10 @@ func _physics_process(delta: float) -> void:
 	_open_choice_panels_if_due()
 	context.lighting.update(delta)                                                    # 10 빛·그리기
 	_combo.update(delta)
+	_chatter.update(delta)
 	_update_view(delta)
 	_recorder.sample(_horde.alive_count())
 	_update_music_danger()
-
-
-func _read_move_input() -> Vector2:
-	if _autoplay != null:
-		return _autoplay.move_direction()
-	var keyboard := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var wasd := Vector2(
-		float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
-		float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W)))
-	var keys := (keyboard + wasd).limit_length(1.0)
-	return keys if keys.length() > 0.0 else _hud.joystick_direction()
-
-
-func _wants_skill() -> bool:
-	if _autoplay != null:
-		return _autoplay.wants_skill()
-	return Input.is_key_pressed(KEY_SPACE) or _hud.consume_skill_press()
 
 
 ## 전직 → 보물 상자 → 레벨 업 카드 차례. 헬기 버티기 중이나 보스 공격 중엔 미룬다 (흐름 끊지 않게 — 문서 13).

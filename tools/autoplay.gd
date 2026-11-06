@@ -14,7 +14,7 @@ const MELEE_BRAVE_HEALTH_RATIO := 0.5 # 체력이 이보다 많으면 과감하�
 const ZONE_SLOW_DOWN_DISTANCE := 30.0 # 기다리는 자리에 이만큼 가까워지면 끌림을 줄여 좀비 피하기가 이기게
 const BOSS_ENGAGE_DISTANCE := 75.0    # 원거리 무기는 보스와 이 거리 안을 지킨다 (네일건 사거리 100 보다 안쪽)
 const NORMAL_REACTION_SECONDS := 0.15 # 보통은 방향을 0.15초마다 다시 정한다 (매 프레임 완벽하게 피하는 건 사람 같지 않음)
-const CAPTURE_SECONDS: Array[float] = [4.0, 45.0, 95.0, 150.0, 215.0, 268.0, 302.0]
+const CAPTURE_SECONDS: Array[float] = [4.0, 30.0, 50.0, 75.0, 100.0, 125.0, 150.0, 182.0]   # 한 밤 3분 안 (보스·포위·떼 돌진·착륙)
 
 var skill_level: String = "보통"
 var _context: RunContext
@@ -284,7 +284,7 @@ func _pick_branch_index() -> int:
 func _capture_if_due() -> void:
 	for second: float in CAPTURE_SECONDS:
 		if _context.elapsed_seconds >= second:
-			_capture_once("t%03d" % int(second))
+			_capture_once("n%d_t%03d" % [_context.night_cycle.night, int(second)])
 
 
 func _capture_once(capture_name: String) -> void:

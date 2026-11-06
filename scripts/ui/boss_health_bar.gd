@@ -5,7 +5,8 @@
 class_name BossHealthBar
 extends Control
 
-const TOP := 46.0
+const TOP := 60.0                 # 무기 칸(아래 끝 46) 밑
+const RIGHT_MARGIN := 40.0        # 오른쪽 '멈춤' 버튼을 피함
 const BAR_HEIGHT := 4.0
 const SIDE_MARGIN := 8.0
 const TRAIL_FOLLOW_SPEED := 0.6   # 흰 줄이 따라 내려오는 빠르기 (초당 체력 비율)
@@ -20,7 +21,7 @@ var _time: float = 0.0
 func watch(director: BossDirector) -> void:
 	_director = director
 	set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	offset_bottom = TOP + 16.0
+	offset_bottom = TOP + 10.0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
@@ -45,7 +46,7 @@ func _draw() -> void:
 	if _last_boss == null or _last_boss.is_dead:
 		return
 	var is_raging := bool(_last_boss.boss_state.get("is_raging", false))
-	var width := size.x - SIDE_MARGIN * 2.0
+	var width := size.x - SIDE_MARGIN - RIGHT_MARGIN
 	var name_text := String(_last_boss.info["name"])
 	var others := _director.alive_boss_count() - 1
 	if others > 0:

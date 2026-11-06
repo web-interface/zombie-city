@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3]
+[gd_scene load_steps=26 format=3]
 
 [ext_resource type="Script" path="res://scripts/run/run.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ground.gd" id="2"]
@@ -26,6 +26,7 @@
 [ext_resource type="Script" path="res://scripts/world/hazards.gd" id="24"]
 [ext_resource type="Script" path="res://scripts/systems/horde_events.gd" id="25"]
 [ext_resource type="Script" path="res://scripts/world/pickups.gd" id="26"]
+[ext_resource type="Script" path="res://scripts/world/speech_bubble.gd" id="27"]
 
 [node name="Run" type="Node2D"]
 editor_description = "[파일] scenes/run.tscn
@@ -86,6 +87,9 @@ script = ExtResource("12")
 
 [node name="Lighting" type="Node2D" parent="World"]
 script = ExtResource("13")
+
+[node name="SpeechBubble" type="Node2D" parent="World"]
+script = ExtResource("27")
 
 [node name="Systems" type="Node" parent="."]
 
