@@ -17,6 +17,8 @@ var last_run_result: Dictionary = {}
 var test_options: Dictionary = {}
 ## 자동 플레이로 지금까지 끝낸 판 수
 var finished_test_runs: int = 0
+## 첫 판 안내("끌어서 움직여요")를 이번에 켠 뒤로 이미 봤나 (v0.5 저장이 생기면 저장으로 옮김)
+var has_seen_first_run_hints: bool = false
 
 
 func _ready() -> void:

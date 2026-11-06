@@ -6,6 +6,12 @@ class_name Hud
 extends CanvasLayer
 
 const SKILL_BUTTON_MARGIN := Vector2(8, 16)
+## 첫 판 안내: (보여 줄 때, 사라질 때, 글) — 글 설명 대신 처음 몇 초에 자연스럽게 (문서 02 §12)
+const FIRST_RUN_HINTS: Array[Array] = [
+	[0.6, 4.6, "화면 아무 데나 끌어서 움직여요"],
+	[5.2, 9.2, "공격은 자동! 오른쪽 아래는 스킬"],
+	[10.0, 14.0, "초록 조각을 모으면 강해져요"],
+]
 
 var level_up_panel: LevelUpPanel
 var promotion_panel: PromotionPanel
@@ -16,6 +22,8 @@ var _banner: Banner
 var _pause_menu: PauseMenu
 var _arrow: ExtractionArrow
 var _run_seconds: float = 300.0
+var _hint_label: Label
+var _hint_time: float = -1.0
 
 
 func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: Promotion, skill_runner: SkillRunner, extraction: Extraction) -> void:
@@ -55,6 +63,35 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	root.add_child(promotion_panel)
 	promotion_panel.setup(promotion)
 	promotion_panel.closed.connect(_on_choice_closed)
+
+
+## 이번에 켠 뒤 첫 판이면 처음 몇 초 동안 조작 안내를 차례로 보여 준다.
+func start_first_run_hints(_skill_runner: SkillRunner) -> void:
+	if SceneRouter.has_seen_first_run_hints or SceneRouter.is_autoplay():
+		return
+	SceneRouter.has_seen_first_run_hints = true
+	_hint_label = PixelUi.label("", PixelUi.INK)
+	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hint_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	_hint_label.offset_top = -76.0
+	_hint_label.offset_bottom = -60.0
+	get_child(0).add_child(_hint_label)
+	_hint_time = 0.0
+
+
+func _process(delta: float) -> void:
+	if _hint_time < 0.0 or get_tree().paused:
+		return
+	_hint_time += delta
+	var shown := ""
+	for hint: Array in FIRST_RUN_HINTS:
+		if _hint_time >= float(hint[0]) and _hint_time < float(hint[1]):
+			shown = String(hint[2])
+	_hint_label.text = shown
+	_hint_label.modulate.a = 0.6 + 0.4 * absf(sin(_hint_time * 3.0))
+	if _hint_time > float(FIRST_RUN_HINTS.back()[1]):
+		_hint_label.queue_free()
+		_hint_time = -1.0
 
 
 func joystick_direction() -> Vector2:

@@ -5,11 +5,16 @@
 class_name RunCamera
 extends Camera2D
 
+## 움직이는 쪽을 이만큼 더 보여 준다 (세로 화면이라 옆·앞이 좁아서 — 국내 조사)
+const LOOK_AHEAD_DISTANCE := 14.0
+const LOOK_AHEAD_FOLLOW_SPEED := 2.5
+
 ## 0 이면 흔들림 끔 (설정)
 var shake_strength_multiplier: float = 1.0
 var _trauma: float = 0.0
 var _decay_per_second: float = 1.5
 var _max_shake_pixels: float = 3.0
+var _look_ahead: Vector2 = Vector2.ZERO
 
 
 func setup(juice_rules: Dictionary) -> void:
@@ -22,11 +27,13 @@ func add_trauma(amount: float) -> void:
 	_trauma = clampf(_trauma + amount * shake_strength_multiplier, 0.0, 1.0)
 
 
-func follow(target_position: Vector2, delta: float) -> void:
+## moving_direction 쪽으로 화면을 조금 앞서 보여 준다 (천천히 따라가서 어지럽지 않게).
+func follow(target_position: Vector2, delta: float, moving_direction: Vector2) -> void:
+	_look_ahead = _look_ahead.lerp(moving_direction * LOOK_AHEAD_DISTANCE, minf(1.0, LOOK_AHEAD_FOLLOW_SPEED * delta))
 	_trauma = maxf(_trauma - _decay_per_second * delta, 0.0)
 	var strength := _trauma * _trauma * _max_shake_pixels
 	var shake_offset := Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * strength
-	global_position = (target_position + shake_offset).round()
+	global_position = (target_position + _look_ahead + shake_offset).round()
 
 
 func view_size() -> Vector2:

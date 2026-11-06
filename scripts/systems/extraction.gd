@@ -105,6 +105,11 @@ func _draw_helicopter() -> void:
 	var descent := clampf((_context.elapsed_seconds - _landed_at) / DESCENT_SECONDS, 0.0, 1.0)
 	var height := lerpf(60.0, 18.0, descent)
 	var body_position := zone_position + Vector2(-12, -height - 5)
+	# 서치라이트: 헬기에서 바닥으로 비추는 빛이 착륙 원 위를 천천히 훑는다
+	var spot := zone_position + Vector2(cos(_time * 1.3) * 12.0, sin(_time * 0.9) * 7.0)
+	var lamp := body_position + Vector2(9, 7)
+	draw_colored_polygon(PackedVector2Array([lamp, spot + Vector2(-11, 2), spot + Vector2(11, 2)]), Color(1.0, 0.97, 0.8, 0.13))
+	draw_circle(spot, 9.0, Color(1.0, 0.97, 0.8, 0.12))
 	draw_texture(HELICOPTER_TEXTURE, body_position.round())
 	var rotor_center := body_position + Vector2(8, 3)
 	var rotor_angle := _time * 30.0

@@ -6,6 +6,8 @@ extends Node2D
 
 const END_DELAY_SECONDS := 1.6        # 쓰러지거나 탈출한 뒤 결과 화면까지 (연출 보여 줄 시간)
 const DANGER_HEALTH_RATIO := 0.35
+const DEATH_SLOW_MOTION_SECONDS := 0.9
+const DEATH_SLOW_MOTION_SCALE := 0.3
 
 var context := RunContext.new()
 var _is_over: bool = false
@@ -41,6 +43,7 @@ func _ready() -> void:
 	_hud.setup(context, _rack, _level_up, _promotion, _skill_runner, _extraction)
 	_connect_signals()
 	SoundPlayer.start_run_music()
+	_hud.start_first_run_hints(_skill_runner)
 	if SceneRouter.is_autoplay():
 		_autoplay = preload("res://tools/autoplay.gd").new()
 		add_child(_autoplay)
@@ -71,6 +74,7 @@ func _build_context() -> void:
 	context.projectiles.setup(context)
 	context.shards.setup(context)
 	context.area_effects.setup(context)
+	world.get_node("Shadows").setup(context)
 
 
 func _connect_signals() -> void:
@@ -94,7 +98,7 @@ func _connect_signals() -> void:
 func _physics_process(delta: float) -> void:
 	if _is_over:
 		_survivor.move_step(delta, Vector2.ZERO)
-		context.camera.follow(_survivor.position, delta)
+		context.camera.follow(_survivor.position, delta, Vector2.ZERO)
 		return
 	context.elapsed_seconds += delta
 	_survivor.move_step(delta, _read_move_input())                                   # 1·2 입력 → 생존자
@@ -155,7 +159,7 @@ func resume_after_choice() -> void:
 
 
 func _update_view(delta: float) -> void:
-	context.camera.follow(_survivor.position, delta)
+	context.camera.follow(_survivor.position, delta, _survivor.moving_direction)
 	var view_size := context.camera.view_size()
 	$World/Ground.update(context.camera.global_position, view_size)
 	context.props.update(context.camera.global_position)
@@ -223,6 +227,7 @@ func _on_survivor_damaged(amount: float) -> void:
 func _on_survivor_died() -> void:
 	_hud.show_banner("물렸어요…", "alert")
 	context.play_sound("game_over")
+	_play_hit_stop(DEATH_SLOW_MOTION_SECONDS, DEATH_SLOW_MOTION_SCALE)   # 쓰러지는 순간을 느리게 보여 준다
 	_end_run(false)
 
 
