@@ -1,6 +1,6 @@
 """
 [파일] tools/export_web.py
-[하는 일] 게임을 웹(브라우저)용으로 내보낸다. Godot 를 화면 없이 띄워 export_presets.cfg 의 'Web' 설정으로 index.html·.wasm·.pck 를 만들고, web/ 폴더의 파일(링크 미리보기 그림 og.png, 폰 소리 켜기 sound_unlock.js)과 GitHub Pages 용 .nojekyll 을 옆에 둔다. 만들어진 파일이 빠졌거나 Godot 가 오류를 내면 종료 코드 1.
+[하는 일] 게임을 웹(브라우저)용으로 내보낸다. Godot 를 화면 없이 띄워 export_presets.cfg 의 'Web' 설정으로 index.html·.wasm·.pck 를 만들고, web/ 폴더의 파일(링크 미리보기 그림 og.png, 폰 소리 켜기 sound_unlock.js, 카톡에서 기본 브라우저로 열기 kakao_open.js)과 GitHub Pages 용 .nojekyll 을 옆에 둔다. 만들어진 파일이 빠졌거나 Godot 가 오류를 내면 종료 코드 1.
 [쓰는 곳] 웹에 새 판을 올릴 때 `py -3 tools/export_web.py` → 나온 폴더(../survivor-web, gh-pages 가지)를 커밋·push (문서 07 내보내기). 기본 출력 폴더는 인자로 바꿀 수 있다.
 [근거 문서] 07 내보내기, 08 로드맵 지금 상황
 """
@@ -17,8 +17,8 @@ PROJECT = Path(__file__).resolve().parent.parent
 GODOT = Path(r"C:\Users\kbs\Godot\Godot_v4.7.2-stable_win64_console.exe")
 DEFAULT_OUTPUT = PROJECT.parent / "survivor-web"
 PRESET_NAME = "Web"
-EXPECTED_FILES = ["index.html", "index.js", "index.wasm", "index.pck", "og.png", "sound_unlock.js"]
-WEB_FILES_NOT_COPIED = {"README.md", ".gdignore"}   # 설명·Godot 표시 파일은 웹에 안 올림
+EXPECTED_FILES = ["index.html", "index.js", "index.wasm", "index.pck", "og.png", "sound_unlock.js", "kakao_open.js"]
+WEB_FILES_NOT_COPIED = {"README.md", ".gdignore", "shell.html"}   # 설명·Godot 표시·틀(index.html 로 바뀌어 나감) 파일은 따로 안 올림
 
 
 def main() -> int:
