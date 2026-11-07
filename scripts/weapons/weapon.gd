@@ -141,7 +141,12 @@ func stun_zombie(zombie: Zombie, seconds: float) -> void:
 func play_attack_sound() -> void:
 	_attack_count += 1
 	if _attack_count % maxi(1, int(info.get("sound_every_attacks", 1))) == 0:
-		context.play_sound(String(info["sound"]), EVOLVED_PITCH_OFFSET if is_evolved else 0.0)
+		context.play_sound(String(info["sound"]), sound_pitch())
+
+
+## 소리 높낮이: 같은 소리를 다른 무기에 다시 쓸 때 data 의 sound_pitch 로 차이를 두고, 진화하면 더 낮게
+func sound_pitch() -> float:
+	return float(info.get("sound_pitch", 0.0)) + (EVOLVED_PITCH_OFFSET if is_evolved else 0.0)
 
 
 ## 큰 공격의 화면 흔들림 (data/weapons.json shake_trauma — 무기마다)

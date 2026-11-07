@@ -24,7 +24,15 @@
     "disinfectant": "복도 소독 시간입니다",
     "defibrillator": "물러나세요, 쇼크!",
     "scalpel": "손이 기억하는 각도",
-    "molotov": "빈 소주병 재활용"
+    "molotov": "빈 소주병 재활용",
+    "baseball_bat": "동네 야구단 4번 배트",
+    "pitching_machine": "타격 연습장에서 뜯어 옴",
+    "ball_bucket": "연습구 한 바구니",
+    "stadium_light": "야간 경기는 이 맛",
+    "crossbow": "멧돼지 잡던 그것",
+    "bear_trap": "산에서 쓰던 그대로",
+    "hunting_dog": "이름은 복실이",
+    "throwing_knives": "손에 익은 무게"
   },
   "gear": {
     "vest": "택배 테이프로 한 겹 더",
@@ -42,7 +50,9 @@
     "radio": "아직 지지직거림",
     "turnout_gear": "땀 냄새는 덤",
     "delivery_bag": "보온 보냉 겸용",
-    "stethoscope": "심장 소리가 들려"
+    "stethoscope": "심장 소리가 들려",
+    "batting_gloves": "땀에 전 손목 밴드까지",
+    "camo_cloak": "풀잎을 꽂아 둠"
   },
   "heal": "편의점 구급함에서",
   "evolution": "둘이 합쳐지면…",
@@ -50,6 +60,8 @@
     "hidden_airstrike": "\"좌표 불러 줄게요\"",
     "hidden_backdraft": "문 열지 마세요",
     "hidden_express": "오늘 도착 보장",
-    "hidden_miracle": "아직 안 끝났어요"
+    "hidden_miracle": "아직 안 끝났어요",
+    "hidden_grand_slam": "9회 말 투아웃 만루",
+    "hidden_pack_hunt": "다들 물어!"
   }
 }

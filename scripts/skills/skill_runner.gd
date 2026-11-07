@@ -138,7 +138,7 @@ func _run_effect(effect: Dictionary) -> void:
 			_context.area_effects.add_poison_cloud(center, float(effect["radius"]), float(effect["seconds"]), float(effect["damage_per_second"]))
 		"collect_all_shards":
 			_context.shards.collect_all()
-		"airstrike", "backdraft", "express", "miracle":
+		"airstrike", "backdraft", "express", "miracle", "grand_slam", "pack_hunt":
 			_hidden_effects.start(effect)
 		_:
 			push_error("data/skills.json: 모르는 효과 조각 '%s'" % effect["type"])
@@ -176,8 +176,8 @@ func _push_cone(effect: Dictionary) -> void:
 			_context.horde.hit(zombie, float(effect["damage"]), {"source": "skill", "show_number": false})
 	for index: int in range(14):
 		var spray := survivor.facing.rotated(randf_range(-half_angle, half_angle)) * randf_range(10.0, float(effect["range"]))
-		_context.effects.burst(survivor.position + spray, Color("e9ecef"), 1, 20.0)
-	_context.play_sound("skill_extinguisher")
+		_context.effects.burst(survivor.position + spray, Color(String(effect.get("color", "e9ecef"))), 1, 20.0)
+	_context.play_sound(String(effect.get("sound", "skill_extinguisher")))   # 홈런은 배트 소리·하얀 알갱이
 
 
 ## 바라보는 방향으로 화면 끝까지 꿰뚫는 한 발. 가는 길의 좀비를 모두 맞힌다.

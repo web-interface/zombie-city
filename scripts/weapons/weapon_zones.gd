@@ -1,7 +1,7 @@
 ## [파일] scripts/weapons/weapon_zones.gd
-## [하는 일] 무기가 바닥에 남기는 장판: 불(화염병·불도끼·백드래프트)·연기 구름(최루탄 — 느려짐, 진화하면 기절)·조명탄(불 + 빛 기둥, 그 자리를 밝혀 좀비가 약해짐). 0.25초마다 안의 좀비에게 피해를 주고, 주황 장판 + 떠오르는 불씨 / 뭉게 구름으로 그린다.
-## [쓰는 곳] scripts/weapons/weapon_rack.gd 가 자식으로 만들고 매 프레임 update() 를 부른다. 던지는 무기(lob_area_weapon.gd)·도끼 진화(melee_arc_weapon.gd)·히든 스킬이 add_zone() 을 부른다. 전직 스킬 장판은 따로 scripts/world/area_effects.gd.
-## [근거 문서] 14 §2-2·§2-7 (불 = 주황 장판 + 불씨), 03 §2 화염병·조명탄
+## [하는 일] 무기가 바닥에 남기는 장판: 불(화염병·불도끼·백드래프트)·연기 구름(최루탄 — 느려짐, 진화하면 기절)·조명탄(불 + 빛 기둥, 그 자리를 밝혀 좀비가 약해짐)·빛(구장 조명 — 하얀 빛 기둥, 빛 안 좀비는 느리고 더 아픔), 그리고 곰 덫(BearTraps). 0.25초마다 안의 좀비에게 피해를 주고, 주황 장판 + 떠오르는 불씨 / 뭉게 구름으로 그린다.
+## [쓰는 곳] scripts/weapons/weapon_rack.gd 가 자식으로 만들고 매 프레임 update() 를 부른다. 던지는 무기(lob_area_weapon.gd)·도끼 진화(melee_arc_weapon.gd)·히든 스킬이 add_zone()·add_trap() 을 부른다. 전직 스킬 장판은 따로 scripts/world/area_effects.gd.
+## [근거 문서] 14 §2-2·§2-7 (불 = 주황 장판 + 불씨)·§3-1 (구장 조명·곰 덫), 03 §2 화염병·조명탄
 class_name WeaponZones
 extends Node2D
 
@@ -9,11 +9,11 @@ const DAMAGE_TICK_SECONDS := 0.25
 const MAX_ZONES := 24                  # 장판이 이보다 많으면 가장 오래된 것부터 지운다 (성능)
 const GROUND_LAYER := -1               # 좀비 발밑에 깔리게
 const EMBERS_PER_SECOND := 10.0        # 장판 하나가 내는 불씨·연기 알갱이 수
-const FLARE_PILLAR_HEIGHT := 44.0
 const FLARE_LIGHT_RADIUS_RATIO := 1.5  # 조명탄 빛은 장판보다 넓게
 const PUFF_COUNT := 5
 const FLAME_ALPHA := 0.7               # 불꽃 점 — 좀비가 가려지지 않을 만큼만 (문서 13 가독성)
 const FLAMES_PER_RADIUS := 0.9
+const LIGHT_SPARKLE_RATIO := 0.3
 const FIRE_FILL_ALPHA := 0.12          # 불바다처럼 여러 장판이 겹쳐도 좀비가 비쳐 보이게
 const CLOUD_FILL_ALPHA := 0.07
 const CLOUD_PUFF_ALPHA := 0.1
@@ -23,13 +23,17 @@ const LOOKS := {
 	"fire": {"ground": Color("ff7a2a"), "flames": [Color("ffe08a"), Color("ff9a3c"), Color("ff5a2a")]},
 	"flare": {"ground": Color("ff4d6d"), "flames": [Color("ffd0d8"), Color("ff7a90"), Color("ff4d6d")]},
 	"gas": {"ground": Color("9fb39a"), "flames": [Color("c9d6c3"), Color("9fb39a"), Color("7d8f78")]},
+	"light": {"ground": Color("fff2b0"), "flames": [Color("ffffff"), Color("fffbe0"), Color("ffe9a0")]},
 }
+## 빛 기둥이 서는 장판 종류 → 기둥 높이 (구장 조명은 더 높게)
+const PILLAR_HEIGHTS := {"flare": 44.0, "light": 64.0}
 
 var _zones: Array[Dictionary] = []
 var _context: RunContext
 var _visuals: WeaponVisuals
 var _tick_timer: float = 0.0
 var _time: float = 0.0
+var _traps: BearTraps
 
 
 func setup(context: RunContext, visuals: WeaponVisuals) -> void:
@@ -37,6 +41,7 @@ func setup(context: RunContext, visuals: WeaponVisuals) -> void:
 	_visuals = visuals
 	z_as_relative = false
 	z_index = GROUND_LAYER
+	_traps = BearTraps.new(context, visuals)
 
 
 ## kind: "fire" · "gas" · "flare". stun_seconds 가 있으면 깔리는 순간 안의 좀비를 기절시킨다 (진압 작전).
@@ -51,11 +56,19 @@ func add_zone(kind: String, center: Vector2, radius: float, seconds: float, dama
 			zombie.stun(stun_seconds * (boss_multiplier if zombie.is_boss else 1.0))
 	if kind == "flare":
 		_context.lighting.add_temporary_light(center, radius * FLARE_LIGHT_RADIUS_RATIO, seconds)
+	elif kind == "light":   # 구장 조명: 장판 자체가 빛 — 빛 안 좀비는 느리고 더 아프다 (빛과 어둠 규칙)
+		_context.lighting.add_temporary_light(center, radius, seconds)
+
+
+## 곰 덫 놓기 (밟으면 닫힘 — BearTraps)
+func add_trap(center: Vector2, trigger_radius: float, seconds: float, damage: float, bind_seconds: float, blast_radius: float, trigger_sound: String, is_evolved: bool) -> void:
+	_traps.add(center, trigger_radius, seconds, damage, bind_seconds, blast_radius, trigger_sound, is_evolved)
 
 
 ## 판이 새로 시작될 때(다음 밤 등) 장판을 비운다
 func clear() -> void:
 	_zones.clear()
+	_traps.clear()
 
 
 func update(delta: float) -> void:
@@ -74,6 +87,7 @@ func update(delta: float) -> void:
 			_zones[write_index] = zone
 			write_index += 1
 	_zones.resize(write_index)
+	_traps.update(delta)
 	queue_redraw()
 
 
@@ -101,6 +115,7 @@ func _spawn_embers(zone: Dictionary, delta: float) -> void:
 
 
 func _draw() -> void:
+	_traps.draw_on(self, _time)
 	for zone: Dictionary in _zones:
 		var fade := clampf(float(zone["time_left"]) * 2.0, 0.0, 1.0)
 		if zone["kind"] == "gas":
@@ -118,7 +133,8 @@ func _draw_fire(zone: Dictionary, fade: float) -> void:
 	var flicker := 0.85 + 0.15 * sin(_time * 14.0 + center.x)
 	draw_circle(center, radius, Color(look["ground"], FIRE_FILL_ALPHA * fade))
 	draw_circle(center, radius * 0.62, Color(flames[1], FIRE_FILL_ALPHA * fade * flicker))   # 가운데가 더 밝게 타오름
-	for index: int in range(int(radius * FLAMES_PER_RADIUS)):
+	var flame_ratio := LIGHT_SPARKLE_RATIO if zone["kind"] == "light" else 1.0   # 빛 장판은 반짝임만 조금 (하얀 점이 너무 많으면 좀비가 묻힘)
+	for index: int in range(int(radius * FLAMES_PER_RADIUS * flame_ratio)):
 		var point := center + Vector2.from_angle(randf() * TAU) * sqrt(randf()) * radius
 		var flame_height := 3.0 if index % 5 == 0 else 2.0
 		draw_rect(Rect2(point.round(), Vector2(1, flame_height)), Color(flames[index % flames.size()], FLAME_ALPHA * fade))
@@ -127,16 +143,16 @@ func _draw_fire(zone: Dictionary, fade: float) -> void:
 	for index: int in range(dots):
 		if (index + int(_time * 8.0)) % 3 != 0:
 			draw_rect(Rect2((center + Vector2.from_angle(TAU * index / dots) * radius).round(), Vector2.ONE), Color(edge_color, 0.6 * fade))
-	if zone["kind"] == "flare":
-		_draw_flare_pillar(center, fade)
+	if PILLAR_HEIGHTS.has(zone["kind"]):
+		_draw_pillar(center, fade, look, float(PILLAR_HEIGHTS[zone["kind"]]))
 
 
-## 조명탄 빛 기둥: 바닥에서 위로 뻗는 분홍빛 줄 + 꼭대기 반짝임
-func _draw_flare_pillar(center: Vector2, fade: float) -> void:
+## 빛 기둥(조명탄 분홍·구장 조명 하양): 바닥에서 위로 뻗는 줄 + 꼭대기 반짝임
+func _draw_pillar(center: Vector2, fade: float, look: Dictionary, height: float) -> void:
 	var flicker := 0.7 + 0.3 * sin(_time * 18.0)
-	draw_rect(Rect2(center + Vector2(-1.0, -FLARE_PILLAR_HEIGHT), Vector2(3.0, FLARE_PILLAR_HEIGHT)), Color(LOOKS["flare"]["flames"][1], 0.35 * fade * flicker))
-	draw_rect(Rect2(center + Vector2(0.0, -FLARE_PILLAR_HEIGHT), Vector2(1.0, FLARE_PILLAR_HEIGHT)), Color(LOOKS["flare"]["flames"][0], 0.7 * fade * flicker))
-	draw_rect(Rect2(center + Vector2(-1.0, -FLARE_PILLAR_HEIGHT - 2.0), Vector2(3.0, 3.0)), Color(WeaponVisuals.WHITE, fade * flicker))
+	draw_rect(Rect2(center + Vector2(-1.0, -height), Vector2(3.0, height)), Color(look["flames"][1], 0.35 * fade * flicker))
+	draw_rect(Rect2(center + Vector2(0.0, -height), Vector2(1.0, height)), Color(look["flames"][0], 0.7 * fade * flicker))
+	draw_rect(Rect2(center + Vector2(-1.0, -height - 2.0), Vector2(3.0, 3.0)), Color(WeaponVisuals.WHITE, fade * flicker))
 
 
 ## 연기 구름: 천천히 도는 뭉게 덩어리 몇 개. 좀비가 비쳐 보이게 옅게 (가독성 — 문서 13), 진화하면 가장자리만 금색 점선.
