@@ -1,19 +1,18 @@
 ## [파일] scripts/ui/night_clear_panel.gd
-## [하는 일] 헬기를 탄 뒤 뜨는 '밤 생존' 창: "첫째 밤 생존!", 이번 밤 처치·레벨·최대 연속, 보상(체력 절반 회복 + 카드 한 장 더), 다음 밤 경고("좀비가 더 세고 많아져요"), 큰 [둘째 밤으로] 버튼. 누르면 next_requested 를 보내고 닫힌다.
+## [하는 일] 헬기를 탄 뒤 뜨는 '밤 생존' 창: "첫째 밤 생존!", 이번 밤 처치·레벨·최대 연속, 보상(체력 절반 회복 + 카드 한 장 더), 다음 밤 경고("좀비가 더 세고 많아져요"), 큰 [둘째 밤으로] 버튼. 누르면 next_requested 를 보내고 닫힌다. 헬기 버티던 손가락이 그대로 눌러 넘어가지 않게 버튼은 엄지 자리(아래 35%) 밖 위쪽에, 뜬 뒤 0.6초는 흐리게 막는다(TapGuard). 스페이스·엔터는 창이 뜬 뒤 새로 누른 것만.
 ## [쓰는 곳] scripts/ui/hud.gd 가 만들고 open() 으로 연다. run.gd 가 next_requested 를 받아 다음 밤을 시작한다. 자동 플레이 봇은 hud.continue_night() 로 누른다.
-## [근거 문서] 14 §1-1 밤 이어가기·§4 중독 설계(멈출 틈 없이 '다음 밤?'), 05 화면 목록
+## [근거 문서] 15 §8 잘못 눌림, 14 §1-1 밤 이어가기·§4 중독 설계(멈출 틈 없이 '다음 밤?'), 05 화면 목록
 class_name NightClearPanel
 extends Control
 
 signal next_requested
 
-const INPUT_GUARD_MILLISECONDS := 400.0   # 헬기 버티던 손가락이 그대로 눌러 넘어가지 않게
 const TITLE_BOUNCE_SPEED := 5.0      # 제목 반짝임 빠르기
 
 var _title: Label
 var _stats_box: VBoxContainer
 var _next_button: Button
-var _opened_at_msec: int = 0
+var _guard := TapGuard.new()
 var _time: float = 0.0
 
 
@@ -27,7 +26,7 @@ func setup() -> void:
 	add_child(PixelUi.full_rect(dim))
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 6)
-	add_child(PixelUi.centered(column))
+	TapGuard.place_above_thumb_zone(self, column)
 	_title = PixelUi.label("", PixelUi.GOLD, false, true)
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(_title)
@@ -36,7 +35,10 @@ func setup() -> void:
 	column.add_child(_stats_box)
 	_next_button = PixelUi.button("", PixelUi.GOOD)
 	_next_button.custom_minimum_size = Vector2(150, 30)
-	_next_button.pressed.connect(_on_next_pressed)
+	_guard.watch(_next_button)
+	_next_button.pressed.connect(func() -> void:
+		if _guard.accepts(_next_button):
+			_close_and_continue())
 	column.add_child(_next_button)
 
 
@@ -50,7 +52,7 @@ func open(summary: Dictionary) -> void:
 	_add_line("체력 %d%% 회복 + 카드 한 장" % summary["heal_percent"], PixelUi.GOOD)
 	_add_line("%s은 좀비가 더 세고 많아요" % summary["next_night_name"], PixelUi.ALERT)
 	_next_button.text = "%s으로" % summary["next_night_name"]
-	_opened_at_msec = Time.get_ticks_msec()
+	_guard.open()
 	_time = 0.0
 	visible = true
 
@@ -59,9 +61,9 @@ func is_open() -> bool:
 	return visible
 
 
-## 자동 플레이 봇·키보드용
+## 자동 플레이 봇용 (막는 시간이 끝났는지만 본다)
 func press_next() -> void:
-	if visible:
+	if visible and _guard.is_ready():
 		_close_and_continue()
 
 
@@ -70,14 +72,14 @@ func _process(delta: float) -> void:
 		return
 	_time += delta
 	_title.modulate.a = 0.7 + 0.3 * absf(sin(_time * TITLE_BOUNCE_SPEED))   # 제목이 반짝반짝
-	if Input.is_key_pressed(KEY_SPACE) or Input.is_key_pressed(KEY_ENTER):
-		_on_next_pressed()
+	_next_button.modulate = _guard.current_modulate()
 
 
-func _on_next_pressed() -> void:
-	if Time.get_ticks_msec() - _opened_at_msec < INPUT_GUARD_MILLISECONDS:
-		return
-	_close_and_continue()
+## 키보드: 창이 뜬 뒤 새로 누른 스페이스·엔터만 (스킬 쓰려고 누르고 있던 스페이스로 넘어가지 않게)
+func _input(event: InputEvent) -> void:
+	var key := event as InputEventKey
+	if visible and key != null and key.pressed and not key.echo and key.keycode in [KEY_SPACE, KEY_ENTER] and _guard.is_ready():
+		_close_and_continue()
 
 
 func _close_and_continue() -> void:

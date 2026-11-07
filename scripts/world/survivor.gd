@@ -1,11 +1,13 @@
 ## [파일] scripts/world/survivor.gd
-## [하는 일] 생존자(플레이어): 이동, 체력, 맞기·회복, 능력치(SurvivorStats), 스킬이 거는 상태(돌진·보호막·마지막 버티기). 그림은 자식 SurvivorAnimator 가 그린다.
+## [하는 일] 생존자(플레이어): 이동, 체력, 맞기(출처·방향을 hit_taken 으로 알리고 HitLog 에 적음)·회복, 능력치(SurvivorStats), 스킬이 거는 상태(돌진·보호막·마지막 버티기). 그림은 자식 SurvivorAnimator 가 그린다.
 ## [쓰는 곳] scenes/run.tscn 의 World/Survivor. run.gd 가 매 프레임 move_step() 을 부르고, 좀비·스킬·시스템이 take_damage()·heal()·start_dash() 를 부른다. 판 시작 때 은신처·오늘의 도전·감염도 바꾸기(RunModifiers)를 능력치에 얹는다.
-## [근거 문서] 02 §2 조작, 03 §1 생존자, 11 §4·§6
+## [근거 문서] 02 §2 조작, 03 §1 생존자, 15 §7-3 맞았을 때 알기, 11 §4·§6
 class_name Survivor
 extends Node2D
 
 signal damaged(amount: float)
+## 맞은 출처와 방향 (화면 가장자리 빨강·받은 피해 숫자 — DamageVignette). from_position 이 NO_DIRECTION 이면 방향 없음
+signal hit_taken(amount: float, source: String, from_position: Vector2)
 signal healed(amount: float)
 signal died
 
@@ -14,6 +16,9 @@ const HURT_FLASH_GAP_SECONDS := 0.25   # 계속 닿아 있을 때 화면이 하�
 const LAST_STAND_GUARD_SECONDS := 1.5
 ## 체력이 이 비율 밑이면 '위험' (체력 막대 빨강·음악 긴장 — 한곳에서 정함)
 const LOW_HEALTH_RATIO := 0.35
+## 체력이 이 비율 밑이면 가장자리가 붉게 두근 + 심장 소리 (문서 15 §7-3)
+const CRITICAL_HEALTH_RATIO := 0.3
+const NO_DIRECTION := Vector2.INF
 
 var survivor_id: String = ""
 var stats: SurvivorStats
@@ -22,6 +27,8 @@ var facing: Vector2 = Vector2.DOWN
 var moving_direction: Vector2 = Vector2.ZERO
 var is_dead: bool = false
 var last_damage_source: String = ""
+## 무엇에 당했나 (결과 화면)
+var hit_log := HitLog.new()
 
 var _guard_time_left: float = 0.0
 var _guard_damage_multiplier: float = 1.0
@@ -77,8 +84,8 @@ func move_step(delta: float, input_direction: Vector2) -> void:
 	animator.animate(delta, moving_direction, facing)
 
 
-## source = 무엇에 맞았는지 (결과 화면 "○○에게 당함" — 커뮤니티: 뭐에 죽었는지 모르면 짜증)
-func take_damage(amount: float, source: String = "") -> void:
+## source = 무엇에 맞았는지 (결과 화면 "○○에게 당함" — 커뮤니티: 뭐에 죽었는지 모르면 짜증), from_position = 때린 것의 위치(맞은 쪽 가장자리)
+func take_damage(amount: float, source: String = "", from_position: Vector2 = NO_DIRECTION) -> void:
 	var is_protected_by_dash := _dash_is_invulnerable and is_dashing()
 	if is_dead or is_protected_by_dash or _is_test_invincible:
 		return
@@ -90,7 +97,9 @@ func take_damage(amount: float, source: String = "") -> void:
 	if _hurt_flash_cooldown <= 0.0:
 		animator.flash(HURT_FLASH_SECONDS)
 		_hurt_flash_cooldown = HURT_FLASH_GAP_SECONDS
+	hit_log.record(final_amount, source)
 	damaged.emit(final_amount)
+	hit_taken.emit(final_amount, source, from_position)
 	if health <= 0.0:
 		_on_health_depleted()
 
@@ -124,6 +133,11 @@ func is_dashing() -> bool:
 
 func is_guarding() -> bool:
 	return _guard_time_left > 0.0
+
+
+## 피해를 아예 안 받는 때 (부활·마지막 버티기 직후, 무적 돌진) — 그림이 깜빡인다
+func is_damage_immune() -> bool:
+	return (is_guarding() and _guard_damage_multiplier <= 0.0) or (_dash_is_invulnerable and is_dashing())
 
 
 func health_ratio() -> float:
@@ -160,6 +174,8 @@ func _tick_timers(delta: float) -> void:
 	_guard_time_left = maxf(_guard_time_left - delta, 0.0)
 	_dash_time_left = maxf(_dash_time_left - delta, 0.0)
 	_hurt_flash_cooldown = maxf(_hurt_flash_cooldown - delta, 0.0)
+	hit_log.advance(delta)
+	animator.set_blinking(is_damage_immune())
 
 
 ## 최대 체력이 늘면 늘어난 만큼 바로 채운다 (방탄조끼·전직).

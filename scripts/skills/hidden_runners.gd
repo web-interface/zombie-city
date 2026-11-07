@@ -6,7 +6,7 @@ class_name HiddenRunners
 extends RefCounted
 
 const BALL_COLOR := Color("fbfaf4")
-const STITCH_COLOR := Color("e04848")
+const STITCH_COLOR := Color("5aa9ff")   # 내 것이라 빨간 실밥 대신 파랑 (문서 15 §7-1)
 const BALL_TRAIL_COLOR := Color("ffd166")
 const DOG_SEARCH_RADIUS := 160.0      # 개가 쫓을 좀비를 찾는 거리 (화면 안쪽)
 const DOG_LEASH_RADIUS := 40.0        # 쫓을 게 없으면 주인 곁 이 거리 안을 돈다

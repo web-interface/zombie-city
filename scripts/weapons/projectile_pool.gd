@@ -13,13 +13,13 @@ const LOOKS := {
 	"bullet": {"color": Color("ffe066"), "size": Vector2(2, 2)},
 	"nail": {"color": Color("d8dde6"), "size": Vector2(3, 1)},
 	"syringe": {"color": Color("8ff59a"), "size": Vector2(3, 2)},
-	"pellet": {"color": Color("ffb347"), "size": Vector2(1, 1)},
-	"box": {"color": Color("b07a43"), "size": Vector2(3, 3)},
+	"pellet": {"color": Color("fff2b0"), "size": Vector2(1, 1)},
+	"box": {"color": Color("c8aa78"), "size": Vector2(3, 3)},
 	"ball": {"color": Color("f4f1e6"), "size": Vector2(2, 2)},
 }
 ## 나는 방향으로 누운 긴 투사체 (화살·칼): 색과 길이(점) — 네모로 그리면 비스듬히 날 때 어색해서 선으로
 const LINE_LOOKS := {
-	"bolt": {"color": Color("c9a36b"), "tip": Color("e3e8f0"), "length": 5.0},
+	"bolt": {"color": Color("cdb27a"), "tip": Color("e3e8f0"), "length": 5.0},
 	"knife": {"color": Color("d8dde6"), "tip": Color("ffffff"), "length": 3.0},
 }
 const SLUG_SIZE := Vector2(4, 3)   # 슬러그 대포(산탄총 진화)의 큰 한 발

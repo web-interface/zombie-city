@@ -5,7 +5,7 @@
 class_name MeleeArcWeapon
 extends Weapon
 
-const SWING_COLOR := Color("ff6b4a")
+const SWING_COLOR := Color("e8f2ff")   # 내 휘두르기는 흰빛 (빨강·주황빨강은 적 전용 — 문서 15 §7-1)
 const SAW_ARC_COLOR := Color("ffd25a")
 const BAT_ARC_COLOR := Color("f4f1e6")
 const HALF_ARC_DOT := 0.0   # 바라보는 방향과의 내적이 이 값보다 크면 반원 안 (0 = 앞쪽 180도)

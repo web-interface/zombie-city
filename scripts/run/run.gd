@@ -18,6 +18,7 @@ var _input := RunInput.new()
 var _chatter := SurvivorChatter.new()
 var _meta_hooks := RunMetaHooks.new()
 var _night_director := NightDirector.new()
+var _hit_feedback := HitFeedback.new()
 
 @onready var _survivor: Survivor = $World/Survivor
 @onready var _horde: ZombieHorde = $World/ZombieHorde
@@ -58,6 +59,8 @@ func _ready() -> void:
 	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo, "rewards": _rewards, "skill_runner": _skill_runner,
 		"night_systems": [_spawner, _events, _boss_director, _night_director, _extraction]})
 	_connect_signals()
+	add_child(_hit_feedback)
+	_hit_feedback.setup(context, {"recorder": _recorder, "combo": _combo, "time_effects": _time_effects, "extraction": _extraction, "hud": _hud})
 	_meta_hooks.setup(context, _hud, _level_up, _boss_director)   # 신호를 이은 뒤에 (시작 레벨 업도 기록·전직에 잡히게 — 검수 지적)
 	SoundPlayer.start_run_music()
 	_hud.start_first_run_hints(_skill_runner)
@@ -119,7 +122,6 @@ func _connect_signals() -> void:
 	_boss_director.boss_enraged.connect(_on_alert_event)
 	_events.event_started.connect(_on_alert_event)
 	_recorder.watch_night(_night_director)
-	_survivor.damaged.connect(_on_survivor_damaged)
 	_survivor.died.connect(_on_survivor_died)
 	_survivor.healed.connect(func(amount: float) -> void: context.effects.show_heal_number(_survivor.position, amount))
 	_hud.give_up_requested.connect(_end_run.bind("gave_up"))
@@ -170,6 +172,8 @@ func _physics_process(delta: float) -> void:
 func _open_choice_panels_if_due() -> void:
 	if _is_over or get_tree().paused or _extraction.phase == "landed" or _boss_director.is_boss_attacking():
 		return
+	if _level_up.pending_choices > 0 and not _level_up.is_choosing and _time_effects.ease_into_choice(_hud.flash_level_up):
+		return   # 레벨 업 창 직전 0.15초 느리게 + '레벨 업!' (문서 15 §8)
 	if _promotion.open_choice_if_waiting() or _rewards.open_pending_chest() or _level_up.open_next_choice():
 		get_tree().paused = true
 
@@ -235,18 +239,6 @@ func _play_boss_kill_moment() -> void:
 	_level_up.grant_bonus_choice()   # 연출이 끝난 뒤에 카드 (창 뒤로 연출이 묻히지 않게 — 검수 지적)
 
 
-func _on_survivor_damaged(amount: float) -> void:
-	_recorder.note_survivor_damaged(_extraction.phase == "landed")
-	_combo.note_damage(amount)
-	# 이보다 큰 한 방이면 흔들림·잠깐 멈춤·아픈 소리 (계속 닿는 작은 피해와 구분)
-	if amount >= float(context.juice_rules["big_hit_damage"]):
-		context.shake("survivor_big_hit")
-		_time_effects.play(float(context.juice_rules["hit_stop_on_survivor_big_hit_seconds"]), 0.0)
-		context.play_sound("survivor_hurt")
-	else:
-		context.camera.add_trauma(float(context.juice_rules["trauma_survivor_contact_per_second"]) * get_physics_process_delta_time())
-
-
 func _on_survivor_died() -> void:
 	if _meta_hooks.try_revive():
 		return
@@ -284,6 +276,7 @@ func _end_run(end_reason: String) -> void:
 	_is_over = true
 	_hud.on_run_over()
 	var result := _recorder.build_result(end_reason, _level_up.level, _promotion.branch_name(), _combo.best)
+	result["hit_recap"] = _survivor.hit_log.summary()   # 결과 화면 '무엇에 당했나'
 	var delay := 0.05 if SceneRouter.is_autoplay() else END_DELAY_SECONDS
 	await get_tree().create_timer(delay, true, false, true).timeout
 	_time_effects.clear()
