@@ -9,7 +9,7 @@ const SHARD_SEARCH_RADIUS := 90.0
 const ZONE_WAIT_DISTANCE := 45.0       # 헬기 오기 전엔 착륙 원 바깥 이 거리에서 기다린다 (원 안 좀비 떼에 미리 갇히지 않게)
 const ZONE_ENTER_SECONDS_BEFORE := 12.0 # 헬기 도착 이 초 전부터 원 안으로
 const ZONE_ORBIT_RADIUS := 18.0        # 원 안에서는 가운데 서 있지 않고 이 반지름으로 돈다 (5차: 서 있으면 제자리 압박·침 웅덩이에 갇혀 레벨 40 판도 원 안에서 쓰러짐)
-const ZONE_ORBIT_TURN_PER_SECOND := 1.6 # 약 4초에 한 바퀴 — 4초 동안 30점 넘게 움직여 제자리 압박이 안 걸리게
+const ZONE_ORBIT_TURN_PER_SECOND := 1.6 # 약 4초에 한 바퀴 — 3초 동안 30점 넘게 움직여 (알림 없는) 제자리 압박이 안 걸리게
 const HEAL_SEEK_HEALTH_RATIO := 0.6    # 체력이 이보다 낮으면 구급함을 먼저 주우러
 const MELEE_KEEP_DISTANCE := 18.0     # 근접 무기는 좀비와 이 정도 거리를 유지해야 닿는다
 const MELEE_BRAVE_HEALTH_RATIO := 0.5 # 체력이 이보다 많으면 과감하게, 적으면 조심스럽게 (그래도 싸움은 계속 — 도망만 치면 조각·구급함이 안 생겨 판 내내 못 살아남)
@@ -111,20 +111,13 @@ func wants_skill() -> bool:
 
 func _process(delta: float) -> void:
 	_capture_if_due()
-	if _hud.night_clear_panel.is_open():
-		_capture_once("night_clear_panel")
+	if _hud.night_clear_panel.is_open() or _hud.night_prep_panel.is_open() or _hud.retry_panel.is_open():   # 밤 생존 → 밤 준비 → (다시 하기)
+		_capture_once("night_panel_" + _hud.night_prep_panel.step() + ("retry" if _hud.retry_panel.is_open() else ""))
 		_hud.continue_night()
 		return
 	if _hud.chest_panel.is_open():
 		_capture_once("chest_panel")
 		_hud.chest_panel.press_claim()
-		return
-	if _hud.night_prep_panel.is_ready():   # 밤 준비: 가장 높은 레벨 무기 · 훈장은 무작위 (문서 15 §2)
-		_capture_once("night_prep_" + _hud.night_prep_panel.step())
-		_hud.night_prep_panel.choose(_pick_prep_index(_hud.night_prep_panel.options()))
-		return
-	if _hud.retry_panel.is_ready():   # --retry 를 주면 '이 밤 다시 하기', 아니면 그만하기 (난이도 통계가 예전과 같게)
-		_hud.retry_panel.decide(SceneRouter.test_options.has("retry"))
 		return
 	if not (_hud.level_up_panel.is_open() or _hud.promotion_panel.is_open()):
 		_decision_delay = 0.25
@@ -278,13 +271,6 @@ func _card_score(card: Dictionary) -> float:
 		if card["id"] in ["ammo", "vest"]:
 			score += 1.0
 	return score + randf() * 0.5
-
-
-func _pick_prep_index(options: Array[Dictionary]) -> int:
-	if options.is_empty() or not options[0].has("level"):
-		return randi() % maxi(options.size(), 1)
-	var levels: Array = options.map(func(option: Dictionary) -> int: return int(option["level"]))
-	return levels.find(levels.max())
 
 
 func _pick_branch_index() -> int:

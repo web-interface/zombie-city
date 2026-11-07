@@ -1,5 +1,5 @@
 ## [파일] scripts/weapons/projectile_pool.gd
-## [하는 일] 날아가는 투사체(총알·못·주사기·산탄·상자·공·화살·칼) 전부를 한곳에서 움직이고, 좀비와 부딪히면 피해·독·밀기를 주고, 어둠을 받지 않는 빛 층에 한 번에 그린다. 상자는 맞힌 뒤 다음 좀비로 튕기고(bounce), 진화 무기는 맞힌 자리가 터지거나(폭발) 맞힐 때마다 조금 회복한다. 진화 탄은 금색·한 점 더 크게. 내 공격은 살짝 투명하게 그려 좀비·경고 표시를 가리지 않게 한다.
+## [하는 일] 날아가는 투사체(총알·못·스테이플러 심·서류·산탄·상자·공·화살·칼) 전부를 한곳에서 움직이고, 좀비와 부딪히면 피해·독·밀기를 주고, 어둠을 받지 않는 빛 층에 한 번에 그린다. 상자는 맞힌 뒤 다음 좀비로 튕기고(bounce), 진화 무기는 맞힌 자리가 터지거나(폭발) 맞힐 때마다 조금 회복한다. 진화 탄은 금색·한 점 더 크게. 내 공격은 살짝 투명하게 그려 좀비·경고 표시를 가리지 않게 한다.
 ## [쓰는 곳] scenes/run.tscn 의 World/Projectiles. 무기(projectile_weapon·spread_weapon)가 launch() 를 부르고 run.gd 가 update() 를 부른다. 폭발 그림은 WeaponRack.visuals 에 맡긴다.
 ## [근거 문서] 03 §2 무기, 14 §2-2(상자 던지기 튕김)·§2-4(진화)·§2-7, 13 커뮤니티 조사(후반 화면 가독성), 11 §4·§5
 class_name ProjectilePool
@@ -12,14 +12,15 @@ const BOUNCE_EXTRA_LIFE := 0.1   # 튕긴 뒤 다음 좀비까지 갈 시간 여
 const LOOKS := {
 	"bullet": {"color": Color("ffe066"), "size": Vector2(2, 2)},
 	"nail": {"color": Color("d8dde6"), "size": Vector2(3, 1)},
-	"syringe": {"color": Color("8ff59a"), "size": Vector2(3, 2)},
-	"pellet": {"color": Color("ffb347"), "size": Vector2(1, 1)},
-	"box": {"color": Color("b07a43"), "size": Vector2(3, 3)},
+	"staple": {"color": Color("e6f4ff"), "size": Vector2(2, 1)},
+	"paper": {"color": Color("f4f8ff"), "size": Vector2(3, 2)},
+	"pellet": {"color": Color("fff2b0"), "size": Vector2(1, 1)},
+	"box": {"color": Color("c8aa78"), "size": Vector2(3, 3)},
 	"ball": {"color": Color("f4f1e6"), "size": Vector2(2, 2)},
 }
 ## 나는 방향으로 누운 긴 투사체 (화살·칼): 색과 길이(점) — 네모로 그리면 비스듬히 날 때 어색해서 선으로
 const LINE_LOOKS := {
-	"bolt": {"color": Color("c9a36b"), "tip": Color("e3e8f0"), "length": 5.0},
+	"bolt": {"color": Color("cdb27a"), "tip": Color("e3e8f0"), "length": 5.0},
 	"knife": {"color": Color("d8dde6"), "tip": Color("ffffff"), "length": 3.0},
 }
 const SLUG_SIZE := Vector2(4, 3)   # 슬러그 대포(산탄총 진화)의 큰 한 발

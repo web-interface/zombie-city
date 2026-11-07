@@ -1,6 +1,6 @@
 """
 [파일] tools/sound_table_core.py
-[하는 일] 효과음 정의 표 ① 기본: 레이어 적는 도구(layer·notes) + 처음부터 있던 효과음 26종(무기 6·좀비·보스·생존자·줍기·레벨 업·카드·전직·스킬 4·폭발·헬기·탈출·게임 오버·UI).
+[하는 일] 효과음 정의 표 ① 기본: 레이어 적는 도구(layer·notes) + 처음부터 있던 효과음 26종(무기 6·좀비·보스·생존자·줍기·레벨 업·카드·전직·스킬 4·폭발·헬기·탈출·게임 오버·UI) + 심장 소리(체력 낮음).
 [쓰는 곳] tools/build_sounds.py 가 다른 표(sound_table_night·weapons·rewards)와 합쳐 audio/<이름>_<번호>.wav 로 만든다. 다른 표들도 여기의 layer·notes 를 쓴다.
 [근거 문서] 06 사운드·"AI 티 안 나게", 08 v0.2 손맛·소리, audio/README.md 크기 기준(효과음 −6dBFS 이하)
 """
@@ -41,10 +41,6 @@ CORE_EFFECTS: dict[str, dict] = {
         layer("square", [2000, 650], 0.035, curve=2.0, duty=0.125, env=(0.0005, 0, 1.8), volume=0.45),
         layer("noise", 22050, 0.06, env=(0.004, 0, 2.5), highpass=3000, lowpass=9000, volume=0.3),
         layer("sine", [300, 120], 0.03, volume=0.4)]},
-    "syringe_shot": {"about": "주사기 총 '퓨슉' — 바람 빠지는 소리 + 올라가는 '뿅'(주입) + 유리 '틱'", "variants": 4, "spread": 2.5, "peak_db": -11.0, "layers": [
-        layer("noise", 22050, 0.1, env=(0.008, 0.01, 2.2), highpass=1800, lowpass=7500, volume=0.55),
-        layer("triangle", [1100, 1900], 0.06, curve=0.7, env=(0.002, 0.01, 1.5), volume=0.45),
-        layer("square", 2600, 0.018, start=0.045, duty=0.25, env=(0.001, 0, 2.0), volume=0.18)]},
     "axe_swing": {"about": "소방 도끼 '휙' — 걸러내는 높이가 올라가는 바람 소리 + 낮게 떨어지는 휘두름", "variants": 4, "spread": 2.0, "peak_db": -9.0, "layers": [
         layer("noise", 22050, 0.24, env=(0.07, 0.02, 2.0), lowpass=[700, 3800], highpass=200),
         layer("triangle", [260, 120], 0.18, curve=1.5, env=(0.04, 0, 1.8), volume=0.35)]},
@@ -73,6 +69,9 @@ CORE_EFFECTS: dict[str, dict] = {
     "shard_pickup": {"about": "백신 조각 줍기 '삐릭' — 1→5 로 높이가 한 칸씩 올라감(도·레·미·솔·라)", "steps": [0, 2, 4, 7, 9], "peak_db": -17.0, "layers": [
         notes("square", "C6 G6 C7:2", 0.022, duty=0.25, env=(0.001, 0.008, 1.4), volume=0.6),
         layer("triangle", 2093, 0.05, start=0.03, env=(0.001, 0, 1.6), volume=0.3)]},
+    "heartbeat": {"about": "심장 소리 '쿵-쿵' — 체력 30% 아래에서 박자마다 (낮은 사인 두 번, 작게)", "variants": 2, "spread": 1.0, "peak_db": -10.0, "layers": [
+        layer("sine", [95, 55], 0.12, curve=1.5, env=(0.004, 0.02, 1.8), volume=0.9),
+        layer("sine", [85, 50], 0.1, start=0.2, curve=1.5, env=(0.004, 0.02, 1.8), volume=0.6)]},
     "level_up": {"about": "레벨 업 — 빠르게 올라가는 펼침화음 + 끝에 반짝이 (변형마다 오르는 모양이 다름)", "variants": 3, "spread": 2.0, "peak_db": -8.0, "layers": [
         notes("square", ["C5 E5 G5 C6 E6 G6 C7:6", "G4 C5 E5 G5 C6 E6 G6:6", "C5 G5 E5 C6 G5 E6 C7:6"], 0.05,
               env=(0.002, 0.02, 1.2), vibrato=(6, 0.15, 0.1), volume=0.55),

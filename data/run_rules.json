@@ -15,11 +15,13 @@
   },
   "nights": {
     "night_seconds": 180,
-    "spawn_growth_per_night": 0.25,
-    "contact_damage_growth_per_night": 0.2,
+    "zombie_health_growth_per_night": 0.3,
+    "minimum_growth_per_night": 0.03,
+    "max_minimum_multiplier": 1.9,
+    "contact_damage_growth_per_night": 0.03,
     "speed_growth_per_night": 0.05,
     "max_speed_multiplier": 1.3,
-    "boss_health_growth_per_night": 2.5,
+    "boss_health_growth_per_night": 0.5,
     "elite_chance_first_night": 0.003,
     "elite_chance_growth_per_night": 0.002,
     "heal_ratio_between_nights": 0.5,
@@ -36,7 +38,7 @@
       "열째"
     ]
   },
-  "_밤_근거": "끝없는 밤 (14 §1-1): 헬기를 타면 다음 밤으로 — 좀비 체력은 시간 성장을 밤 사이에도 이어 가고(night_seconds × 지난 밤 수), 나오는 수·피해·빠르기·보스 체력은 밤마다 곱한다. 목표(개고수 기준, 문서 12 §4): 고수 봇 첫째 밤 40~55%·둘째 15~25%·셋째 5~10%, 보통 10~20%, 초보 0~5%. 보스 체력 배율은 5차에서 밤마다 +10 → +2.5 (둘째 밤 보스가 11배라 한 번도 못 잡았음).",
+  "_밤_근거": "16 §2 (15 §4 를 고침, 사용자 승인): 일반 좀비 체력 밤마다 +0.30배(직선 — 밤이 갈수록 처치 시간이 천천히 짧아져 쓸어버리는 맛이 자람), 보스 체력은 따로 +0.5배, 필드 최소 좀비 밤마다 +3%(최대 ×1.9, 화면 상한 300), 닿으면 피해 밤마다 +3%. 빠르기 +5%(최대 1.3배)는 그대로. elite_chance 는 드문 무작위 정예용(정예 자리는 spawn_curve.json night_score).",
   "combo": {
     "reset_after_seconds": 2.5,
     "milestones": [
@@ -85,8 +87,9 @@
   "_보상_근거": "중독 설계 (14 §2-6·§4): 정예·보스는 보물 상자(슬롯이 돌다 멈춤 — 강화 1개 70%·3개 25%·5개 5%), 좀비는 아주 가끔 자석·폭탄·냉각 스프레이. 손에 넣는 보상이 화면에서 반짝여야 '한 판 더'.",
   "_연속처치_근거": "중독 설계 (14 §4): 2.5초 안에 다음 처치가 이어지면 연속 숫자가 커지고, 50·100·200… 마다 소리·빛·조각 보너스. 첫 시험에서 처치가 끊기지 않아 연속 = 전체 처치(619)였다 → '맞으면 끊김': 받은 피해가 12 쌓이면 끊기고, 쌓인 피해는 초당 4씩 잊는다(살짝 스친 건 봐줌). 잘 피할수록 커지는 실력 보상.",
   "experience": {
-    "shards_needed_base": 2,
-    "shards_needed_per_level": 1.4,
+    "shards_needed_base": 0.5,
+    "shards_needed_per_level": 1.5,
+    "shards_needed_per_level_squared": 0.55,
     "shard_magnet_speed": 130
   },
   "build": {
@@ -94,19 +97,33 @@
     "gear_slots": 4,
     "max_item_level": 5,
     "weapon_growth": {
-      "night_max_level_base": 5, "night_max_level_per_night": 2, "new_weapon_start_ratio": 0.5,
-      "damage_bonus_per_level": 0.08, "damage_keys": ["damage", "damage_per_second", "impact_damage", "poison_damage_per_second"],
-      "bonus_every_levels": 5, "bonus_order": ["area", "pierce", "count"],
-      "area_bonus_ratio": 0.05, "area_keys": ["radius", "width", "trap_blast_radius"],
-      "pierce_bonus": 1, "count_bonus": 1, "count_bonus_cap": 3,
-      "count_keys": ["projectile_count", "drone_count", "chain_count", "throw_count", "beam_count"]
+      "night_max_level_base": 5, "night_max_level_per_night": 2,
+      "new_weapon_start_ratio": 0.5, "new_weapon_min_level_from_night_2": 5,
+      "damage_bonus_per_level": 0.08, "damage_keys": ["damage", "damage_per_second", "impact_damage", "poison_damage_per_second"]
     },
     "cards_per_level_up": 3,
     "rerolls_per_run": 1,
     "skip_card_heal_ratio": 0.15,
     "heal_card_ratio": 0.3,
-    "common_weapons": ["shotgun", "saw_drone", "molotov"],
-    "common_gear": ["vest", "sneakers", "backpack", "ammo", "energy_drink", "knee_pads", "battery", "vitamins", "lucky_charm", "research_notes", "duct_tape", "coffee"],
+    "common_weapons": [
+      "shotgun",
+      "saw_drone",
+      "molotov"
+    ],
+    "common_gear": [
+      "vest",
+      "sneakers",
+      "backpack",
+      "ammo",
+      "energy_drink",
+      "knee_pads",
+      "battery",
+      "vitamins",
+      "lucky_charm",
+      "research_notes",
+      "duct_tape",
+      "coffee"
+    ],
     "banishes_per_run": 2,
     "min_weapon_cards": 1,
     "hidden_skill_min_level": 8,
@@ -122,7 +139,7 @@
     ]
   },
   "_한계돌파_근거": "문서 15 §5-1 (2026-11-07 저녁): 칸이 다 차고 단계도 다 오르면 구급상자만 남아 레벨 40~50 부터 회복만 골랐다(가장 많이 고른 카드 = 회복 2,323번). 이제 모자란 칸은 한계 돌파 카드(작게, 끝없이 쌓임)로 채우고, 구급상자는 체력이 heal_offer_below_health_ratio(50%) 아래일 때만 한 장. 진화 카드는 레벨 업엔 없고 보물 상자에서만.",
-  "_weapon_growth_뜻": "문서 15 §5-2: 그 밤 무기 최대 레벨 = night_max_level_base + night_max_level_per_night × (밤 − 1) (30밤 63). 6레벨부터 5단계 숫자(진화했으면 진화 숫자)의 damage_keys 에 한 레벨마다 +8%(더하기), bonus_every_levels(5)레벨마다 bonus_order 차례로 범위 +5%(area_keys) → 관통 +1 → 발 수 +1(count_keys, 무기마다 count_bonus_cap 까지). 새로 얻는 무기는 그 밤 최대 레벨 × new_weapon_start_ratio(내림, 최소 1)에서 시작. 장비는 max_item_level(5) 그대로.",
+  "_weapon_growth_뜻": "문서 16 §6 (15 §5-2 보다 우선): 그 밤 무기 최대 레벨 = night_max_level_base + night_max_level_per_night × (밤 − 1) (30밤 63). 6레벨부터 5단계 숫자(진화했으면 진화 숫자)의 damage_keys 에 한 레벨마다 +8%(더하기 — 63레벨 = 5.6배). 새로 얻는 무기는 1밤 1레벨, 2밤부터 그 밤 최대 레벨 × new_weapon_start_ratio(내림, 최소 new_weapon_min_level_from_night_2). 15·30·45 레벨 특성은 다음 묶음. 장비는 max_item_level(5) 그대로.",
   "night_carry": {
     "final_night": 30,
     "retries_per_run": 2
@@ -137,7 +154,7 @@
     "flashlight_radius": 30,
     "street_lamp_radius": 32,
     "darkness_color": "#3a3f63",
-    "zombie_speed_in_dark": 1.15,
+    "zombie_speed_in_dark": 1.0,
     "zombie_speed_in_light": 0.75,
     "zombie_damage_taken_in_light": 1.2
   },
@@ -188,7 +205,11 @@
     "hidden_skill_chance_bonus": 0.0,
     "chest_luck": 0.0,
     "chest_size_bonus": 0,
-    "run_scrap_bonus_ratio": 0.0
+    "run_scrap_bonus_ratio": 0.0,
+    "overtime_step_seconds": 30,
+    "overtime_bonus_per_step": 0.0,
+    "overtime_max_bonus": 0.0,
+    "intern_count": 0
   },
   "_juice_근거": "디자인 분석가 조사(2026-11-07): 흔들림은 충격 값 제곱·최대 3점, 잠깐 멈춤은 보스 처치 150ms+0.6초 30% 느리게, 피해 숫자는 치명타·30 이상·보스만 최대 20개 (문서 13)",
   "status_effects": {
@@ -199,7 +220,7 @@
     "poison_cloud_apply_seconds": 2,
     "boss_stun_multiplier": 0.4,
     "dash_hit_interval_seconds": 0.4,
-    "max_zombies_hurting_at_once": 4
+    "max_zombies_hurting_at_once": 3
   },
   "health_pack": {
     "drop_chance": 0.025,
@@ -210,11 +231,7 @@
   "music": {
     "busy_horde_size": 150
   },
-  "_max_zombies_hurting_근거": "처음 3 → 3차 밸런스 2(둘러싸여도 빠져나갈 틈) → 사용자 '가만히 서 있으면 버텨지는 게 말이 안 돼'(2026-11-07) 로 4: 둘러싸이면 정말 위험하게.",
-  "_experience_근거": "난이도 테스터 2차(2026-11-07): 좀비가 많아져 조각도 늘어난 만큼 레벨당 조각 2.5→3.2 (레벨 10 ≈ 96초·레벨 20 ≈ 192초 유지). docs/balance_log.md",
-  "_3차_근거": "난이도 테스터 3차(2026-11-07): 봇을 고친 뒤(8bc5e1a) 보통 봇이 세져서 탈출 75%·레벨 10이 82초였다 → 레벨당 조각 3.2→3.7 (레벨 10 약 100초·레벨 20 약 200초). 한 번에 무는 좀비 3→2 는 2차 제안대로, 둘러싸이면 바로 쓰러지는 대신 '위기'가 되게 (위기 온 탈출 판 0/24 → 5/29). docs/balance_log.md",
+  "_max_zombies_hurting_근거": "15 §3-1·§10: 한 번에 무는 좀비 4 → 3 (보스는 따로). 가만히 서 있으면 최소 마릿수가 채워져 자연히 둘러싸이니 안 보이는 규칙으로 세게 할 필요가 없다. 어둠 속 빨라짐도 뺌(lighting.zombie_speed_in_dark 1.0).",
   "_탈출_근거": "한 밤 3분 (사용자 '5분은 루즈해', 2026-11-07): 2:30 착륙 지점 → 3:00 헬기 → 6초 버티기 → 3:25 떠남.",
-  "_경험치_근거": "3분 밤에 레벨 10(전직) ≈ 0:55, 레벨 20(각성) ≈ 2:10 이 되게 3.7 → 2.2 (처음 값, 난이도 테스터가 맞춤).",
-  "_5차_근거": "난이도 테스터 5차(2026-11-07 아침, 끝없는 밤·개고수): 그대로면 고수 봇 첫째 밤 6%·보통 0% — 좀비 체력이 3분에 17배로 크는데(0.09, 그대로 둠) 생존자 화력이 못 따라가 2:15 뒤에 다 쓰러졌다. 좀비를 줄이면 조각도 줄어 오히려 더 어려워져서(나오는 수 ×0.8 시험: 0%) 성장을 빠르게: 레벨당 조각 2.2 → 1.4 (첫 1분 레벨 업 약 5초마다, 레벨 10 ≈ 50초). 구급함 0.8% → 2.5%, 밤마다 보스 체력 +10 → +2.5. docs/balance_log.md",
-  "_6차_근거": "난이도 테스터 6차(2026-11-07, 새 무기·진화·새 생존자 합친 뒤): 레벨당 조각 1.4 그대로 — 카드 종류가 늘어 성장이 오히려 느려져 레벨 10 이 49초 → 약 63초(목표 1:00 안팎)가 됐다. 1.2 는 레벨 10 이 60초로 거의 같고 생존률도 그대로(33%)라 되돌림. docs/balance_log.md"
+  "_경험치_근거": "15 §5-1: 다음 레벨까지 = base + per_level × 레벨 + per_level_squared × 레벨² — 처음 빠르고 뒤로 느리게(뱀서). 목표: 첫 레벨 업 6초 안, 첫 1분 6번 안팎, 끝 1분 3번 안팎, 한 밤 레벨 약 17. docs/balance_log.md"
 }

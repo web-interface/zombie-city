@@ -41,7 +41,7 @@ func _build_window() -> PanelContainer:
 	column.add_child(_centered_label("오늘의 도전", PixelUi.GOLD, false, true))
 	column.add_child(_centered_label(_date_text(today), PixelUi.MUTED, true))
 	column.add_child(_build_preview(String(survivor["outfit"])))
-	column.add_child(_centered_label("%s %s" % [survivor["role"], survivor["name"]], PixelUi.INK))
+	column.add_child(_centered_label(String(survivor["role"]), PixelUi.INK))
 	if not Unlocks.is_unlocked(survivor_id):
 		column.add_child(_centered_label("아직 잠긴 생존자 — 오늘만 맛보기", PixelUi.GOLD, true))
 	column.add_child(_centered_label("규칙: " + String(rule["name"]), PixelUi.ALERT))

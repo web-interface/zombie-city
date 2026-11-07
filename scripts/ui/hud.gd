@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/hud.gd
-## [하는 일] 한 판 화면 위 UI 묶음(CanvasLayer): 맨 위 정보 줄, 조이스틱, 스킬 버튼, 알림 띠, 착륙 화살표, 레벨 업 창, 전직 창, 밤 생존 → 밤 준비(무기·훈장) 창, 다시 하기 창, 일시정지를 만들고 run.gd 와 이어 준다. 창을 고르면 멈춤을 푼다. 멈춘 동안에도 돌아간다.
+## [하는 일] 한 판 화면 위 UI 묶음(CanvasLayer): 맞았을 때 가장자리 빨강·받은 피해 숫자(DamageVignette, 맨 아래 칸), 레벨 업 직전 '레벨 업!' 번쩍, 맨 위 정보 줄·앞으로 올 일 시간 줄, 조이스틱, 스킬 버튼, 알림 띠, 착륙 화살표, 레벨 업 창, 전직 창, 밤 생존 → 밤 준비(들고 갈 무기·훈장) 창, 다시 하기 창, 일시정지를 만들고 run.gd 와 이어 준다. 창을 고르면 멈춤을 푼다. 멈춘 동안에도 돌아간다.
 ## [쓰는 곳] scenes/run.tscn 의 Hud. run.gd 가 setup()·update_display()·show_banner() 를 부르고, 자동 플레이가 choose_card()·choose_branch() 를 부른다.
 ## [근거 문서] 05 화면 목록·게임 화면 배치, 11 §4
 class_name Hud
@@ -16,6 +16,8 @@ signal retry_decided(is_retry: bool)
 signal chest_claimed
 
 const SKILL_BUTTON_MARGIN := Vector2(8, 16)
+const LEVEL_UP_FLASH_SECONDS := 0.35
+const LEVEL_UP_FLASH_SIZE := 22
 ## 첫 판 안내: (보여 줄 때, 사라질 때, 글) — 글 설명 대신 처음 몇 초에 자연스럽게 (문서 02 §12)
 const FIRST_RUN_HINTS: Array[Array] = [
 	[0.6, 4.6, "화면 아무 데나 끌어서 움직여요"],
@@ -37,6 +39,7 @@ var retry_panel: RetryPanel
 var _boss_bar: BossHealthBar
 var chest_panel: ChestPanel
 var _top_bar: HudTopBar
+var _timeline: NightTimeline
 var _joystick: FloatingJoystick
 var _skill_button: SkillButton
 var _banner: Banner
@@ -61,11 +64,16 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 
 ## 판 중 늘 보이는 것: 조이스틱·위 표시줄·보스 체력 줄·착륙 화살표·알림 띠·스킬 버튼·컷인
 func _build_play_parts(root: Control, context: RunContext, rack: WeaponRack, level_up: LevelUp, skill_runner: SkillRunner, extraction: Extraction) -> void:
+	var vignette := DamageVignette.new()   # 맨 아래 칸: 적 테두리 위, 다른 HUD 아래 (문서 15 §7-2)
+	root.add_child(vignette)
+	vignette.setup(context)
 	_joystick = FloatingJoystick.new()
 	root.add_child(_joystick)
 	_top_bar = HudTopBar.new()
 	root.add_child(_top_bar)
 	_top_bar.setup(context, level_up, rack)
+	_timeline = NightTimeline.new()
+	root.add_child(_timeline)
 	_boss_bar = BossHealthBar.new()
 	root.add_child(_boss_bar)
 	_arrow = ExtractionArrow.new()
@@ -149,6 +157,20 @@ func _process(delta: float) -> void:
 		_hint_time = -1.0
 
 
+## 레벨 업 창 직전(0.15초 느린 화면 동안) 가운데 큰 '레벨 업!'이 번쩍 — 창이 왜 뜨는지 먼저 알게 (문서 15 §8)
+func flash_level_up() -> void:
+	var flash := PixelUi.label("레벨 업!", PixelUi.GOOD, false, true)
+	flash.add_theme_font_size_override("font_size", LEVEL_UP_FLASH_SIZE)
+	flash.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	flash.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	flash.offset_top = get_viewport().get_visible_rect().size.y * 0.3
+	flash.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	get_child(0).add_child(flash)
+	var tween := flash.create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS).set_ignore_time_scale(true)
+	tween.tween_property(flash, "modulate:a", 0.0, LEVEL_UP_FLASH_SECONDS).set_delay(LEVEL_UP_FLASH_SECONDS * 0.4)
+	tween.tween_callback(flash.queue_free)
+
+
 func joystick_direction() -> Vector2:
 	return _joystick.direction
 
@@ -164,6 +186,11 @@ func update_display(elapsed_seconds: float, _alive_zombies: int, kills: int) -> 
 ## 보스 체력 줄이 볼 보스 담당 (run.gd 가 준비 뒤 부름)
 func watch_bosses(director: BossDirector) -> void:
 	_boss_bar.watch(director)
+
+
+## 위쪽 시간 줄이 볼 밤 감독 (앞으로 올 정예·보스·헬기)
+func watch_night(director: NightDirector) -> void:
+	_timeline.watch(director)
 
 
 ## 위 표시줄의 '둘째 밤'·연속 처치
@@ -194,9 +221,13 @@ func open_retry(retries_left: int, end_reason: String) -> void:
 	retry_panel.open(retries_left, end_reason)
 
 
-## 자동 플레이 봇용
+## 자동 플레이 봇용: 밤 생존 → 밤 준비(가장 높은 레벨 무기·무작위 훈장) → 다시 하기(--retry 를 줄 때만 — 난이도 통계가 예전과 같게)
 func continue_night() -> void:
 	night_clear_panel.press_next()
+	if night_prep_panel.is_ready():
+		night_prep_panel.choose(night_prep_panel.bot_pick_index())
+	if retry_panel.is_ready():
+		retry_panel.decide(SceneRouter.test_options.has("retry"))
 
 
 func show_banner(text: String, style_name: String) -> void:
@@ -217,7 +248,8 @@ func on_run_over() -> void:
 
 
 func _is_choice_window_open() -> bool:
-	return level_up_panel.is_open() or promotion_panel.is_open() or night_clear_panel.is_open() or chest_panel.is_open() 		or night_prep_panel.is_open() or retry_panel.is_open()
+	return level_up_panel.is_open() or promotion_panel.is_open() or night_clear_panel.is_open() or chest_panel.is_open() \
+		or night_prep_panel.is_open() or retry_panel.is_open()
 
 
 func choose_card(index: int) -> void:

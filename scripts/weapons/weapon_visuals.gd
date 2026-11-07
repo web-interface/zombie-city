@@ -1,7 +1,7 @@
 ## [파일] scripts/weapons/weapon_visuals.gd
-## [하는 일] 무기·히든 스킬의 눈에 띄는 연출만 그린다: 번개(지그재그 하얀 번쩍)·하늘 번개, 물줄기(굵은 파란 선 + 물방울)·테이프 줄, 폭발(원 + 파편 + 연기), 충격파·전기·화염 고리, 폭격 예고 원, 화면 번쩍, 불꽃·불씨·연기 알갱이. 게임 규칙에는 영향이 없다. 180×320 픽셀 화면이라 1점 단위로 그린다.
+## [하는 일] 무기·히든 스킬의 눈에 띄는 연출만 그린다: 번개(지그재그 하얀 번쩍)·하늘 번개, 물줄기(굵은 파란 선 + 물방울)·테이프 줄, 폭발(흰빛 → 하늘색 원 + 파편 + 연기), 충격파·전기·푸른 화염 고리, 폭격 겨냥 표시(내 것이라 흰·하늘색 — 빨강은 적 전용), 화면 번쩍(설정 '번쩍임 줄이기'면 안 함), 불꽃·불씨·연기 알갱이. 게임 규칙에는 영향이 없다. 180×320 픽셀 화면이라 1점 단위로 그린다.
 ## [쓰는 곳] scripts/weapons/weapon_rack.gd 가 빛 층(어둠을 안 받음)에 만들고, 무기(Weapon.visuals())·무기 장판(weapon_zones.gd)·히든 스킬(hidden_skill_effects.gd)이 부른다.
-## [근거 문서] 14 §2-7 눈에 띄는 연출, 06 손맛·AI 티(빛도 픽셀 단계로), 12 §6 성능(개수 상한, 알갱이는 ParticleBuffer 고리 버퍼)
+## [근거 문서] 15 §7-1 색 언어(내 효과에 빨강·자홍·주황빨강 금지)·§7-4 내 효과 투명도, 14 §2-7 눈에 띄는 연출, 06 손맛·AI 티(빛도 픽셀 단계로), 12 §6 성능(개수 상한, 알갱이는 ParticleBuffer 고리 버퍼)
 class_name WeaponVisuals
 extends Node2D
 
@@ -29,10 +29,11 @@ const WATER_LIGHT := Color("bfe6ff")
 const TAPE_COLOR := Color("d9b36c")
 const TAPE_STRIPE := Color("8c6a2e")
 const SMOKE_COLOR := Color("4a4d57")
-const WARNING_COLOR := Color("ff4d4d")
+const TARGET_COLOR := Color("dfefff")   # 내 폭격 겨냥 (적 예고 빨강과 구별)
 const SHOCK_COLOR := Color("fff2b0")
-const FIRE_COLORS: Array[Color] = [Color("ffe08a"), Color("ff9a3c"), Color("ff5a2a")]
-const DEBRIS_COLORS: Array[Color] = [Color("3b3f4a"), Color("6b5a48"), Color("ff9a3c")]
+## 내 불 = 파란 불·흰 불 (주황빨강은 적 전용 — 문서 15 §7-1)
+const FIRE_COLORS: Array[Color] = [Color("ffffff"), Color("9fd8ff"), Color("5aa9ff")]
+const DEBRIS_COLORS: Array[Color] = [Color("3b3f4a"), Color("6b7385"), Color("9fd8ff")]
 
 var _bolts: Array[Dictionary] = []
 var _beams: Array[Dictionary] = []
@@ -42,12 +43,15 @@ var _particles := ParticleBuffer.new(PARTICLE_CAPACITY)
 ## 무기 말고도 빛 층에 그릴 것 (draw_glow_on(canvas) 를 가진 것 — 히든 스킬의 공·사냥개)
 var glow_drawers: Array[Object] = []
 var _context: RunContext
+## 설정 '번쩍임 줄이기' (WeaponZones 가 설정을 읽어 넣음 — 투명도도 그쪽이 modulate 로)
+var is_flash_reduced: bool = false
 
 
 func setup(context: RunContext) -> void:
 	_context = context
 	z_as_relative = false
 	z_index = DRAW_LAYER
+
 
 
 ## 지그재그 번개 한 줄기 (테이저건·제세동기). 진화 무기는 금빛 테두리.
@@ -106,13 +110,15 @@ func fire_ring(center: Vector2, radius: float) -> void:
 		add_particle(point, Vector2.from_angle(randf() * TAU) * 12.0, randf_range(0.3, 0.6), FIRE_COLORS.pick_random(), RISE_GRAVITY)
 
 
-## 폭격 예고: 깜빡이는 빨간 원 + 줄어드는 안쪽 원 (억울하지 않게 — 문서 14 §4 공정한 어려움)
-func warning_circle(center: Vector2, radius: float, seconds: float) -> void:
-	_add_shape("warning", center, radius, seconds, WARNING_COLOR)
+## 내 폭격 겨냥: 깜빡이는 흰·하늘색 점선 원 + 줄어드는 안쪽 원 + 십자 (어디 떨어질지 보이게)
+func target_circle(center: Vector2, radius: float, seconds: float) -> void:
+	_add_shape("warning", center, radius, seconds, TARGET_COLOR)
 
 
 ## 화면 전체가 잠깐 번쩍 (심정지·히든 스킬)
 func screen_flash(color: Color, seconds: float) -> void:
+	if is_flash_reduced:
+		return
 	_add_shape("flash", Vector2.ZERO, 0.0, seconds, color)
 
 

@@ -1,7 +1,7 @@
 ## [파일] scripts/ui/chest_panel.gd
-## [하는 일] 보물 상자 창: 상자가 열리고 슬롯 칸(1·3·5개)에서 아이콘이 빠르게 돌다가 하나씩 멈추며 받을 강화를 보여 준다. 5개면 금빛 '대박' 연출. [받기]를 누르면 claimed 를 보내고 닫힌다.
+## [하는 일] 보물 상자 창: 상자가 열리고 슬롯 칸(1·3·5개)에서 아이콘이 빠르게 돌다가 하나씩 멈추며 받을 강화를 보여 준다. 5개면 금빛 '대박' 연출. [받기]를 누르면 claimed 를 보내고 닫힌다. 창 내용은 조이스틱 엄지 자리(아래 35%) 밖 위쪽에, [받기]는 나타난 뒤 0.6초 흐리게 막는다(TapGuard).
 ## [쓰는 곳] scripts/ui/hud.gd 가 만들고 open() 으로 연다. scripts/run/run_rewards.gd 가 claimed 를 받아 강화를 적용한다. 자동 플레이 봇은 press_claim().
-## [근거 문서] 14 §2-6 보물 상자·§4 중독 설계(쉴 새 없는 보상), data/run_rules.json chest
+## [근거 문서] 15 §8 잘못 눌림, 14 §2-6 보물 상자·§4 중독 설계(쉴 새 없는 보상), data/run_rules.json chest
 class_name ChestPanel
 extends Control
 
@@ -24,6 +24,7 @@ var _spin_textures: Array[Texture2D] = []   # 도는 동안 매 프레임 불러
 var _stopped_count: int = 0
 var _spin_time: float = 0.0
 var _rules: Dictionary = {}
+var _guard := TapGuard.new()
 
 
 func setup() -> void:
@@ -38,7 +39,7 @@ func setup() -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 6)
 	column.alignment = BoxContainer.ALIGNMENT_CENTER
-	add_child(PixelUi.centered(column))
+	TapGuard.place_above_thumb_zone(self, column)
 	_title = PixelUi.label("보물 상자!", PixelUi.GOLD, false, true)
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(_title)
@@ -53,7 +54,10 @@ func setup() -> void:
 	column.add_child(_name_box)
 	_claim_button = PixelUi.button("받기", PixelUi.GOLD)
 	_claim_button.custom_minimum_size = Vector2(120, 26)
-	_claim_button.pressed.connect(_on_claim)
+	_guard.watch(_claim_button)
+	_claim_button.pressed.connect(func() -> void:
+		if _guard.accepts(_claim_button):
+			_on_claim())
 	column.add_child(_claim_button)
 
 
@@ -83,12 +87,15 @@ func is_open() -> bool:
 	return visible
 
 
+## 자동 플레이 봇용 (막는 시간이 끝났는지만 본다)
 func press_claim() -> void:
-	if visible and _claim_button.visible:
+	if visible and _claim_button.visible and _guard.is_ready():
 		_on_claim()
 
 
 func _process(delta: float) -> void:
+	if visible and _claim_button.visible:
+		_claim_button.modulate = _guard.current_modulate()
 	if not visible or _stopped_count >= _slots.size():
 		return
 	_spin_time += delta
@@ -110,6 +117,7 @@ func _stop_slot(index: int) -> void:
 		_chest_image.texture = _chest_frame(1)
 		_name_box.visible = true
 		_claim_button.visible = true
+		_guard.open()   # [받기]가 나타난 때부터 0.6초
 
 
 func _on_claim() -> void:

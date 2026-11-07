@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "data/promotions.json",
-    "하는 일": "전직 갈래 18개 (생존자 6명 × 3). 레벨 10 에 1차(stage_1), 레벨 20 에 2차(stage_2) 가 적용된다. 능력치 바꾸기(add·multiply)와 스킬 바꾸기(skill_changes), 바뀐 옷 그림(outfit)을 정한다.",
+    "하는 일": "전직 갈래 18개 (생존자 6명 × 3 — 직장인: 영업왕·야근왕·팀장). 레벨 10 에 1차(stage_1), 레벨 20 에 2차(stage_2) 가 적용된다. 능력치 바꾸기(add·multiply)와 스킬 바꾸기(skill_changes), 바뀐 옷 그림(outfit)을 정한다.",
     "쓰는 곳": "scripts/systems/promotion.gd 가 적용하고, scripts/ui/promotion_panel.gd 가 갈래 카드를 보여 준다.",
     "근거 문서": "02 §5 전직, 03 §1-2 전직 숫자, 04 §2 전직 옷차림"
   },
@@ -155,47 +155,42 @@
     }
   },
 
-  "nurse_emergency": {
-    "name": "응급의학", "survivor": "nurse", "outfit": "nurse_emergency",
-    "summary": "끝까지 버틴다",
+  "office_sales": {
+    "name": "영업왕", "survivor": "office_worker", "outfit": "office_sales",
+    "summary": "발로 뛰어 다 주워 온다",
     "stage_1": {
-      "text": "회복 효과 2배, 초당 회복 +1",
-      "multiply": { "heal_multiplier": 2.0 },
-      "add": { "regen_per_second": 1.0 }
+      "text": "이동 속도 +15%, 줍는 범위 +60%",
+      "multiply": { "move_speed": 1.15, "pickup_radius": 1.6 }
     },
     "stage_2": {
-      "text": "쓰러질 피해를 한 번 버팀(체력 1), 다시 쓰기 x0.7",
-      "add": { "last_stand": 1 },
+      "text": "실적 보너스: 백신 조각 +25%, 카페인 충전 다시 쓰기 x0.7",
+      "add": { "shard_bonus_ratio": 0.25 },
       "skill_changes": [ { "change": "scale_cooldown", "by": 0.7 } ]
     }
   },
-  "nurse_epidemiology": {
-    "name": "역학조사관", "survivor": "nurse", "outfit": "nurse_epidemiology",
-    "summary": "독이 번진다",
+  "office_overtime": {
+    "name": "야근왕", "survivor": "office_worker", "outfit": "office_overtime",
+    "summary": "밤이 깊을수록 무섭다",
     "stage_1": {
-      "text": "독으로 쓰러진 좀비가 주변 2마리에 독을 옮김, 독 피해 x1.5",
-      "add": { "poison_spread": 1 },
-      "multiply": { "poison_damage_multiplier": 1.5 }
+      "text": "야근 수당 2배 (30초마다 +12%, 최대 +72%)",
+      "multiply": { "overtime_bonus_per_step": 2.0, "overtime_max_bonus": 2.0 }
     },
     "stage_2": {
-      "text": "응급 처치에 독 폭발 (반경 60, 초당 6, 6초)",
-      "skill_changes": [
-        { "change": "add_effect", "effect": { "type": "poison_burst", "radius": 60, "damage_per_second": 6, "seconds": 6 } }
-      ]
+      "text": "야근 수당이 20초마다 붙음",
+      "multiply": { "overtime_step_seconds": 0.67 }
     }
   },
-  "nurse_surgeon": {
-    "name": "수술팀", "survivor": "nurse", "outfit": "nurse_surgeon",
-    "summary": "정확하게 끊는다",
+  "office_teamlead": {
+    "name": "팀장", "survivor": "office_worker", "outfit": "office_teamlead",
+    "summary": "인턴을 데리고 다닌다",
     "stage_1": {
-      "text": "치명타 +20%",
-      "add": { "crit_chance": 0.2 }
+      "text": "인턴 2명이 따라다니며 서류를 던짐",
+      "add": { "intern_count": 2 }
     },
     "stage_2": {
-      "text": "응급 처치에 기절 (반경 50, 1.5초)",
-      "skill_changes": [
-        { "change": "add_effect", "effect": { "type": "radial_stun", "radius": 50, "seconds": 1.5, "damage": 0 } }
-      ]
+      "text": "인턴 1명 더, 모든 피해 +15%",
+      "add": { "intern_count": 1 },
+      "multiply": { "damage_multiplier": 1.15 }
     }
   },
 

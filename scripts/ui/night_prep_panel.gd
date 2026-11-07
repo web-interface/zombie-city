@@ -32,7 +32,7 @@ func _ready() -> void:
 	add_child(PixelUi.full_rect(dim))
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 4)
-	add_child(PixelUi.centered(column))
+	TapGuard.place_above_thumb_zone(self, column)   # 조이스틱 엄지 자리(아래)는 비워 둔다
 	_title = PixelUi.label("", PixelUi.GOLD, false, true)
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(_title)
@@ -70,6 +70,14 @@ func options() -> Array[Dictionary]:
 
 func is_ready() -> bool:
 	return visible and _guard.is_ready()
+
+
+## 자동 플레이 봇: 무기는 가장 높은 레벨, 훈장은 무작위
+func bot_pick_index() -> int:
+	if _step != "weapon":
+		return randi() % maxi(_medal_options.size(), 1)
+	var levels: Array = _weapon_options.map(func(option: Dictionary) -> int: return int(option["level"]))
+	return levels.find(levels.max())
 
 
 func choose(index: int) -> void:
@@ -117,7 +125,7 @@ func _add_card(option: Dictionary, name_text: String, detail_text: String, accen
 	card.add_child(row)
 	_guard.watch(card)
 	card.pressed.connect(func() -> void:
-		if _guard.accepts(card):
+		if _guard.accepts_pick(card):
 			_pick(option))
 	_card_box.add_child(card)
 	_cards.append(card)
@@ -149,4 +157,4 @@ func _clear_cards() -> void:
 ## 막는 동안 카드를 흐리게 → 또렷하게 (지금은 못 누른다는 걸 보이게)
 func _process(_delta: float) -> void:
 	if visible:
-		_card_box.modulate.a = 0.45 + 0.55 * _guard.progress()
+		_card_box.modulate = _guard.current_modulate()

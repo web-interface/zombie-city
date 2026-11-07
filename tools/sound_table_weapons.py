@@ -1,12 +1,12 @@
 """
 [파일] tools/sound_table_weapons.py
-[하는 일] 효과음 정의 표 ③ 새 무기 13종: 경찰(테이저건·최루탄·확성기), 소방관(소방 호스·구조용 절단기·조명탄), 택배기사(상자·테이프 건·소포 폭탄), 간호사(소독약·제세동기·메스), 공용 화염병.
+[하는 일] 효과음 정의 표 ③ 새 무기 13종: 경찰(테이저건·최루탄·확성기), 소방관(소방 호스·구조용 절단기·조명탄), 택배기사(상자·테이프 건·소포 폭탄), 직장인(스테이플러·서류 폭풍·결재 도장·노트북·카페인 충전·칼퇴근 종소리), 메스 소리는 던지는 칼이 씀, 공용 화염병.
 [쓰는 곳] tools/build_sounds.py 가 sound_table_core 의 layer·notes 로 적은 이 표를 audio/<이름>_<번호>.wav 로 만든다. data/weapons.json 의 "sound" 가 이 이름을 부른다.
 [근거 문서] 14 §2-2 생존자 전용 무기·§2-7 눈에 띄는 연출, 06 사운드·"AI 티 안 나게"
 """
 from __future__ import annotations
 
-from sound_table_core import layer
+from sound_table_core import layer, notes
 
 # 무기 소리는 계속 나서 작게: 기존 무기(권총 −8 · 네일건 −11 · 톱날 −12)와 같은 줄. 쉬지 않고 나는 것(소독약·메스·절단기)은 더 작게.
 WEAPON_EFFECTS: dict[str, dict] = {
@@ -57,18 +57,32 @@ WEAPON_EFFECTS: dict[str, dict] = {
         layer("sine", [120, 38], 0.4, start=0.2, curve=2.0, volume=0.85),
         layer("square", [300, 60], 0.15, start=0.2, curve=2.0, duty=0.375, lowpass=1500, volume=0.35),
         layer("noise", 22050, 0.25, start=0.32, env=(0.01, 0.02, 2.0), highpass=4000, tremolo=(37, 0.7, 3), volume=0.15)]},
-    # ───────── 간호사 ─────────
-    "disinfectant_hiss": {"about": "소독약 분무 '칙-칙' — 분무기 펌프 두 번 + 고운 안개 '쉬이' (계속 나는 무기라 아주 작게)", "variants": 3, "spread": 2.0, "peak_db": -14.0, "layers": [
-        layer("noise", 22050, 0.16, env=(0.01, 0.04, 1.8), highpass=3500, lowpass=10000, volume=0.8),
-        layer("noise", 22050, 0.2, start=0.2, env=(0.01, 0.05, 1.8), highpass=3500, lowpass=10000, volume=0.7),
-        layer("square", [900, 700], 0.03, duty=0.25, lowpass=3000, volume=0.15),
-        layer("noise", 22050, 0.4, start=0.05, env=(0.15, 0.05, 1.6), highpass=5000, lowpass=9000, volume=0.15)]},
-    "defib_shock": {"about": "제세동기 '삐이잉-팡' — 충전되며 올라가는 소리 + 전기 '팡' + 짧은 지직", "variants": 3, "spread": 2.0, "peak_db": -10.0, "drive": 1.5, "layers": [
-        layer("sine", [700, 3200], 0.28, curve=0.7, env=(0.15, 0.12, 0.5), volume=0.35),
-        layer("square", [350, 1600], 0.28, curve=0.7, duty=0.125, env=(0.2, 0.08, 0.5), lowpass=4500, volume=0.12),
-        layer("noise", 22050, 0.015, start=0.28, env=(0, 0, 1.0), volume=0.9),
-        layer("sine", [160, 50], 0.18, start=0.28, curve=2.0, volume=0.8),
-        layer("saw", [140, 110], 0.2, start=0.28, tremolo=(57, 0.9, 4), env=(0.001, 0.04, 1.6), lowpass=5000, volume=0.45)]},
+    # ───────── 직장인 (15 부록 B) ─────────
+    "stapler_click": {"about": "스테이플러 '딸깍' — 짧은 쇠 '찰칵' + 눌리는 플라스틱 '딱' (빨리 연사해서 아주 작게)", "variants": 4, "spread": 3.0, "peak_db": -13.0, "layers": [
+        layer("metal", 12000, 0.02, env=(0, 0.002, 2.5), highpass=2500, volume=0.7),
+        layer("square", [1500, 900], 0.025, duty=0.25, env=(0.001, 0, 2.0), lowpass=5000, volume=0.35),
+        layer("noise", 22050, 0.015, start=0.03, env=(0, 0, 2.0), highpass=4000, volume=0.3)]},
+    "paper_swish": {"about": "서류 폭풍 '휙-팔랑' — 종이가 스치는 바람 + 바스락 (자주 나서 아주 작게)", "variants": 3, "spread": 3.0, "peak_db": -15.0, "layers": [
+        layer("noise", 22050, 0.09, env=(0.02, 0.01, 1.8), highpass=2500, lowpass=[3000, 9000], volume=0.8),
+        layer("noise", 22050, 0.06, start=0.05, env=(0.002, 0, 2.0), highpass=5000, tremolo=(60, 0.8, 3), volume=0.3)]},
+    "stamp_slam": {"about": "결재 도장 '쾅' — 묵직한 나무 '쿵' + 책상 울림 + 종이 '탁'", "variants": 3, "spread": 2.0, "peak_db": -9.0, "drive": 1.4, "layers": [
+        layer("sine", [150, 45], 0.22, curve=2.0, volume=0.9),
+        layer("noise", [3000, 500], 0.12, curve=2.0, env=(0.001, 0.005, 2.0), lowpass=1600, volume=0.6),
+        layer("square", [240, 90], 0.08, curve=2.0, duty=0.375, lowpass=1200, volume=0.3),
+        layer("noise", 22050, 0.03, start=0.01, env=(0, 0, 2.0), highpass=3500, volume=0.25)]},
+    "laptop_crash": {"about": "노트북 '퍽-지직' — 플라스틱 깨짐 + 낮은 폭발 + 전기 지직", "variants": 3, "spread": 2.5, "peak_db": -9.0, "drive": 1.5, "layers": [
+        layer("noise", [9000, 1500], 0.12, curve=1.5, env=(0.001, 0.005, 2.0), lowpass=6000, volume=0.6),
+        layer("sine", [130, 40], 0.3, curve=2.0, volume=0.8),
+        layer("saw", [160, 120], 0.18, start=0.05, tremolo=(57, 0.9, 4), env=(0.001, 0.04, 1.6), lowpass=4000, volume=0.3),
+        layer("metal", 9000, 0.06, start=0.02, env=(0.001, 0, 2.0), volume=0.25)]},
+    "skill_caffeine": {"about": "카페인 충전 — 컵 뚜껑 '톡' + 후루룩 + 올라가는 '삐융'", "variants": 2, "spread": 1.5, "peak_db": -9.0, "layers": [
+        layer("square", 2200, 0.02, duty=0.25, env=(0.001, 0, 2.0), volume=0.3),
+        layer("noise", 22050, 0.3, start=0.04, env=(0.05, 0.1, 1.5), lowpass=[900, 2600], highpass=300, tremolo=(23, 0.7, 2), volume=0.6),
+        layer("square", [300, 1400], 0.25, start=0.32, curve=0.7, duty=0.125, env=(0.004, 0.08, 1.4), lowpass=5000, volume=0.3)]},
+    "clock_out_bell": {"about": "칼퇴근 퇴근 종소리 '딩동댕동' — 학교 종처럼 맑은 네 음 + 길게 울리는 꼬리", "variants": 1, "peak_db": -7.0, "layers": [
+        notes("triangle", "E5:3 C5:3 D5:3 G4:6", 0.09, env=(0.002, 0.05, 1.2), volume=0.55),
+        notes("sine", "E6:3 C6:3 D6:3 G5:6", 0.09, env=(0.002, 0.03, 1.6), volume=0.18),
+        layer("sine", 392, 1.2, start=0.9, env=(0.002, 0.05, 2.0), volume=0.3)]},
     "scalpel_slice": {"about": "메스 '슥-칭' — 아주 짧게 베는 바람 + 가는 쇠 울림 (자주 나서 아주 작게)", "variants": 3, "spread": 3.0, "peak_db": -14.0, "layers": [
         layer("noise", 22050, 0.07, env=(0.025, 0, 1.8), highpass=3000, lowpass=[4000, 10000], volume=0.8),
         layer("sine", 4200, 0.1, start=0.03, env=(0.001, 0, 2.2), volume=0.3),

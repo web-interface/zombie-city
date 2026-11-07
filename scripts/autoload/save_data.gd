@@ -114,6 +114,23 @@ func is_screen_shake_on() -> bool:
 	return bool(setting("is_screen_shake_on"))
 
 
+## 보이는 규칙 설정 (문서 15 §7-4·§8): 내 효과 투명도 0.25~1, 번쩍임 줄이기, 피해 숫자, 두 번 눌러 고르기
+func my_effects_opacity() -> float:
+	return clampf(float(setting("my_effects_opacity")), 0.25, 1.0)
+
+
+func is_flash_reduced() -> bool:
+	return bool(setting("is_flash_reduced"))
+
+
+func is_damage_numbers_on() -> bool:
+	return bool(setting("is_damage_numbers_on"))
+
+
+func is_double_tap_pick_on() -> bool:
+	return bool(setting("is_double_tap_pick_on"))
+
+
 func flag(flag_name: String) -> bool:
 	return bool(section("flags").get(flag_name, false))
 

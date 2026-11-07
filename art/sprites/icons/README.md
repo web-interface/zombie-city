@@ -4,6 +4,8 @@
 | 파일 | 무엇 |
 |---|---|
 | `icon_ammo.png` | 아이콘 'ammo' (10×10) |
+| `icon_approval_stamp.png` | 아이콘 'approval_stamp' (10×10) |
+| `icon_approval_stamp_evolved.png` | 진화 아이콘 'approval_stamp' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_backpack.png` | 아이콘 'backpack' (10×10) |
 | `icon_ball_bucket.png` | 아이콘 'ball_bucket' (10×10) |
 | `icon_ball_bucket_evolved.png` | 진화 아이콘 'ball_bucket' — 금색 색바꿈 + 금빛 테두리 (자동) |
@@ -16,18 +18,16 @@
 | `icon_bomb.png` | 아이콘 'bomb' (10×10) |
 | `icon_box_toss.png` | 아이콘 'box_toss' (10×10) |
 | `icon_box_toss_evolved.png` | 진화 아이콘 'box_toss' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_caffeine_rush.png` | 아이콘 'caffeine_rush' (10×10) |
 | `icon_camo_cloak.png` | 아이콘 'camo_cloak' (10×10) |
 | `icon_codex.png` | 아이콘 'codex' (10×10) |
 | `icon_coffee.png` | 아이콘 'coffee' (10×10) |
 | `icon_crossbow.png` | 아이콘 'crossbow' (10×10) |
 | `icon_crossbow_evolved.png` | 진화 아이콘 'crossbow' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_daily.png` | 아이콘 'daily' (10×10) |
-| `icon_defibrillator.png` | 아이콘 'defibrillator' (10×10) |
-| `icon_defibrillator_evolved.png` | 진화 아이콘 'defibrillator' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_delivery_bag.png` | 아이콘 'delivery_bag' (10×10) |
-| `icon_disinfectant.png` | 아이콘 'disinfectant' (10×10) |
-| `icon_disinfectant_evolved.png` | 진화 아이콘 'disinfectant' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_duct_tape.png` | 아이콘 'duct_tape' (10×10) |
+| `icon_employee_badge.png` | 아이콘 'employee_badge' (10×10) |
 | `icon_energy_drink.png` | 아이콘 'energy_drink' (10×10) |
 | `icon_extinguisher.png` | 아이콘 'extinguisher' (10×10) |
 | `icon_fire_axe.png` | 아이콘 'fire_axe' (10×10) |
@@ -42,14 +42,16 @@
 | `icon_hammer.png` | 아이콘 'hammer' (10×10) |
 | `icon_hidden_airstrike.png` | 아이콘 'hidden_airstrike' (10×10) |
 | `icon_hidden_backdraft.png` | 아이콘 'hidden_backdraft' (10×10) |
+| `icon_hidden_clock_out.png` | 아이콘 'hidden_clock_out' (10×10) |
 | `icon_hidden_express.png` | 아이콘 'hidden_express' (10×10) |
 | `icon_hidden_grand_slam.png` | 아이콘 'hidden_grand_slam' (10×10) |
-| `icon_hidden_miracle.png` | 아이콘 'hidden_miracle' (10×10) |
 | `icon_hidden_pack_hunt.png` | 아이콘 'hidden_pack_hunt' (10×10) |
 | `icon_homerun.png` | 아이콘 'homerun' (10×10) |
 | `icon_hunting_dog.png` | 아이콘 'hunting_dog' (10×10) |
 | `icon_hunting_dog_evolved.png` | 진화 아이콘 'hunting_dog' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_knee_pads.png` | 아이콘 'knee_pads' (10×10) |
+| `icon_laptop_toss.png` | 아이콘 'laptop_toss' (10×10) |
+| `icon_laptop_toss_evolved.png` | 진화 아이콘 'laptop_toss' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_lock.png` | 아이콘 'lock' (10×10) |
 | `icon_lucky_charm.png` | 아이콘 'lucky_charm' (10×10) |
 | `icon_magnet.png` | 아이콘 'magnet' (10×10) |
@@ -59,6 +61,8 @@
 | `icon_molotov_evolved.png` | 진화 아이콘 'molotov' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_nail_gun.png` | 아이콘 'nail_gun' (10×10) |
 | `icon_nail_gun_evolved.png` | 진화 아이콘 'nail_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_paper_storm.png` | 아이콘 'paper_storm' (10×10) |
+| `icon_paper_storm_evolved.png` | 진화 아이콘 'paper_storm' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_parcel_drone.png` | 아이콘 'parcel_drone' (10×10) |
 | `icon_parcel_drone_evolved.png` | 진화 아이콘 'parcel_drone' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_pistol.png` | 아이콘 'pistol' (10×10) |
@@ -71,8 +75,6 @@
 | `icon_research_notes.png` | 아이콘 'research_notes' (10×10) |
 | `icon_saw_drone.png` | 아이콘 'saw_drone' (10×10) |
 | `icon_saw_drone_evolved.png` | 진화 아이콘 'saw_drone' — 금색 색바꿈 + 금빛 테두리 (자동) |
-| `icon_scalpel.png` | 아이콘 'scalpel' (10×10) |
-| `icon_scalpel_evolved.png` | 진화 아이콘 'scalpel' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_scrap.png` | 아이콘 'scrap' (10×10) |
 | `icon_settings.png` | 아이콘 'settings' (10×10) |
 | `icon_shelter_banish.png` | 아이콘 'shelter_banish' (10×10) |
@@ -93,9 +95,8 @@
 | `icon_sprint.png` | 아이콘 'sprint' (10×10) |
 | `icon_stadium_light.png` | 아이콘 'stadium_light' (10×10) |
 | `icon_stadium_light_evolved.png` | 진화 아이콘 'stadium_light' — 금색 색바꿈 + 금빛 테두리 (자동) |
-| `icon_stethoscope.png` | 아이콘 'stethoscope' (10×10) |
-| `icon_syringe_gun.png` | 아이콘 'syringe_gun' (10×10) |
-| `icon_syringe_gun_evolved.png` | 진화 아이콘 'syringe_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_stapler.png` | 아이콘 'stapler' (10×10) |
+| `icon_stapler_evolved.png` | 진화 아이콘 'stapler' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_tape_gun.png` | 아이콘 'tape_gun' (10×10) |
 | `icon_tape_gun_evolved.png` | 진화 아이콘 'tape_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_taser.png` | 아이콘 'taser' (10×10) |

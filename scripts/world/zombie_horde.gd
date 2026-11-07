@@ -164,10 +164,10 @@ func _touch_survivor(zombie: Zombie, survivor: Survivor, delta: float) -> void:
 	if zombie.is_stunned():
 		return
 	if zombie.is_boss:   # 보스는 제한 밖에서 따로 문다 (졸개 2마리가 먼저 물고 있으면 보스 피해가 통째로 빠지던 것 — 마지막 검수)
-		survivor.take_damage(zombie.contact_damage_per_second * delta, String(zombie.info["name"]))
+		survivor.take_damage(zombie.contact_damage_per_second * delta, String(zombie.info["name"]), zombie.position)
 	elif _biters_this_frame < _bite_limit:
 		_biters_this_frame += 1
-		survivor.take_damage(zombie.contact_damage_per_second * delta, String(zombie.info["name"]))
+		survivor.take_damage(zombie.contact_damage_per_second * delta, String(zombie.info["name"]), zombie.position)
 
 
 ## 좀비끼리 겹치지 않게 살짝 밀어낸다. 칸 나누기로 가까운 것만 본다.

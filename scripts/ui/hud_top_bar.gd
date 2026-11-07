@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/hud_top_bar.gd
-## [하는 일] 화면 맨 위 정보 줄: 경험치 막대, 레벨, 구조까지 남은 시간(가운데 크게), 처치 수, 무기 4칸·장비 4칸 작은 아이콘과 단계 점, 생존자 체력 막대. 숫자가 바뀌면 살짝 튀어 오른다.
+## [하는 일] 화면 맨 위 정보 줄: 경험치 막대, 레벨, 구조까지 남은 시간(가운데 크게), 처치 수, 무기 4칸·장비 4칸 작은 아이콘과 단계 점(두 칸 줄 사이 빈 곳엔 night_timeline.gd 의 시간 줄), 생존자 체력 막대. 숫자가 바뀌면 살짝 튀어 오른다.
 ## [쓰는 곳] scripts/ui/hud.gd 가 만들고 매 프레임 refresh() 를 부른다.
 ## [근거 문서] 05 게임 화면 배치, 02 §12 (숫자는 튀어 오르는 애니메이션)
 class_name HudTopBar
@@ -8,6 +8,9 @@ extends Control
 const SAFE_TOP := 4.0            # 폰 카메라 구멍을 피해 살짝 내림
 const SLOT_SIZE := 12.0
 const MAX_LEVEL_PIPS := 5        # 단계 점은 5개까지, 넘으면 숫자로
+const SLOT_GAP := 2.0
+const SIDE_PADDING := 4.0       # 무기 칸·장비 칸이 화면 가장자리에서 떨어진 만큼 (시간 줄이 이 사이 빈 곳에 들어감)
+const SLOT_ROW_TOP := 30.0      # 무기·장비 칸 줄의 위 끝 (SAFE_TOP 아래로)
 
 var _level_up: LevelUp
 var _rack: WeaponRack
@@ -68,7 +71,7 @@ func _draw() -> void:
 	_draw_text(PixelUi.FONT_SMALL, _night_name, Vector2(width * 0.5, SAFE_TOP + 26.0), HORIZONTAL_ALIGNMENT_CENTER, PixelUi.MUTED, PixelUi.SIZE_SMALL)
 	_draw_text(font, "처치 %d" % _kills, Vector2(width - 4, SAFE_TOP + 16.0 - _kill_bump * 1.5), HORIZONTAL_ALIGNMENT_RIGHT, PixelUi.INK)
 	_draw_combo(width)
-	_draw_slots(SAFE_TOP + 30.0)
+	_draw_slots(SAFE_TOP + SLOT_ROW_TOP)
 	_draw_health_bar(width)
 
 
@@ -88,16 +91,16 @@ func _timer_color() -> Color:
 
 
 func _draw_slots(top: float) -> void:
-	var slot_left := 4.0
+	var slot_left := SIDE_PADDING
 	for weapon: Weapon in _rack.weapons:
 		_draw_slot(weapon.icon_name(), weapon.level, Vector2(slot_left, top))
 		if weapon.is_evolved:   # 진화 무기 칸은 금색 테두리 (문서 14 §2-7)
 			draw_rect(Rect2(Vector2(slot_left, top), Vector2.ONE * SLOT_SIZE), Weapon.EVOLVED_COLOR, false, 1.0)
-		slot_left += SLOT_SIZE + 2.0
-	slot_left = size.x - 4.0 - (SLOT_SIZE + 2.0) * _rack.gear_levels.size()
+		slot_left += SLOT_SIZE + SLOT_GAP
+	slot_left = size.x - SIDE_PADDING - (SLOT_SIZE + SLOT_GAP) * _rack.gear_levels.size()
 	for gear_id: String in _rack.gear_levels.keys():
 		_draw_slot(String(GameData.entry("gear", gear_id)["icon"]), int(_rack.gear_levels[gear_id]), Vector2(slot_left, top))
-		slot_left += SLOT_SIZE + 2.0
+		slot_left += SLOT_SIZE + SLOT_GAP
 
 
 func _draw_slot(icon_name: String, level: int, top_left: Vector2) -> void:

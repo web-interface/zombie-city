@@ -1,5 +1,5 @@
 ## [파일] scripts/systems/level_up.gd
-## [하는 일] 경험치와 레벨: 백신 조각을 모아 레벨을 올리고(다음 레벨까지 기본 + 레벨당 양 × 지금 레벨 — data/run_rules.json experience, 연구 노트는 경험치 더 받음), 레벨마다 카드 3장을 뽑아(CardDeck — 생존자 카드 풀·진화 먼저·가끔 금색 히든) 보여 달라고 알린다. 고른 카드를 적용한다(새 무기·강화·장비·진화·히든 스킬·구급상자·한계 돌파). 다시 뽑기·빼 버리기·건너뛰기(체력 조금 회복)·보스 보상 카드 한 번 더도 맡는다. 밤이 바뀌면 레벨 1·경험치 0·한계 돌파 비움·다시 뽑기/빼 버리기 다시 채움. 보물 상자가 쓰는 API(roll_upgrade_cards·apply_card·has_evolution_ready)도 여기.
+## [하는 일] 경험치와 레벨: 백신 조각을 모아 레벨을 올리고(다음 레벨까지 기본 + 레벨당 양 × 레벨 + 제곱 몫 × 레벨² — 처음 빠르고 뒤로 느리게, data/run_rules.json experience, 연구 노트는 경험치 더 받음), 레벨마다 카드 3장을 뽑아(CardDeck — 생존자 카드 풀·진화는 상자에서만·가끔 금색 히든) 보여 달라고 알린다. 고른 카드를 적용한다(새 무기·강화·장비·진화·히든 스킬·구급상자·한계 돌파). 다시 뽑기·빼 버리기·건너뛰기(체력 조금 회복)·보스 보상 카드 한 번 더도 맡는다. 보물 상자가 쓰는 API(roll_upgrade_cards·apply_card·has_evolution_ready)도 여기.
 ## [쓰는 곳] scenes/run.tscn 의 Systems/LevelUp. 조각(vaccine_shard_field.gd)이 add_experience() 를, 레벨 업 창(scripts/ui/level_up_panel.gd)이 choose()·reroll()·banish()·skip() 을, 보물 상자가 roll_upgrade_cards()·apply_card() 를 부른다. run.gd 가 evolved·hidden_skill_chosen 을 듣는다.
 ## [근거 문서] 02 §5 성장과 조합, 03 §5 레벨과 경험치, 14 §2-1·§2-4·§2-5·§2-6, 15 §2·§5-2 (밤마다 새로 키우기), data/run_rules.json build·experience
 class_name LevelUp
@@ -50,9 +50,10 @@ func reset_for_new_night() -> void:
 
 
 ## 다음 레벨까지: shards_needed_base + shards_needed_per_level × 지금 레벨 (목표 레벨 10 ≈ 1:30, 레벨 20 ≈ 3:30 — 문서 13)
+## 다음 레벨까지: base + per_level × 레벨 + per_level_squared × 레벨² — 뱀서처럼 처음 빠르고 뒤로 느리게 (15 §5-1: 첫 1분 6번, 끝 1분 3번, 한 밤 약 17)
 func experience_needed() -> float:
 	var rules := GameData.rules("experience")
-	return float(rules["shards_needed_base"]) + float(rules["shards_needed_per_level"]) * level
+	return float(rules["shards_needed_base"]) + float(rules["shards_needed_per_level"]) * level + float(rules["shards_needed_per_level_squared"]) * level * level
 
 
 func add_experience(amount: float) -> void:

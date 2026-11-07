@@ -25,7 +25,7 @@ func _ready() -> void:
 	add_child(PixelUi.full_rect(dim))
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 6)
-	add_child(PixelUi.centered(column))
+	TapGuard.place_above_thumb_zone(self, column)   # 조이스틱 엄지 자리(아래)는 비워 둔다
 	_title = PixelUi.label("", PixelUi.ALERT, false, true)
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(_title)
@@ -78,5 +78,5 @@ func _close(is_retry: bool) -> void:
 
 func _process(_delta: float) -> void:
 	if visible:
-		_retry_button.modulate.a = 0.45 + 0.55 * _guard.progress()
-		_quit_button.modulate.a = _retry_button.modulate.a
+		_retry_button.modulate = _guard.current_modulate()
+		_quit_button.modulate = _retry_button.modulate
