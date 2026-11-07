@@ -34,7 +34,8 @@ func setup(context: RunContext, parts: Dictionary) -> void:
 ## 헬기를 탔다. 판을 끝내야 하면 끝낼 이유("escaped" 마지막 밤 생존 · "test_night_limit" 시험 밤 수), 아니면 "".
 func on_night_survived() -> String:
 	_recorder.note_night_survived()
-	_context.shards.cash_in_all()
+	# 남은 조각을 경험치로 바꾸지 않는다 — 다음 밤은 레벨 1부터라 쓸모가 없고, 그 레벨 업으로 레벨 10 이 되면
+	# 다음 밤 시작에 전직 창이 엉뚱하게 뜬다 (총감독 2026-11-07, 문서 16 §6)
 	_context.play_sound("night_clear")
 	if _context.night_cycle.night >= int(GameData.rules("night_carry")["final_night"]):
 		_hud.show_banner("새벽시를 탈출했어요!", "good")

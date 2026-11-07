@@ -16,7 +16,9 @@ const META_TABLE_NAMES: Array[String] = ["meta_rules", "shelter", "infection", "
 var _tables: Dictionary = {}
 
 
-func _ready() -> void:
+## _ready 가 아니라 _init 에서 읽는다 — 명령줄로 한 판 장면을 바로 열면(시험 봇) 장면의 멤버 변수(밤 준비·훈장)가
+## 자동 로드의 _ready 보다 먼저 만들어져 표가 비어 있었다 (총감독 2026-11-07)
+func _init() -> void:
 	for table_name: String in TABLE_NAMES + META_TABLE_NAMES:
 		_tables[table_name] = _load_table(table_name)
 
