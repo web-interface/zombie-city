@@ -1,5 +1,5 @@
 ## [파일] tools/autoplay.gd
-## [하는 일] 자동 플레이 봇(초보·보통·고수): 사람 대신 움직이고(좀비 피하기·조각 줍기·가로등 빛 이용·보스 돌진 피하기·착륙 지점 가기), 레벨 업 카드·전직 갈래·스킬을 고른다. --capture=폴더 를 주면 정해진 순간마다 화면을 저장한다.
+## [하는 일] 자동 플레이 봇(초보·보통·고수): 사람 대신 움직이고(좀비 피하기·조각 줍기·가로등 빛 이용·보스 돌진과 날아오는 침·식칼 피하기·착륙 지점 가기), 레벨 업 카드·전직 갈래·스킬을 고른다. --capture=폴더 를 주면 정해진 순간마다 화면을 저장한다.
 ## [쓰는 곳] scripts/run/run.gd 가 명령줄에 --autoplay 가 있으면 만든다. 예: Godot --path . --fixed-fps 60 -- --autoplay=보통 --survivor=police --branch=random --runs=20 --stats=tools/out/balance/police.jsonl
 ## [근거 문서] 12 §4 봇 실력 3단계·돌리는 법, 07 시험 방법
 extends Node
@@ -16,6 +16,7 @@ const MELEE_BRAVE_HEALTH_RATIO := 0.5 # 체력이 이보다 많으면 과감하�
 const ZONE_SLOW_DOWN_DISTANCE := 30.0 # 기다리는 자리에 이만큼 가까워지면 끌림을 줄여 좀비 피하기가 이기게
 const BOSS_ENGAGE_DISTANCE := 75.0    # 원거리 무기는 보스와 이 거리 안을 지킨다 (네일건 사거리 100 보다 안쪽)
 const NORMAL_REACTION_SECONDS := 0.15 # 보통은 방향을 0.15초마다 다시 정한다 (매 프레임 완벽하게 피하는 건 사람 같지 않음)
+const SHOT_DODGE_DISTANCE := 60.0     # 고수는 이 안으로 날아오는 침·식칼을 옆으로 피한다
 const CAPTURE_SECONDS: Array[float] = [4.0, 30.0, 46.0, 75.0, 100.0, 125.0, 150.0, 182.0]   # 한 밤 3분 안 (보스·포위·떼 돌진·착륙)
 
 var skill_level: String = "보통"
@@ -56,7 +57,7 @@ func move_direction() -> Vector2:
 	elif skill_level != "초보" and not _is_heading_to_zone():
 		wanted += _boss_engage() * 0.7
 	if skill_level == "고수" and not _is_heading_to_zone():   # 헬기 탈 땐 보스 피하기보다 원 안이 먼저 (검수: 원에 못 들어가 헬기를 놓침)
-		wanted += _boss_dodge() * 2.5 + _light_pull() * 0.5
+		wanted += _boss_dodge() * 2.5 + _light_pull() * 0.5 + _shot_dodge() * 2.0
 	_wander_angle += randf_range(-0.3, 0.3)
 	match skill_level:
 		"초보":
@@ -69,10 +70,8 @@ func move_direction() -> Vector2:
 
 ## 좀비 피하기를 얼마나 세게 할지: 착륙 지점으로 뛰어들 땐 뚫고 가고, 근접 무기는 붙어야 닿으니 덜 피한다
 func _escape_weight() -> float:
-	if _is_heading_to_zone():
-		return 0.7
-	if _is_melee_fighter():
-		return 0.5 if _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO else 0.8
+	if _is_heading_to_zone(): return 0.7
+	if _is_melee_fighter(): return 0.5 if _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO else 0.8
 	return 1.1
 
 
@@ -104,8 +103,8 @@ func wants_skill() -> bool:
 	match skill_level:
 		"초보":
 			return randf() < 0.01
-		"고수":
-			return crowd >= 7 or _context.survivor.health_ratio() < 0.45
+		"고수":   # 6차: 7마리 기다리다 스킬을 아껴 쓰러짐 → 보통보다 일찍
+			return crowd >= 4 or _context.survivor.health_ratio() < 0.5
 		_:
 			return crowd >= 4 or _context.survivor.health_ratio() < 0.4
 
@@ -161,17 +160,13 @@ func _hazard_escape(survivor_position: Vector2) -> Vector2:
 
 
 func _is_melee_fighter() -> bool:
-	for weapon: Weapon in _context.weapon_rack.weapons:
-		if weapon is MeleeArcWeapon:
-			return true
-	return false
+	return _context.weapon_rack.weapons.any(func(weapon: Weapon) -> bool: return weapon is MeleeArcWeapon)
 
 
 ## 가장 가까운 좀비와 근접 거리를 유지하도록 다가가거나 물러선다
 func _melee_approach() -> Vector2:
 	var target := _context.horde.nearest(_context.survivor.position, 90.0)
-	if target == null:
-		return Vector2.ZERO
+	if target == null: return Vector2.ZERO
 	var to_target := target.position - _context.survivor.position
 	return to_target.normalized() * clampf((to_target.length() - MELEE_KEEP_DISTANCE) / 20.0, -1.0, 1.0)
 
@@ -212,8 +207,7 @@ func _zone_goal() -> Vector2:
 	return _extraction.zone_position + from_zone * ZONE_WAIT_DISTANCE
 
 
-## 원거리 무기: 보스가 사거리 밖으로 멀어지면 다시 다가간다 (3차: 빠른 택배기사가 보스를 피해 멀리만 돌아 보스 처치에 51~80초)
-## 돌진 예고 중에는 다가가지 않는다.
+## 원거리 무기: 보스가 사거리 밖으로 멀어지면 다시 다가간다, 돌진 예고 중엔 말고 (3차: 빠른 택배기사가 보스를 피해 멀리만 돌아 보스 처치에 51~80초)
 func _boss_engage() -> Vector2:
 	for zombie: Zombie in _context.horde.zombies:
 		if zombie.is_boss and not bool(zombie.boss_state.get("is_warning", false)):
@@ -234,32 +228,34 @@ func _boss_dodge() -> Vector2:
 	return Vector2.ZERO
 
 
-## 고수: 좀비가 많으면 가까운 가로등 빛 쪽으로 (빛 안 좀비는 느리고 약함)
+## 고수: 좀비가 많으면 90 안의 가장 가까운 가로등 빛 쪽으로 (빛 안 좀비는 느리고 약함)
 func _light_pull() -> Vector2:
-	if _context.horde.alive_count() < 40:
+	var here := _context.survivor.position
+	var lamps: Array = _context.lighting.lamp_positions().filter(func(lamp: Vector2) -> bool: return lamp.distance_to(here) < 90.0)
+	if _context.horde.alive_count() < 40 or lamps.is_empty():
 		return Vector2.ZERO
-	var survivor_position := _context.survivor.position
-	var best := Vector2.ZERO
-	var best_distance := 90.0
-	for lamp: Vector2 in _context.lighting.lamp_positions():
-		var distance := lamp.distance_to(survivor_position)
-		if distance < best_distance:
-			best_distance = distance
-			best = lamp - survivor_position
-	return best.normalized() if best_distance > 12.0 else Vector2.ZERO
+	lamps.sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.distance_to(here) < b.distance_to(here))
+	var to_lamp: Vector2 = lamps[0] - here
+	return to_lamp.normalized() if to_lamp.length() > 12.0 else Vector2.ZERO
+
+
+## 고수: 날아오는 침·식칼·철근이 나를 지나갈 길이면 그 길의 옆으로 비킨다 (6차: 고수가 보통보다 못 피했음)
+func _shot_dodge() -> Vector2:
+	var away := Vector2.ZERO
+	for shot: Dictionary in _context.hazards.incoming_shots():
+		var direction := Vector2(shot["velocity"]).normalized()
+		var to_survivor := _context.survivor.position - Vector2(shot["position"])
+		var side := to_survivor - direction * to_survivor.dot(direction)
+		if to_survivor.dot(direction) > 0.0 and to_survivor.length() < SHOT_DODGE_DISTANCE and side.length() < 10.0:
+			away += side.normalized() if side.length() > 0.5 else direction.orthogonal()
+	return away.limit_length(1.0)
 
 
 func _pick_card_index(cards: Array) -> int:
 	if skill_level == "초보" or cards.is_empty():
 		return randi() % maxi(cards.size(), 1)
-	var best_index := 0
-	var best_score := -999.0
-	for index: int in range(cards.size()):
-		var score := _card_score(cards[index])
-		if score > best_score:
-			best_score = score
-			best_index = index
-	return best_index
+	var scores: Array = cards.map(_card_score)
+	return scores.find(scores.max())
 
 
 func _card_score(card: Dictionary) -> float:
