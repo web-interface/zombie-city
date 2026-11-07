@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/online_rank_line.gd
-## [하는 일] 결과 화면 목록 맨 앞 '순위' 띠: 로그인했으면 판 결과를 바로 올리고 "이번 기록 전체 7위"(새 최고면 크게 금색 "새 최고 기록! 전체 3위", 오늘의 도전 판이면 오늘의 도전 순위), 안 했으면 [로그인하고 순위에 올리기] — 로그인하면 그때 올린다. 못 올리면 이유 한 줄. 게임은 기다리지 않는다.
+## [하는 일] 결과 화면 목록 맨 앞 '순위' 띠: 로그인했으면 판 결과를 바로 올리고 "이번 기록 전체 7위"(새 최고면 크게 금색 "전체 3위!" + "새 최고 기록", 오늘의 도전 판이면 오늘의 도전 순위), 안 했으면 [로그인하고 순위에 올리기] — 로그인하면 그때 올린다. 못 올리면 이유 한 줄. 게임은 기다리지 않는다.
 ## [쓰는 곳] scripts/ui/result_screen.gd 가 Online.can_submit(결과) 일 때만 만든다(시험 봇·시험 옵션 판은 안 만듦). scripts/meta/online.gd 로 올린다.
 ## [근거 문서] 05 화면 목록(결과), 07 온라인 순위표
 class_name OnlineRankLine
@@ -55,8 +55,8 @@ func _on_submitted(answer: Dictionary) -> void:
 	var standing := _pick_board(answer.get("boards", []))
 	var board_name := "오늘의 도전" if String(standing.get("board", "")).begins_with("daily:") else "전체"
 	if bool(standing.get("isNewBest", false)):
-		_set_lines([["새 최고 기록! %s %d위" % [board_name, int(standing.get("rank", 0))], PixelUi.GOLD, BIG],
-			["%d명 중" % int(standing.get("total", 0)), PixelUi.MUTED, SMALL]])
+		_set_lines([["%s %d위!" % [board_name, int(standing.get("rank", 0))], PixelUi.GOLD, BIG],
+			["새 최고 기록 · %d명 중" % int(standing.get("total", 0)), PixelUi.GOLD, SMALL]])
 		return
 	_set_lines([["이번 기록 %s %d위" % [board_name, int(standing.get("runRank", 0))], PixelUi.INK, REGULAR],
 		["내 최고 %d위 · %d명 중" % [int(standing.get("rank", 0)), int(standing.get("total", 0))], PixelUi.MUTED, SMALL]])
