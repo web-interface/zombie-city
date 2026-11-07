@@ -1,20 +1,20 @@
 ## [파일] scripts/systems/night_cycle.gd
-## [하는 일] 끝없는 밤의 '몇째 밤'과 그 밤의 세기를 들고 있다: 좀비 체력(시간 성장을 밤 사이에도 이어 감)·나오는 수·닿는 피해·빠르기·보스 체력·정예 확률 배율, 밤 이름("둘째 밤"), 그 밤의 분위기(날씨·어둠 색 — data/night_themes.json). 다음 밤으로 넘기면 숫자만 하나 올린다.
-## [쓰는 곳] RunContext.night_cycle 로 들고 다닌다. zombie_spawner·boss_director·horde_events 가 배율을 묻고, night_flow.gd 가 advance() 를 부르고, HUD·기록이 night 를, weather.gd 가 theme() 을 읽는다.
-## [근거 문서] 14 §1-1 밤 이어가기·§3 감염도·오늘의 도전, data/run_rules.json nights, data/spawn_curve.json, data/infection.json
+## [하는 일] 끝없는 밤의 '몇째 밤'과 그 밤의 세기를 들고 있다: 좀비 체력(밤 안 +30% 까지 × 밤 사이 직선)·필드 최소 좀비·닿는 피해·빠르기·보스 체력·정예 확률 배율, 밤 이름("둘째 밤"), 그 밤의 분위기(날씨·어둠 색 — data/night_themes.json). 다음 밤으로 넘기면 숫자만 하나 올린다.
+## [쓰는 곳] RunContext.night_cycle 로 들고 다닌다. zombie_spawner·night_director·boss_director 가 배율을 묻고, night_flow.gd 가 advance() 를 부르고, HUD·기록이 night 를, weather.gd 가 theme() 을 읽는다.
+## [근거 문서] 15 §3-2·§4 밤 사이 곡선, 14 §1-1 밤 이어가기·§3 감염도·오늘의 도전, data/run_rules.json nights, data/spawn_curve.json, data/infection.json
 class_name NightCycle
 extends RefCounted
 
 var night: int = 1
 var _rules: Dictionary = {}
-var _health_growth_per_second: float = 0.0
+var _in_night_health_growth: float = 0.0
 ## 감염도·오늘의 도전 배율 (RunModifiers.run_multipliers — 판 시작 때 한 번)
 var _run_modifiers: Dictionary = {}
 
 
 func _init() -> void:
 	_rules = GameData.rules("nights")
-	_health_growth_per_second = float(GameData.table("spawn_curve")["health_growth_per_second"])
+	_in_night_health_growth = float(GameData.table("spawn_curve")["in_night_health_growth"])
 	_run_modifiers = RunModifiers.run_multipliers()
 
 
@@ -35,13 +35,17 @@ func night_name(night_number: int = -1) -> String:
 	return "%d번째 밤" % number
 
 
-## 지난 밤들의 시간까지 이어서 늘어나는 체력 배율 — 강해진 생존자에게 둘째 밤 시작이 시시하지 않게
+## 일반 좀비 체력 배율: 한 밤 안에서는 최대 +30% 만, 밤 사이는 직선 (15 §3-2·§4 — 어려움은 단단함이 아니라 마릿수·박자로)
 func zombie_health_multiplier(elapsed_seconds: float) -> float:
-	return (1.0 + _health_growth_per_second * (elapsed_seconds + night_seconds() * (night - 1))) * _modifier("zombie_health", 1.0)
+	var in_night := 1.0 + _in_night_health_growth * minf(elapsed_seconds / night_seconds(), 1.0)
+	var between_nights := 1.0 + float(_rules["zombie_health_growth_per_night"]) * (night - 1)
+	return in_night * between_nights * _modifier("zombie_health", 1.0)
 
 
-func spawn_multiplier() -> float:
-	return (1.0 + float(_rules["spawn_growth_per_night"]) * (night - 1)) * _modifier("zombie_count", 1.0)
+## 필드 최소 좀비 배율: 밤마다 조금씩, 상한까지 (15 §4)
+func minimum_multiplier() -> float:
+	var growth := minf(1.0 + float(_rules["minimum_growth_per_night"]) * (night - 1), float(_rules["max_minimum_multiplier"]))
+	return growth * _modifier("zombie_count", 1.0)
 
 
 func contact_damage_multiplier() -> float:
@@ -73,11 +77,9 @@ func heal_ratio_between_nights() -> float:
 	return float(_rules["heal_ratio_between_nights"])
 
 
-## 밤마다 달라지는 목록(보스 시간표·이벤트)에서 이번 밤 것을 고른다. 목록보다 뒤의 밤은 마지막 것을 쓴다.
-func pick_for_night(per_night_lists: Array) -> Array:
-	if per_night_lists.is_empty():
-		return []
-	return per_night_lists[mini(night, per_night_lists.size()) - 1]
+## 밤 차례대로 돌아가는 목록(보스·몰아치기 종류)에서 이번 밤 것 — 목록이 끝나면 처음부터 다시
+func pick_rotating(per_night_list: Array) -> Variant:
+	return per_night_list[(night - 1) % per_night_list.size()]
 
 
 ## 새 좀비가 몇 초 일찍 나오나 (감염도 2)

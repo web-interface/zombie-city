@@ -19,7 +19,7 @@
   "walker": {
     "name": "걷는 좀비",
     "radius": 4,
-    "max_health": 12,
+    "max_health": 10,
     "move_speed": 15,
     "contact_damage_per_second": 17,
     "shard_value": 1,

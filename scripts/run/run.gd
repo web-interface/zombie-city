@@ -17,6 +17,7 @@ var _rewards := RunRewards.new()
 var _input := RunInput.new()
 var _chatter := SurvivorChatter.new()
 var _meta_hooks := RunMetaHooks.new()
+var _night_director := NightDirector.new()
 
 @onready var _survivor: Survivor = $World/Survivor
 @onready var _horde: ZombieHorde = $World/ZombieHorde
@@ -42,18 +43,20 @@ func _ready() -> void:
 	_skill_runner.setup(context, String(survivor_info["skill"]))
 	_level_up.setup(context, _rack)
 	_promotion.setup(context, _skill_runner)
-	_spawner.setup(context)
+	_spawner.setup(context, _night_director)
 	_events.setup(context, _spawner)
 	_boss_director.setup(context, _spawner)
+	_night_director.setup(context, _spawner, _events, _boss_director)
 	_recorder.setup(context)
 	_extraction.setup(context)
 	_hud.setup(context, _rack, _level_up, _promotion, _skill_runner, _extraction)
 	_hud.watch_bosses(_boss_director)
+	_hud.watch_night(_night_director)
 	_rewards.setup(context, _hud, _level_up, _combo)
 	_rewards.watch_build(_skill_runner, _time_effects)
 	add_child(_night_flow)
 	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo, "rewards": _rewards, "skill_runner": _skill_runner,
-		"night_systems": [_spawner, _events, _boss_director, _extraction]})
+		"night_systems": [_spawner, _events, _boss_director, _night_director, _extraction]})
 	_connect_signals()
 	_meta_hooks.setup(context, _hud, _level_up, _boss_director)   # 신호를 이은 뒤에 (시작 레벨 업도 기록·전직에 잡히게 — 검수 지적)
 	SoundPlayer.start_run_music()
@@ -115,6 +118,7 @@ func _connect_signals() -> void:
 	_boss_director.boss_defeated.connect(_on_boss_defeated)
 	_boss_director.boss_enraged.connect(_on_alert_event)
 	_events.event_started.connect(_on_alert_event)
+	_recorder.watch_night(_night_director)
 	_survivor.damaged.connect(_on_survivor_damaged)
 	_survivor.died.connect(_on_survivor_died)
 	_survivor.healed.connect(func(amount: float) -> void: context.effects.show_heal_number(_survivor.position, amount))
@@ -140,7 +144,8 @@ func _physics_process(delta: float) -> void:
 	if _input.wants_skill():
 		_skill_runner.try_use()
 	_skill_runner.update(delta)
-	_spawner.update(delta)                                                            # 3 좀비 나오기·이벤트
+	_night_director.update(delta)                                                     # 3 박자·큰 일 → 좀비 나오기·이벤트
+	_spawner.update(delta)
 	_events.update(delta)
 	_horde.update(delta)                                                              # 4 좀비 움직이기·특수 행동
 	_boss_director.update(delta)
@@ -218,7 +223,6 @@ func _on_alert_event(banner_text: String) -> void:
 
 func _on_boss_defeated(seconds_to_kill: float, boss_name: String) -> void:
 	_recorder.note_boss_kill(seconds_to_kill)
-	_spawner.start_calm()
 	_hud.show_banner("%s 처치! 카드 한 장 더" % boss_name, "good")
 	context.play_sound("explosion")
 	_play_boss_kill_moment()
@@ -259,7 +263,6 @@ func _on_landing_zone_revealed(_zone_position: Vector2) -> void:
 
 func _on_helicopter_arrived() -> void:
 	_recorder.note_event()
-	_spawner.is_extraction_rush = true
 	_hud.show_banner("헬기 도착! 원 안에서 버텨요", "good")
 
 
