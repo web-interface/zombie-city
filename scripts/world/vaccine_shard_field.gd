@@ -51,15 +51,11 @@ func positions() -> Array[Vector2]:
 	return result
 
 
-## 밤을 넘길 때: 남은 조각을 한꺼번에 경험치로 바꾸고 비운다 (헬기 탄 보상)
-func cash_in_all() -> void:
-	var total := 0.0
-	for shard: Dictionary in _shards:
-		total += float(shard["value"])
+## 밤을 넘길 때: 바닥의 조각을 경험치로 바꾸지 않고 다 지운다 — 다음 밤은 레벨 1부터라 남은 조각을 주우면
+## 시작하자마자 레벨이 훌쩍 올랐다 (사용자 2026-11-07 "다음 밤 넘어갈 때 기존 밤 경험치 다 없애 줘야지")
+func clear() -> void:
 	_shards.clear()
 	queue_redraw()
-	if total > 0.0:
-		collected.emit(total)
 
 
 ## 화면의 조각을 모두 끌어온다 (물류왕 2차 전직)

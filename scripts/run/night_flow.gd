@@ -59,6 +59,7 @@ func start_next_night(choice: Dictionary = {}) -> void:
 	for system: Object in _night_systems:
 		system.call("reset_for_new_night")
 	_context.horde.clear_all()
+	_context.shards.clear()   # 지난 밤 경험치 조각 (레벨·경험치는 LevelUp 이 0 으로)
 	_context.health_packs.clear()
 	_rewards.add_pending_chests(_context.pickups.take_chests())   # 바닥 상자는 사라지지 않고 쌓아 둠
 	_context.pickups.clear()
