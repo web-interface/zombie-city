@@ -1,0 +1,273 @@
+# [파일] audio/source/music_battle.txt
+# [하는 일] 장면 음악 악보: 보스전(사단조 150 BPM) · 보스 분노(같은 템포·같은 길이) · 탈출(다단조→다장조 189 BPM, 헬기 날개 박자) · 생존자 고르기(사장조 125 BPM, 두근두근).
+# [쓰는 곳] tools/build_sounds.py → tools/sound_music.py 가 music_scores.txt·music_nights.txt 다음에 읽는다 (앞 파일의 악기·타악기도 씀) → audio/music_boss·boss_rage·extraction·select.wav
+# [근거 문서] 14 §1-3 보스 3종·§1-1 헬기·탈출, 02 §12 음악, 05 생존자 고르기 화면, 06 사운드
+#
+# 쓰는 법은 music_scores.txt 맨 위와 같다. 이 파일의 곡은 모두 파일 하나짜리라, 한 곡 안에서 크기를 맞춘다.
+# music_boss 와 music_boss_rage 는 빠르기·마디 수·화음이 같다 → 재생 위치를 그대로 넘겨 바꾸면 박자가 맞물린다.
+
+# ───────── 타악기 (이 파일에서 새로) ─────────
+@drum taiko wave=triangle pitch=150,72 curve=2 length=0.42 env=0.001,0.03,1.6 volume=0.9
+@drum taiko wave=square pitch=220,90 curve=2.5 length=0.08 env=0.001,0,2.0 lowpass=1600 volume=0.25
+@drum taiko wave=noise pitch=2500 length=0.06 env=0,0,1.5 lowpass=1500 volume=0.35
+@drum gong  wave=metal pitch=1900 length=2.4 env=0.005,0.1,2.0 lowpass=3500 volume=0.22
+@drum gong  wave=triangle pitch=98,92 length=2.2 env=0.005,0.2,1.8 volume=0.45
+@drum clap  wave=noise pitch=14000 length=0.11 env=0.001,0.004,2.6 highpass=900 lowpass=7500 tremolo=95,0.75,3 volume=0.6
+@drum clap  wave=noise pitch=9000 length=0.03 env=0,0,1.6 highpass=1200 volume=0.3
+
+# ───────── 보스전 악기 — 톱니파 금관 '빰 빰', 현악기처럼 몰아치는 베이스, 큰북 ─────────
+@instrument boss_bass  wave=square duty=0.375 adsr=0.002,0.06,0.6,0.01 gate=0.8 lowpass=2200 volume=0.55
+@instrument boss_brass wave=saw adsr=0.004,0.12,0.5,0.03 gate=0.75 lowpass=2600 volume=0.11
+@instrument boss_lead  wave=saw adsr=0.01,0.15,0.75,0.06 gate=0.95 vibrato=5.5,0.25,0.15 lowpass=3800 volume=0.3 echo=3,0.25,0.25
+@instrument rage_bass  wave=saw adsr=0.001,0.04,0.65,0.005 gate=0.8 lowpass=2000 volume=0.5
+@instrument rage_lead  wave=square duty=0.25 adsr=0.005,0.1,0.8,0.05 gate=0.96 vibrato=7.5,0.4,0.1 lowpass=5000 volume=0.3 echo=3,0.3,0.3
+@instrument rage_harm  wave=saw adsr=0.005,0.1,0.75,0.05 gate=0.95 vibrato=7,0.35,0.1 lowpass=3500 volume=0.2
+@instrument rage_alarm wave=square duty=0.125 adsr=0.001,0.03,0.5,0.005 gate=0.6 lowpass=6000 volume=0.1
+
+# ───────── 탈출 악기 — 헬기 날개 '두두두'(노이즈를 박자에 맞춰 끊음), 무전 '삐 삐-' ─────────
+# ex_rotor 의 떨림 12.6Hz = 189 BPM 16분음표 → 날개 소리가 박자와 딱 맞는다
+@instrument ex_bass  wave=square duty=0.5 adsr=0.002,0.06,0.65,0.01 gate=0.85 lowpass=2000 volume=0.5
+@instrument ex_lead  wave=square duty=0.25 adsr=0.004,0.1,0.75,0.04 gate=0.94 vibrato=6,0.22,0.12 lowpass=4500 volume=0.34 echo=3,0.22,0.25
+@instrument ex_arp   wave=square duty=0.125 adsr=0.001,0.04,0.35,0.005 gate=0.7 lowpass=5000 volume=0.12
+@instrument ex_radio wave=square duty=0.5 adsr=0.001,0.01,1,0.005 gate=0.9 lowpass=4000 volume=0.1
+@instrument ex_rotor wave=noise pitch=2800 adsr=0.005,0.01,1,0.005 gate=1 lowpass=900 tremolo=12.6,0.9,3 volume=0.25
+
+# ───────── 생존자 고르기 악기 — 튕기는 화음, 통통 베이스, 실로폰 같은 삼각파 ─────────
+@instrument sel_bass  wave=triangle adsr=0.003,0.12,0.5,0.03 gate=0.8 volume=0.5
+@instrument sel_pluck wave=square duty=0.25 adsr=0.001,0.07,0,0.01 gate=1 lowpass=3200 volume=0.11
+@instrument sel_pad   wave=square duty=0.5 adsr=0.25,0.4,0.7,0.3 gate=1 lowpass=1300 vibrato=4.5,0.08,0.3 volume=0.045
+@instrument sel_glock wave=triangle adsr=0.002,0.3,0.15,0.08 gate=0.9 volume=0.34 echo=3,0.25,0.25
+
+
+# ═════════ 보스전: 사단조 150 BPM, 20마디(32.0초) ═════════
+# 화음: 1~4 Gm Gm A♭ Gm (낮은 나팔 부름) | 5~12 Gm E♭ A♭ D Gm E♭ C D | 13~20 Cm A♭ E♭ D Cm A♭ D D
+# 베이스 '다다다 둥-' 이 반음 위를 찌르며 몰아치고, 1·5·13마디에 징·심벌로 장면을 끊는다.
+@song music_boss bpm=150 bars=20
+
+@part music_boss boss_bass
+| G2 G2 G2 G3:3 G2 G2 G2 Ab3:3 G2 G2 D3:2 | % | Ab2 Ab2 Ab2 Ab3:3 Ab2 Ab2 Ab2 A3:3 Ab2 Ab2 Eb3:2 | G2 G2 G2 G3:3 G2 G2 G2 Ab3:3 G2 G2 D3:2
+| G2 G2 G2 G3:3 G2 G2 G2 Ab3:3 G2 G2 D3:2 | Eb2 Eb2 Eb2 Eb3:3 Eb2 Eb2 Eb2 E3:3 Eb2 Eb2 Bb2:2
+| Ab2 Ab2 Ab2 Ab3:3 Ab2 Ab2 Ab2 A3:3 Ab2 Ab2 Eb3:2 | D2 D2 D2 D3:3 D2 D2 D2 Eb3:3 D2 D2 A2:2
+| G2 G2 G2 G3:3 G2 G2 G2 Ab3:3 G2 G2 D3:2 | Eb2 Eb2 Eb2 Eb3:3 Eb2 Eb2 Eb2 E3:3 Eb2 Eb2 Bb2:2
+| C2 C2 C2 C3:3 C2 C2 C2 Db3:3 C2 C2 G2:2 | D2 D2 D2 D3:3 D2 D2 D2 Eb3:3 D2 D2 A2:2
+| C2 C2 C2 C3:3 C2 C2 C2 Db3:3 C2 C2 G2:2 | Ab2 Ab2 Ab2 Ab3:3 Ab2 Ab2 Ab2 A3:3 Ab2 Ab2 Eb3:2
+| Eb2 Eb2 Eb2 Eb3:3 Eb2 Eb2 Eb2 E3:3 Eb2 Eb2 Bb2:2 | D2 D2 D2 D3:3 D2 D2 D2 Eb3:3 D2 D2 A2:2
+| C2 C2 C2 C3:3 C2 C2 C2 Db3:3 C2 C2 G2:2 | Ab2 Ab2 Ab2 Ab3:3 Ab2 Ab2 Ab2 A3:3 Ab2 Ab2 Eb3:2
+| D2 D2 D2 D3:3 D2 D2 D2 Eb3:3 D2 D2 A2:2 | D2 D2 D2 D3:3 D2 D2 D2 Eb3:3 A2 C3 D3:2
+
+@part music_boss boss_brass
+| G4+Bb4+D5:2 . G4+Bb4+D5:2 . G4+Bb4+D5:2 .:2 G4+Bb4+D5:2 G4+Bb4+D5:2 .:2 | % | Ab4+C5+Eb5:2 . Ab4+C5+Eb5:2 . Ab4+C5+Eb5:2 .:2 Ab4+C5+Eb5:2 Ab4+C5+Eb5:2 .:2
+| G4+Bb4+D5:2 . G4+Bb4+D5:2 . G4+Bb4+D5:2 .:2 G4+Bb4+D5:2 G4+Bb4+D5:2 .:2 | %
+| G4+Bb4+Eb5:2 . G4+Bb4+Eb5:2 . G4+Bb4+Eb5:2 .:2 G4+Bb4+Eb5:2 G4+Bb4+Eb5:2 .:2 | Ab4+C5+Eb5:2 . Ab4+C5+Eb5:2 . Ab4+C5+Eb5:2 .:2 Ab4+C5+Eb5:2 Ab4+C5+Eb5:2 .:2
+| F#4+A4+D5:2 . F#4+A4+D5:2 . F#4+A4+D5:2 .:2 F#4+A4+D5:2 F#4+A4+D5:2 .:2 | G4+Bb4+D5:2 . G4+Bb4+D5:2 . G4+Bb4+D5:2 .:2 G4+Bb4+D5:2 G4+Bb4+D5:2 .:2
+| G4+Bb4+Eb5:2 . G4+Bb4+Eb5:2 . G4+Bb4+Eb5:2 .:2 G4+Bb4+Eb5:2 G4+Bb4+Eb5:2 .:2 | G4+C5+E5:2 . G4+C5+E5:2 . G4+C5+E5:2 .:2 G4+C5+E5:2 G4+C5+E5:2 .:2
+| F#4+A4+D5:2 . F#4+A4+D5:2 . F#4+A4+D5:2 .:2 F#4+A4+D5:2 F#4+A4+D5:2 .:2 | G4+C5+Eb5:2 . G4+C5+Eb5:2 . G4+C5+Eb5:2 .:2 G4+C5+Eb5:2 G4+C5+Eb5:2 .:2
+| Ab4+C5+Eb5:2 . Ab4+C5+Eb5:2 . Ab4+C5+Eb5:2 .:2 Ab4+C5+Eb5:2 Ab4+C5+Eb5:2 .:2 | G4+Bb4+Eb5:2 . G4+Bb4+Eb5:2 . G4+Bb4+Eb5:2 .:2 G4+Bb4+Eb5:2 G4+Bb4+Eb5:2 .:2
+| F#4+A4+D5:2 . F#4+A4+D5:2 . F#4+A4+D5:2 .:2 F#4+A4+D5:2 F#4+A4+D5:2 .:2 | G4+C5+Eb5:2 . G4+C5+Eb5:2 . G4+C5+Eb5:2 .:2 G4+C5+Eb5:2 G4+C5+Eb5:2 .:2
+| Ab4+C5+Eb5:2 . Ab4+C5+Eb5:2 . Ab4+C5+Eb5:2 .:2 Ab4+C5+Eb5:2 Ab4+C5+Eb5:2 .:2 | F#4+A4+D5:2 . F#4+A4+D5:2 . F#4+A4+D5:2 .:2 F#4+A4+D5:2 F#4+A4+D5:2 .:2 | %
+
+@part music_boss boss_lead
+| G4:6 D5:2 G5:8 | F5:4 Eb5:4 D5:8 | Eb5:6 C5:2 Ab4:8 | G4:4 A4:4 Bb4:4 D5:4
+| G5:4 D6:4 Bb5:2 A5:2 G5:4 | Bb5:4 G5:4 Eb6:6 D6:2 | C6:4 Eb6:4 Ab6:6 G6:2 | F#6:8 D6:4 A5:4
+| G5:4 D6:4 Bb5:2 A5:2 G5:4 | Bb5:4 Eb6:4 G6:6 F6:2 | E6:4 G6:4 C7:6 Bb6:2 | A6:8 F#6:4 D6:4
+| G6:6 F6:2 Eb6:4 D6:4 | C6:6 Bb5:2 Ab5:4 C6:4 | Bb5:6 C6:2 D6:4 Eb6:4 | F#6:6 E6:2 D6:8
+| Eb6:6 D6:2 C6:4 Eb6:4 | Ab6:6 G6:2 F6:4 Eb6:4 | D6:4 F#6:4 A6:4 C7:4 | D7:8 C7:2 A6:2 F#6:2 D6:2
+
+@part music_boss taiko volume=0.7
+| X..x..X...X.x... | % | % | X..x..X...XxXxXX
+| X..x..X...X.x... | % | % | % | % | % | % | X..x..X...XxXxXX
+| X..x..X...X.x... | % | % | % | % | % | % | X..x..XxXxXxXXXX
+
+@part music_boss kick volume=0.6
+| X.......X....... | % | % | %
+| X.....X...X..... | % | % | % | % | % | % | %
+| X.....X...X..... | % | % | % | % | % | % | %
+
+@part music_boss snare volume=0.6
+| ................ | % | % | ............XxXX
+| ....X.......X... | % | % | % | % | % | % | ....X.......XxXX
+| ....X.......X... | % | % | % | % | % | % | ....X...XxXxXXXX
+
+@part music_boss hat volume=1.5
+| x.x.x.x.x.x.x.x. | % | % | %
+| x.xxx.xxx.xxx.xx | % | % | % | % | % | % | %
+| x.xxx.xxx.xxx.xx | % | % | % | % | % | % | %
+
+@part music_boss crash volume=0.5
+| ................ | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+
+@part music_boss gong volume=0.9
+| X............... | ................ | % | %
+| ................ | % | % | % | % | % | % | %
+| ................ | % | % | % | % | % | % | %
+
+
+# ═════════ 보스 분노: 사단조 150 BPM, 20마디(32.0초) — 보스전과 화음·자리가 같고 더 격하게 ═════════
+# 베이스가 16분음표 톱니파로, 북이 8분음표로 두 배, 멜로디는 한 옥타브 위 비명 같은 사각파 + 3도 아래 화음, 뒤에서 반음 경보가 계속 운다.
+@song music_boss_rage bpm=150 bars=20
+
+@part music_boss_rage rage_bass
+| G2 G2 G3 G2 G2 G3 G2 G2 G3 G2 G2 G3 G2 G3 Ab3 G3 | % | Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab3 A3 Ab3 | G2 G2 G3 G2 G2 G3 G2 G2 G3 G2 G2 G3 G2 G3 Ab3 G3
+| G2 G2 G3 G2 G2 G3 G2 G2 G3 G2 G2 G3 G2 G3 Ab3 G3 | Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb3 E3 Eb3
+| Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab3 A3 Ab3 | D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 Eb3 D3
+| G2 G2 G3 G2 G2 G3 G2 G2 G3 G2 G2 G3 G2 G3 Ab3 G3 | Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb3 E3 Eb3
+| C2 C2 C3 C2 C2 C3 C2 C2 C3 C2 C2 C3 C2 C3 Db3 C3 | D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 Eb3 D3
+| C2 C2 C3 C2 C2 C3 C2 C2 C3 C2 C2 C3 C2 C3 Db3 C3 | Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab3 A3 Ab3
+| Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb2 Eb3 Eb2 Eb3 E3 Eb3 | D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 Eb3 D3
+| C2 C2 C3 C2 C2 C3 C2 C2 C3 C2 C2 C3 C2 C3 Db3 C3 | Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab2 Ab3 Ab2 Ab3 A3 Ab3
+| D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 Eb3 D3 | D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 D2 D3 D2 A2 C3 D3
+
+@part music_boss_rage rage_lead
+| G5:6 D6:2 G6:8 | F6:4 Eb6:4 D6:8 | Eb6:6 C6:2 Ab5:8 | G5:4 A5:4 Bb5:4 D6:4
+| G5:4 D6:4 Bb5:2 A5:2 G5:4 | Bb5:4 G5:4 Eb6:6 D6:2 | C6:4 Eb6:4 Ab6:6 G6:2 | F#6:8 D6:4 A5:4
+| G5:4 D6:4 Bb5:2 A5:2 G5:4 | Bb5:4 Eb6:4 G6:6 F6:2 | E6:4 G6:4 C7:6 Bb6:2 | A6:8 F#6:4 D6:4
+| G6:6 F6:2 Eb6:4 D6:4 | C6:6 Bb5:2 Ab5:4 C6:4 | Bb5:6 C6:2 D6:4 Eb6:4 | F#6:6 E6:2 D6:8
+| Eb6:6 D6:2 C6:4 Eb6:4 | Ab6:6 G6:2 F6:4 Eb6:4 | D6:4 F#6:4 A6:4 C7:4 | D7:8 C7:2 A6:2 F#6:2 D6:2
+
+@part music_boss_rage rage_harm
+| D5:6 Bb5:2 D6:8 | D6:4 C6:4 Bb5:8 | C6:6 Ab5:2 Eb5:8 | D5:4 F#5:4 G5:4 A5:4
+| D5:4 Bb5:4 G5:2 F5:2 D5:4 | G5:4 Eb5:4 Bb5:6 Bb5:2 | Ab5:4 C6:4 Eb6:6 Eb6:2 | D6:8 A5:4 F#5:4
+| D5:4 Bb5:4 G5:2 F5:2 D5:4 | G5:4 Bb5:4 Eb6:6 D6:2 | C6:4 E6:4 G6:6 G6:2 | F#6:8 D6:4 A5:4
+| Eb6:6 D6:2 C6:4 Bb5:4 | Ab5:6 G5:2 Eb5:4 Ab5:4 | G5:6 Ab5:2 Bb5:4 C6:4 | D6:6 C6:2 A5:8
+| C6:6 Bb5:2 G5:4 C6:4 | Eb6:6 Eb6:2 C6:4 C6:4 | A5:4 D6:4 F#6:4 A6:4 | A6:8 F#6:2 D6:2 A5:2 F#5:2
+
+@part music_boss_rage rage_alarm
+| D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 | % | Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 | D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6
+| D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 | Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5
+| Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 | A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5
+| D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 D6 Eb6 | Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5
+| G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 | A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5
+| G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 | Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6
+| Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 Bb5 B5 | A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5
+| G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 G5 Ab5 | Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6 Eb6 E6
+| A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 A5 Bb5 | %
+
+@part music_boss_rage taiko volume=0.8
+| X.xX.xX.X.xX.xXx | % | % | % | % | % | % | X.xX.xX.XxXxXXXX
+| X.xX.xX.X.xX.xXx | % | % | % | % | % | % | X.xX.xX.XxXxXXXX
+| X.xX.xX.X.xX.xXx | % | % | XxXxXxXxXxXxXXXX
+
+@part music_boss_rage kick volume=0.6
+| X.x.X.x.X.x.X.x. | % | % | % | % | % | % | %
+| X.x.X.x.X.x.X.x. | % | % | % | % | % | % | %
+| X.x.X.x.X.x.X.x. | % | % | %
+
+@part music_boss_rage snare volume=0.6
+| ....X.......X... | % | % | ....X.......XxXX | ....X.......X... | % | % | ....X...XxXxXXXX
+| ....X.......X... | % | % | ....X.......XxXX | ....X.......X... | % | % | ....X...XxXxXXXX
+| ....X.......X... | % | % | ....XxXxXxXxXXXX
+
+@part music_boss_rage hat volume=1.5
+| xxXxxxXxxxXxxxXx | % | % | % | % | % | % | %
+| xxXxxxXxxxXxxxXx | % | % | % | % | % | % | %
+| xxXxxxXxxxXxxxXx | % | % | %
+
+@part music_boss_rage crash volume=0.7
+| X............... | ................ | % | % | X............... | ................ | % | %
+| X............... | ................ | % | % | X............... | ................ | % | %
+| X............... | ................ | % | %
+
+
+# ═════════ 탈출: 다단조 → 다장조 189 BPM, 20마디(25.4초) — 헬기가 온다 ═════════
+# 화음: 1~4 Cm A♭ B♭ Cm (무전 '삐 삐-') | 5~12 Cm A♭ B♭ G Cm A♭ B♭ C | 13~20 A♭ B♭ Cm Cm A♭ B♭ C C
+# 단조로 쫓기다가 12·19마디에 다장조(C)로 밝아진다 — '거의 다 왔다'. 16분음표 날개 소리가 박자를 계속 민다.
+@song music_extraction bpm=189 bars=20
+
+@part music_extraction ex_bass
+| C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 | Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 | Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 | C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 C2:2 C3:2
+| C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 | Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 | Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 | G1:2 G2:2 G1:2 G2:2 G1:2 G2:2 B1:2 D2:2
+| C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 | Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 | Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 | C2:2 C3:2 C2:2 C3:2 E2:2 E3:2 G2:2 G3:2
+| Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 | Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 | C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 C2:2 C3:2 | %
+| Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 Ab1:2 Ab2:2 | Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 Bb1:2 Bb2:2 | C2:2 C3:2 C2:2 C3:2 E2:2 E3:2 G2:2 G3:2 | C2:2 C3:2 C2:2 C3:2 G1:2 G2:2 B1:2 B2:2
+
+@part music_extraction ex_rotor
+| C4:16 | % | % | % | % | % | % | % | % | %
+| C4:16 | % | % | % | % | % | % | % | % | %
+
+@part music_extraction ex_radio
+| G6 . G6:3 .:2 G6 . G6 .:6 | G6:3 . G6 . G6:3 .:7 | . G6 . G6 . G6:3 .:2 G6 .:5 | .:16
+| .:16 | % | % | % | % | % | % | %
+| G6 . G6:3 .:2 G6 . G6 .:6 | . G6 . G6 . G6:3 .:2 G6 .:5 | G6:3 . G6 . G6:3 .:7 | .:16 | .:16 | % | % | %
+
+@part music_extraction ex_lead
+| .:16 | % | % | %
+| G5:4 C6:4 Eb6:4 D6:2 C6:2 | Eb6:4 C6:4 Ab5:6 Bb5:2 | D6:4 F6:4 Bb6:6 F6:2 | B5:4 D6:4 G6:8
+| G5:4 C6:4 Eb6:4 F6:2 G6:2 | Ab6:4 G6:4 Eb6:6 C6:2 | Bb6:4 F6:4 D6:4 F6:4 | E6:4 G6:4 C7:8
+| C6:6 Bb5:2 Ab5:4 Eb6:4 | D6:6 C6:2 Bb5:4 F6:4 | Eb6:6 D6:2 C6:4 G6:4 | G6:16
+| Ab6:6 G6:2 Eb6:4 C6:4 | Bb6:6 Ab6:2 F6:4 D6:4 | E6:4 G6:4 C7:4 E7:4 | C7:8 G6:4 E6:4
+
+@part music_extraction ex_arp
+| .:16 | % | % | % | % | % | % | %
+| C5 Eb5 G5 C6 G5 Eb5 C5 Eb5 G5 C6 G5 Eb5 C5 Eb5 G5 Eb5 | Ab4 C5 Eb5 Ab5 Eb5 C5 Ab4 C5 Eb5 Ab5 Eb5 C5 Ab4 C5 Eb5 C5
+| Bb4 D5 F5 Bb5 F5 D5 Bb4 D5 F5 Bb5 F5 D5 Bb4 D5 F5 D5 | C5 E5 G5 C6 G5 E5 C5 E5 G5 C6 G5 E5 C5 E5 G5 E5
+| Ab4 C5 Eb5 Ab5 Eb5 C5 Ab4 C5 Eb5 Ab5 Eb5 C5 Ab4 C5 Eb5 C5 | Bb4 D5 F5 Bb5 F5 D5 Bb4 D5 F5 Bb5 F5 D5 Bb4 D5 F5 D5
+| C5 Eb5 G5 C6 G5 Eb5 C5 Eb5 G5 C6 G5 Eb5 C5 Eb5 G5 Eb5 | %
+| Ab4 C5 Eb5 Ab5 Eb5 C5 Ab4 C5 Eb5 Ab5 Eb5 C5 Ab4 C5 Eb5 C5 | Bb4 D5 F5 Bb5 F5 D5 Bb4 D5 F5 Bb5 F5 D5 Bb4 D5 F5 D5
+| C5 E5 G5 C6 G5 E5 C5 E5 G5 C6 G5 E5 C5 E5 G5 E5 | %
+
+@part music_extraction kick volume=0.6
+| X.......X.x..... | % | % | X.......X.X.X.X.
+| X.......X.x..... | % | % | % | % | % | % | X.......X.X.X.X.
+| X.......X.x..... | % | % | % | % | % | % | X.......X.X.X.X.
+
+@part music_extraction snare volume=0.6
+| ....X.......X... | % | % | ....X...XxXxXXXX
+| ....X.......X... | % | % | % | % | % | % | ....X...XxXxXXXX
+| ....X.......X... | % | % | % | % | % | % | ....X...XxXxXXXX
+
+@part music_extraction hat volume=1.2
+| x.x.x.x.x.x.x.x. | % | % | %
+| x.x.x.x.x.x.x.x. | % | % | % | % | % | % | %
+| x.x.x.x.x.x.x.x. | % | % | % | % | % | % | %
+
+@part music_extraction crash volume=0.7
+| ................ | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+
+
+# ═════════ 생존자 고르기: 사장조 125 BPM, 12마디(23.0초) — 두근두근 ═════════
+# 화음: G Em C D | G Em C D | C D Em D → 다시 G
+# 북이 심장처럼 '두-근' (1~8마디 마디에 두 번, 9마디부터 세 번 — 점점 설렌다). 5마디부터 실로폰 멜로디와 손뼉.
+@song music_select bpm=125 bars=12 peak_db=-5
+
+@part music_select sel_bass
+| G2:3 G2 .:2 D3:2 G2:3 G2 .:2 B2:2 | E2:3 E2 .:2 B2:2 E2:3 E2 .:2 G2:2 | C3:3 C3 .:2 G2:2 C3:3 C3 .:2 E3:2 | D3:3 D3 .:2 A2:2 D3:3 D3 .:2 F#3:2
+| G2:3 G2 .:2 D3:2 G2:3 G2 .:2 B2:2 | E2:3 E2 .:2 B2:2 E2:3 E2 .:2 G2:2 | C3:3 C3 .:2 G2:2 C3:3 C3 .:2 E3:2 | D3:3 D3 .:2 A2:2 D3:3 D3 .:2 F#3:2
+| C3:3 C3 .:2 G2:2 C3:3 C3 .:2 E3:2 | D3:3 D3 .:2 A2:2 D3:3 D3 .:2 F#3:2 | E2:3 E2 .:2 B2:2 E2:3 E2 .:2 G2:2 | D3:3 D3 .:2 A2:2 D3:2 E3:2 F#3:2 A3:2
+
+@part music_select sel_pluck
+| .:2 G4+B4+D5:2 .:2 G4+B4+D5:2 .:2 G4+B4+D5:2 .:2 G4+B4+D5:2 | .:2 E4+G4+B4:2 .:2 E4+G4+B4:2 .:2 E4+G4+B4:2 .:2 E4+G4+B4:2
+| .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 | .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2
+| .:2 G4+B4+D5:2 .:2 G4+B4+D5:2 .:2 G4+B4+D5:2 .:2 G4+B4+D5:2 | .:2 E4+G4+B4:2 .:2 E4+G4+B4:2 .:2 E4+G4+B4:2 .:2 E4+G4+B4:2
+| .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 | .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2
+| .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 .:2 E4+G4+C5:2 | .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2
+| .:2 E4+G4+B4:2 .:2 E4+G4+B4:2 .:2 E4+G4+B4:2 .:2 E4+G4+B4:2 | .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2 .:2 F#4+A4+D5:2
+
+# 화음을 길게 깔아 둔다 — 베이스가 쉬는 칸에 소리가 완전히 비지 않게
+@part music_select sel_pad
+| G3+B3+D4:16 | E3+G3+B3:16 | E3+G3+C4:16 | F#3+A3+D4:16 | G3+B3+D4:16 | E3+G3+B3:16 | E3+G3+C4:16 | F#3+A3+D4:16
+| E3+G3+C4:16 | F#3+A3+D4:16 | E3+G3+B3:16 | F#3+A3+D4:16
+
+@part music_select sel_glock
+| .:16 | % | % | %
+| B5:2 D6:2 G6:4 F#6:2 E6:2 D6:4 | E6:2 G6:2 B6:4 A6:2 G6:2 E6:4 | C6:2 E6:2 G6:4 A6:2 G6:2 E6:4 | F#6:4 A6:4 D6:8
+| E6:2 G6:2 C7:4 B6:2 A6:2 G6:4 | F#6:2 A6:2 D7:4 C7:2 B6:2 A6:4 | B6:4 G6:4 E6:4 G6:4 | A6:6 B6:2 A6:4 F#6:4
+
+@part music_select kick volume=0.45
+| X.x.....X.x..... | % | % | % | % | % | % | %
+| X.x...X.x...X.x. | % | % | %
+
+@part music_select clap volume=0.5
+| ................ | % | % | %
+| ....X.......X... | % | % | % | % | % | % | ....X.......X.XX
+
+@part music_select hat volume=1.0
+| ..x...x...x...x. | % | % | % | % | % | % | %
+| ..x...x...x...x. | % | % | %
+
+@part music_select riser volume=0.6
+| .:16 | % | % | % | % | % | % | %
+| .:16 | % | % | C5:16

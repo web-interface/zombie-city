@@ -1,7 +1,7 @@
 # [파일] art/source/sprites.txt
-# [하는 일] 부품 조합 없이 한 장으로 그리는 그림: 소품(버려진 차·고깔·타이어·가로등·기름통·분리수거함·배달 오토바이), 헬기, 백신 조각, 톱날 드론, 배달 드론, 보물 상자. (보스는 bosses.txt, 아이콘은 icons.txt)
+# [하는 일] 부품 조합 없이 한 장으로 그리는 그림: 소품(버려진 차·고깔·타이어·가로등·기름통·분리수거함·배달 오토바이), 헬기, 백신 조각, 톱날 드론, 배달 드론, 보물 상자, 곰 덫. (보스는 bosses.txt, 아이콘은 icons.txt)
 # [쓰는 곳] tools/build_sprites.py 가 art/source/outfits.json 의 "global_palette" 색으로 칠해 art/sprites/*.png 로 만든다.
-# [근거 문서] 04 무기·좀비 모습, 06 그림 규칙, 14 §2-2 배달 드론 · §2-6 보물 상자
+# [근거 문서] 04 무기·좀비 모습, 06 그림 규칙, 14 §2-2 배달 드론 · §2-6 보물 상자 · §3-1 곰 덫
 #
 # 글자 뜻 (global_palette)
 #   o 테두리  g 쇠  G 짙은 쇠  w 흰색  r 빨강  R 짙은 빨강  y 노랑  Y 짙은 노랑  b 나무  B 짙은 나무
@@ -187,3 +187,16 @@ ggg...ggg
 .oiwXwiYYYYiiIo..oiwXwiuouYiiIo.
 .ogiiiiiiiiiIgo..ogiiiiYYYYiIgo.
 .oooooooooooooo..oooooooooooooo.
+
+# ───────── 곰 덫 (사냥꾼 무기 bear_trap, 24×8 = 12×8 두 칸: 왼쪽 열림 · 오른쪽 닫힘) ─────────
+# 열림: 바닥에 펼친 쇠 고리(G·g)에 안쪽으로 난 이빨(w), 가운데 밟는 발판, 아래로 사슬 한 마디.
+# 닫힘: 턱이 위로 닫혀 이빨이 서로 맞물림(w 엇갈림), 양옆 스프링 받침.
+@sprite bear_trap 24x8
+..oooooooo..............
+.oGwGwGwGgo...oooooooo..
+oGo......oGo.oggGgGgGGo.
+og..oGGo..go.owowowowoo.
+oGo.oggo.oGo.oowowowowo.
+.oGwGwGwGgo..oGGGGGGGGo.
+..oooooooo..oGo.oggo.oGo
+.....og......oo.oooo.oo.

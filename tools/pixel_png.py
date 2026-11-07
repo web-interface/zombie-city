@@ -1,7 +1,7 @@
 """
 [파일] tools/pixel_png.py
 [하는 일] 픽셀 그림 기본 도구: 글자 지도 파일 읽기(@part / @sprite), 점 단위 캔버스(겹쳐 찍기·돌리기·어둡게·하얀 실루엣·투명 유리 섞기), 색 섞기·밝기, PNG 저장(반투명 #rrggbbaa 포함). 파이썬 기본 라이브러리만 쓴다.
-[쓰는 곳] tools/build_sprites.py · sprite_sheet.py · sprite_zombies.py · sprite_icons.py 가 불러 쓴다.
+[쓰는 곳] tools/build_sprites.py · sprite_sheet.py · sprite_people.py · sprite_zombies.py · sprite_icons.py · sprite_title.py 가 불러 쓴다.
 [근거 문서] 06 그림 규칙, 11 §11 그림 만드는 길
 """
 from __future__ import annotations

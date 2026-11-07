@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "art/source/outfits.json",
-    "하는 일": "그림 색 표. 생존자 옷 16벌(기본 4 + 전직 12)·좀비 10종의 부품별 색과 모자 종류, 한 장 그림·보스·아이콘에 쓰는 공통 색, 진화 아이콘 금색 규칙을 정한다.",
+    "하는 일": "그림 색 표. 생존자 옷 24벌(기본 6 + 전직 18)·좀비 10종의 부품별 색과 모자 종류, 한 장 그림·보스·아이콘에 쓰는 공통 색, 진화 아이콘 금색 규칙을 정한다.",
     "쓰는 곳": "tools/build_sprites.py · sprite_zombies.py · sprite_icons.py 가 읽어 art/source/*.txt 의 글자를 색으로 바꾼다.",
     "근거 문서": "04 §2 생존자 모습·전직 옷차림, 06 색 표, 14 §1-2 새 좀비 · §2-4 진화"
   },
@@ -20,14 +20,15 @@
   "evolved_icons": {
     "weapons": ["pistol", "fire_axe", "nail_gun", "syringe_gun", "shotgun", "saw_drone",
                 "taser", "tear_gas", "megaphone", "fire_hose", "rescue_saw", "flare", "box_toss",
-                "tape_gun", "parcel_drone", "disinfectant", "defibrillator", "scalpel", "molotov"],
+                "tape_gun", "parcel_drone", "disinfectant", "defibrillator", "scalpel", "molotov",
+                "baseball_bat", "pitching_machine", "ball_bucket", "stadium_light", "crossbow", "bear_trap", "hunting_dog", "throwing_knives"],
     "outline": "#3a1d06",
     "gold_steps": [[195, "#fff1a8"], [140, "#f7c843"], [95, "#d8902a"], [60, "#a35f1b"], [0, "#6b3810"]],
     "glow": "#ffd84a80",
     "sparkle": "#ffffff"
   },
 
-  "_사람_공통": "o 테두리 · s 피부 · e 눈 은 모든 생존자가 같고, 나머지 글자(h t T a p f c C)는 옷마다 다르다.",
+  "_사람_공통": "o 테두리 · s 피부 · e 눈 은 모든 생존자가 같고, 나머지 글자(h t T a p f c C, 새 옷은 k K g G b B v w q d r 도)는 옷마다 다르다. 새 옷은 torso·legs·head 로 다른 부품 묶음(parts_people.txt), extras 로 덧그림(tools/sprite_people.py 의 OVERLAYS)을 고른다.",
   "human_common": { "o": "#16171f", "s": "#f1c49b", "e": "#16171f" },
 
   "human_outfits": {
@@ -49,7 +50,17 @@
     "nurse":                { "hat": "softcap", "h": "#4a3428", "t": "#8cc8e8", "T": "#5fa0c4", "a": "#f4f4f4", "p": "#8cc8e8", "f": "#f4f4f4", "c": "#f4f4f4", "C": "#d0453c" },
     "nurse_emergency":      { "hat": "none",    "h": "#4a3428", "t": "#d0453c", "T": "#9e3029", "a": "#f4f4f4", "p": "#3a3f4a", "f": "#2a2a2a", "c": "#d0453c", "C": "#f4f4f4" },
     "nurse_epidemiology":   { "hat": "softcap", "h": "#4a3428", "t": "#e9ecef", "T": "#b9bec6", "a": "#7fc8d8", "p": "#e9ecef", "f": "#b9bec6", "c": "#e9ecef", "C": "#7fc8d8" },
-    "nurse_surgeon":        { "hat": "softcap", "h": "#4a3428", "t": "#4f9a6e", "T": "#3a7552", "a": "#f4f4f4", "p": "#4f9a6e", "f": "#f4f4f4", "c": "#4f9a6e", "C": "#3a7552" }
+    "nurse_surgeon":        { "hat": "softcap", "h": "#4a3428", "t": "#4f9a6e", "T": "#3a7552", "a": "#f4f4f4", "p": "#4f9a6e", "f": "#f4f4f4", "c": "#4f9a6e", "C": "#3a7552" },
+
+    "batter":               { "hat": "cap",      "torso": "torso_stripe", "extras": ["bat"], "h": "#2a2420", "t": "#eef0f2", "T": "#8a97b5", "a": "#24345e", "p": "#d9dce2", "f": "#1b1c22", "c": "#24345e", "C": "#c73a32", "b": "#d9b27a", "B": "#9a6b35" },
+    "batter_slugger":       { "hat": "batting",  "torso": "torso_stripe", "head": "head_eyeblack", "extras": ["bat"], "h": "#2a2420", "t": "#b9bec8", "T": "#7d8494", "a": "#8f2219", "p": "#b9bec8", "f": "#1b1c22", "c": "#22252c", "C": "#8f2219", "q": "#101114", "b": "#3a3f4a", "B": "#22252c" },
+    "batter_ace":           { "hat": "cap",      "torso": "torso_stripe", "extras": ["glove"], "h": "#2a2420", "t": "#f4f4f4", "T": "#d98a84", "a": "#c73a32", "p": "#e6e8ea", "f": "#1b1c22", "c": "#c73a32", "C": "#f4f4f4", "k": "#a8662e", "K": "#6e3f18" },
+    "batter_thief":         { "hat": "headband", "torso": "torso_stripe", "legs": "legs_dirty", "h": "#2a2420", "t": "#eef0f2", "T": "#7fb08a", "a": "#2d6b39", "p": "#e2ddd0", "d": "#8a6a48", "f": "#1b1c22", "C": "#d0453c" },
+
+    "hunter":               { "hat": "cap",      "torso": "torso_vest", "h": "#2a2018", "t": "#9e3b2e", "T": "#6e2820", "k": "#5a6b3a", "K": "#434f2b", "a": "#6b4a2a", "p": "#5c5a44", "f": "#3b2a1c", "c": "#ff7a1a", "C": "#c4561a" },
+    "hunter_marksman":      { "hat": "hood",     "torso": "torso_vest", "extras": ["scoped_crossbow"], "h": "#2a2018", "t": "#3e4a30", "T": "#2c3522", "k": "#6b7a48", "K": "#4d5833", "a": "#3b2a1c", "p": "#3e4a30", "f": "#2a1e14", "c": "#4a5a36", "C": "#33402a", "b": "#8b5a2b", "B": "#5e3b1c", "g": "#a3a9b3", "G": "#6b7280", "v": "#8fd3ff", "w": "#e8e2cc" },
+    "hunter_trapper":       { "hat": "softcap",  "torso": "torso_apron", "extras": ["apron_skirt"], "h": "#3a2a1e", "t": "#5d6650", "T": "#454c3b", "k": "#7a4f2c", "K": "#5a3820", "g": "#a3a9b3", "a": "#3b2a1c", "p": "#4a4434", "f": "#2a1e14", "c": "#6b4f36", "C": "#4a3626" },
+    "hunter_beastmaster":   { "hat": "none",     "extras": ["fur_cape", "leash"], "h": "#2a2018", "t": "#3a3a34", "T": "#28282a", "a": "#6b4a2a", "p": "#4a4434", "f": "#2a1e14", "k": "#8a6a48", "K": "#5e4630", "r": "#c73a32" }
   },
 
   "_좀비_공통": "o 테두리 · e 눈(빨강) 은 같고, z Z(피부) h(머리) t T(옷) q(바지) 는 종류마다 다르다. 다리 부품의 p(바지)·f(발)는 q·z 로 바꿔 칠한다 (f 가 있으면 장화). 그 밖의 글자: a 줄무늬·명찰 · j J 산성 침 · v V 핏줄(꿈틀) · c C 헬멧·얼굴창 · g G 방패 테두리 · m 벌린 입 속 · b 갈비뼈 · w 이빨.",
@@ -64,7 +75,12 @@
     "bloater": { "hat": "none", "z": "#a9b88f", "Z": "#7f8f69", "h": "#3b3326", "t": "#d9d3bd", "T": "#aaa288", "q": "#4a4f5c", "v": "#7a3b66", "V": "#c2415a" },
     "riot":    { "hat": "visor", "z": "#8fa77a", "Z": "#677d57", "h": "#2a2a24", "t": "#2c3a5a", "T": "#1d2740", "q": "#253150", "f": "#15161c", "c": "#26324d", "C": "#8fb8cf", "g": "#d4e2ec", "G": "#7d93a6", "a": "#c9cdd4" },
     "screamer": { "hat": "none", "z": "#c8cfb4", "Z": "#9aa38a", "h": "#3b302b", "t": "#b9d3df", "T": "#86a7b8", "q": "#c8cfb4", "m": "#4a0f14" },
-    "hound":   { "hat": "none", "z": "#8fa077", "Z": "#66744f", "h": "#3a3128", "t": "#7a6750", "T": "#54463a", "b": "#d2c8ad", "w": "#e8e2cc", "q": "#3a3f4a" },
+    "hound":   { "hat": "none", "z": "#8fa077", "Z": "#66744f", "h": "#3a3128", "t": "#7a6750", "T": "#54463a", "b": "#d2c8ad", "w": "#e8e2cc", "q": "#3a3f4a", "n": "#6e3b33" },
     "brute":   { "hat": "none", "z": "#76996a", "Z": "#557048", "h": "#2a2620", "t": "#5f6f7d", "T": "#44515c", "a": "#e6e6e6", "q": "#3a3f4a" }
+  },
+
+  "_곁_동물": "생존자 곁을 따라다니는 동물 — 좀비 장면 함수를 그대로 쓰고 색만 바꾼다. hunting_dog = 들개 좀비 장면(갈비뼈 b 는 털색으로 덮고, 찢긴 맨살 z 는 황갈색 무늬, 주황 목걸이 n).",
+  "companions": {
+    "hunting_dog": { "scene": "hound", "o": "#16171f", "t": "#8a5a32", "T": "#5e3b1f", "z": "#d0a46a", "Z": "#a07a48", "b": "#8a5a32", "e": "#1a120c", "w": "#f0ead8", "h": "#3a2a1e", "n": "#ff7a1a" }
   }
 }

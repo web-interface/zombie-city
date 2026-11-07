@@ -31,6 +31,7 @@ var _dash_is_invulnerable: bool = false
 var _last_stand_used: bool = false
 var _hurt_flash_cooldown: float = 0.0
 var _last_max_health: float = 1.0
+var _is_test_invincible: bool = false
 
 ## 돌진 중 부딪힌 좀비에게 줄 피해·밀기 (스킬이 정함, 0 이면 없음)
 var dash_contact_damage: float = 0.0
@@ -49,6 +50,7 @@ func setup(new_survivor_id: String) -> void:
 	stats.set_source("trait", [info["trait"]])
 	health = stats.value("max_health")
 	_last_max_health = health
+	_is_test_invincible = SceneRouter.test_options.has("invincible")   # 화면 캡처·밤 넘김 시험용 (--invincible)
 	stats.changed.connect(_on_stats_changed)
 	animator.set_outfit(info["outfit"])
 
@@ -77,7 +79,7 @@ func move_step(delta: float, input_direction: Vector2) -> void:
 ## source = 무엇에 맞았는지 (결과 화면 "○○에게 당함" — 커뮤니티: 뭐에 죽었는지 모르면 짜증)
 func take_damage(amount: float, source: String = "") -> void:
 	var is_protected_by_dash := _dash_is_invulnerable and is_dashing()
-	if is_dead or is_protected_by_dash:
+	if is_dead or is_protected_by_dash or _is_test_invincible:
 		return
 	if not source.is_empty():
 		last_damage_source = source

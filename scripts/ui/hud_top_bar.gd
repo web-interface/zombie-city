@@ -64,7 +64,7 @@ func _draw() -> void:
 	var level_y := SAFE_TOP + 16.0 - _level_bump * 2.0
 	_draw_text(font, "레벨 %d" % _level_up.level, Vector2(4, level_y), HORIZONTAL_ALIGNMENT_LEFT, PixelUi.GOOD)
 	_draw_text(PixelUi.FONT_BOLD, PixelUi.format_time(_remaining_seconds), Vector2(width * 0.5, SAFE_TOP + 16.0), HORIZONTAL_ALIGNMENT_CENTER, _timer_color())
-	_draw_text(PixelUi.FONT_SMALL, "%s · 구조까지" % _night_name, Vector2(width * 0.5, SAFE_TOP + 26.0), HORIZONTAL_ALIGNMENT_CENTER, PixelUi.MUTED, PixelUi.SIZE_SMALL)
+	_draw_text(PixelUi.FONT_SMALL, _night_name, Vector2(width * 0.5, SAFE_TOP + 26.0), HORIZONTAL_ALIGNMENT_CENTER, PixelUi.MUTED, PixelUi.SIZE_SMALL)
 	_draw_text(font, "처치 %d" % _kills, Vector2(width - 4, SAFE_TOP + 16.0 - _kill_bump * 1.5), HORIZONTAL_ALIGNMENT_RIGHT, PixelUi.INK)
 	_draw_combo(width)
 	_draw_slots(SAFE_TOP + 30.0)

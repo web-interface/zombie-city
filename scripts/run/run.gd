@@ -76,6 +76,7 @@ func _build_context() -> void:
 	context.area_effects = world.get_node("AreaEffects")
 	context.hazards = world.get_node("Hazards")
 	context.pickups = world.get_node("Pickups")
+	context.weather = $Weather
 	context.props = world.get_node("Props")
 	context.weapon_rack = _rack
 	context.camera = $Camera
@@ -97,6 +98,7 @@ func _build_context() -> void:
 	context.area_effects.setup(context)
 	context.hazards.setup(context)
 	context.pickups.setup(context)
+	context.weather.setup(context)
 	world.get_node("Shadows").setup(context)
 
 

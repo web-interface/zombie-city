@@ -58,10 +58,13 @@ func set_music_mode(mode: String) -> void:
 	if track.is_empty() or not ResourceLoader.exists(AUDIO_FOLDER + track + ".wav"):
 		_special_track = ""
 		return
+	# 보스 곡 ↔ 분노 곡은 빠르기·길이가 같아서 듣던 자리에서 이어 튼다 (박자가 안 끊기게 — audio/README.md)
+	var keep_position := _special.playing and _special_track.begins_with("music_boss") and track.begins_with("music_boss")
+	var position := _special.get_playback_position() if keep_position else 0.0
 	_special_track = track
 	_special.stream = load(AUDIO_FOLDER + track + ".wav")
 	_special.volume_db = linear_to_db(maxf(_special_level * volume, 0.0001))
-	_special.play()
+	_special.play(position)
 
 
 func play_single_music(track_name: String) -> void:

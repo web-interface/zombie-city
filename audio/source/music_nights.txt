@@ -1,0 +1,299 @@
+# [파일] audio/source/music_nights.txt
+# [하는 일] 밤마다 바뀌는 한 판 음악 악보: 둘째 밤(마단조 147 BPM, 달리는 베이스) · 셋째 밤(다단조 135 BPM, 무겁고 어두운 반 박자) · 넷째 밤 이후(올림바단조 175 BPM, 아르페지오 폭주). 곡마다 3층(바닥·멜로디·긴장 리드).
+# [쓰는 곳] tools/build_sounds.py → tools/sound_music.py 가 music_scores.txt 다음에 읽는다 (그 파일의 악기·타악기도 쓸 수 있음) → audio/music_night2~4_layer1~3.wav
+# [근거 문서] 02 §12 위험할수록 악기가 더해지는 음악, 14 §1-1 밤 이어가기·§4 중독 설계(밤마다 새 얼굴), 06 사운드
+#
+# 쓰는 법은 music_scores.txt 맨 위와 같다. 층 역할도 첫째 밤과 같다: layer1 = 늘 켬(베이스·북), layer2 = 위험 1(멜로디), layer3 = 위험 2(긴장 리드·타악기).
+# 같은 곡의 세 층은 길이가 샘플 하나까지 같아서 동시에 틀고 볼륨만 섞으면 맞물린다.
+
+# ───────── 타악기 (이 파일에서 새로) ─────────
+@drum kick_heavy  wave=triangle pitch=120,38 curve=3 length=0.32 env=0.001,0.03,1.6 volume=1.0
+@drum kick_heavy  wave=square pitch=180,50 curve=3 length=0.08 env=0.001,0,2.0 lowpass=1500 volume=0.3
+@drum kick_heavy  wave=noise pitch=9000 length=0.015 env=0,0,1 lowpass=5000 volume=0.4
+@drum snare_heavy wave=noise pitch=9000 length=0.3 env=0.001,0.02,2.0 lowpass=6000 highpass=250 volume=0.8
+@drum snare_heavy wave=triangle pitch=220,140 curve=2 length=0.1 env=0.001,0,1.5 volume=0.6
+@drum snare_heavy wave=metal pitch=4000 length=0.12 env=0.001,0.01,2.2 lowpass=5000 volume=0.15
+@drum ride        wave=metal pitch=12000 length=0.25 env=0.001,0.01,2.6 highpass=4000 volume=0.18
+@drum ride        wave=triangle pitch=3800 length=0.12 env=0.001,0,2.2 volume=0.06
+
+# ───────── 둘째 밤 악기 — 톱니파 베이스가 '따그닥' 달리고, 사각파 리드가 앞에서 끈다 ─────────
+@instrument n2_bass  wave=saw adsr=0.002,0.06,0.7,0.01 gate=0.85 lowpass=1700 volume=0.85
+@instrument n2_lead  wave=square duty=0.25 adsr=0.003,0.1,0.7,0.04 gate=0.95 vibrato=6.5,0.25,0.12 lowpass=4800 volume=0.3 echo=3,0.2,0.22
+@instrument n2_stab  wave=square duty=0.5 adsr=0.001,0.05,0.3,0.01 gate=0.6 lowpass=2400 volume=0.1
+@instrument n2_trill wave=square duty=0.125 adsr=0.002,0.05,0.5,0.01 gate=0.7 lowpass=6000 volume=0.25
+@instrument n2_shred wave=square duty=0.25 adsr=0.001,0.03,0.6,0.005 gate=0.85 lowpass=6500 volume=0.3 echo=2,0.2,0.2
+
+# ───────── 셋째 밤 악기 — 낮게 깔리는 톱니파, 반음으로 기어오르는 소리, 메아리 긴 종 ─────────
+@instrument n3_bass    wave=square duty=0.5 adsr=0.002,0.08,0.6,0.01 gate=0.85 lowpass=900 volume=0.8
+@instrument n3_low     wave=saw adsr=0.3,0.5,0.8,0.3 gate=1 lowpass=420 vibrato=0.2,0.15 volume=0.45
+@instrument n3_lead    wave=square duty=0.5 adsr=0.02,0.3,0.6,0.15 gate=0.96 vibrato=4.2,0.35,0.25 lowpass=2200 volume=0.42 echo=6,0.35,0.4
+@instrument n3_bell    wave=triangle adsr=0.002,0.35,0,0.05 gate=1 volume=0.16 echo=3,0.4,0.4
+@instrument n3_creep   wave=saw adsr=0.005,0.1,0.5,0.03 gate=0.8 lowpass=1300 volume=0.32
+@instrument n3_screech wave=square duty=0.125 adsr=0.08,0.3,0.8,0.2 gate=0.98 vibrato=7.5,0.6,0.2 lowpass=4000 volume=0.3 echo=4,0.3,0.3
+
+# ───────── 넷째 밤 악기 — 16분음표 옥타브 베이스, 아르페지오 두 겹(펼침 + 한 음 안에서 화음 돌리기) ─────────
+@instrument n4_bass     wave=square duty=0.25 adsr=0.001,0.04,0.6,0.005 gate=0.8 lowpass=2400 volume=0.7
+@instrument n4_arp      wave=square duty=0.125 adsr=0.001,0.04,0.4,0.005 gate=0.7 lowpass=5500 volume=0.13
+@instrument n4_lead     wave=square duty=0.5 adsr=0.002,0.08,0.7,0.03 gate=0.92 vibrato=7,0.2,0.1 lowpass=5000 volume=0.3 echo=3,0.25,0.25
+@instrument n4_chip_min wave=square duty=0.25 adsr=0.004,0.15,0.6,0.02 gate=0.95 arpeggio=50,0,3,7,12 lowpass=6000 volume=0.25
+@instrument n4_chip_maj wave=square duty=0.25 adsr=0.004,0.15,0.6,0.02 gate=0.95 arpeggio=50,0,4,7,12 lowpass=6000 volume=0.25
+@instrument n4_scream   wave=saw adsr=0.05,0.3,0.85,0.15 gate=0.98 vibrato=6.8,0.5,0.15 lowpass=5000 volume=0.32 echo=3,0.3,0.3
+
+
+# ═════════ 둘째 밤: 마단조 147 BPM(첫째 밤보다 17% 빠름), 24마디(39.2초) ═════════
+# 화음: 1~8 Em Em C D Em Em C B | 9~16 Am Am Em Em C D B B | 17~24 Em C Am B Em C D B
+# 베이스는 '8분 + 16분 둘' 말발굽 리듬으로 계속 달린다. 8·16·24마디는 베이스가 B7 로 치고 올라가며 다음으로 넘긴다.
+@song music_night2 bpm=147 bars=24
+
+@part music_night2_layer1 n2_bass
+| E2:2 E2 E2 E3:2 E2 E2 E2:2 E2 E2 E3:2 E2 E2 | % | C2:2 C2 C2 C3:2 C2 C2 C2:2 C2 C2 C3:2 C2 C2 | D2:2 D2 D2 D3:2 D2 D2 D2:2 D2 D2 D3:2 D2 D2
+| E2:2 E2 E2 E3:2 E2 E2 E2:2 E2 E2 E3:2 E2 E2 | % | C2:2 C2 C2 C3:2 C2 C2 C2:2 C2 C2 C3:2 C2 C2 | B1:2 B1 B1 B2:2 B1 B1 D#2:2 D#2 F#2 A2:2 B2 D#3
+| A1:2 A1 A1 A2:2 A1 A1 A1:2 A1 A1 A2:2 A1 A1 | % | E2:2 E2 E2 E3:2 E2 E2 E2:2 E2 E2 E3:2 E2 E2 | %
+| C2:2 C2 C2 C3:2 C2 C2 C2:2 C2 C2 C3:2 C2 C2 | D2:2 D2 D2 D3:2 D2 D2 D2:2 D2 D2 D3:2 D2 D2 | B1:2 B1 B1 B2:2 B1 B1 B1:2 B1 B1 B2:2 B1 B1 | B1:2 B1 B1 B2:2 B1 B1 D#2:2 D#2 F#2 A2:2 B2 D#3
+| E2:2 E2 E2 E3:2 E2 E2 E2:2 E2 E2 E3:2 E2 E2 | C2:2 C2 C2 C3:2 C2 C2 C2:2 C2 C2 C3:2 C2 C2 | A1:2 A1 A1 A2:2 A1 A1 A1:2 A1 A1 A2:2 A1 A1 | B1:2 B1 B1 B2:2 B1 B1 B1:2 B1 B1 B2:2 B1 B1
+| E2:2 E2 E2 E3:2 E2 E2 E2:2 E2 E2 E3:2 E2 E2 | C2:2 C2 C2 C3:2 C2 C2 C2:2 C2 C2 C3:2 C2 C2 | D2:2 D2 D2 D3:2 D2 D2 D2:2 D2 D2 D3:2 D2 D2 | B1:2 B1 B1 B2:2 B1 B1 D#2:2 D#2 F#2 A2:2 B2 D#3
+
+@part music_night2_layer1 kick volume=0.5
+| X.....x.X.x..... | % | % | % | % | % | % | X.....x.X.X.X.X.
+| X.....x.X.x..... | % | % | % | % | % | % | X.....x.X.X.X.X.
+| X.....x.X.x..... | % | % | % | % | % | % | X.....x.X.X.X.X.
+
+@part music_night2_layer1 snare volume=0.55
+| ....X.......X... | % | % | % | % | % | % | ....X.......XxXX
+| ....X.......X... | % | % | % | % | % | % | ....X.......XxXX
+| ....X.......X... | % | % | % | % | % | % | ....X...xxXxXXXX
+
+@part music_night2_layer1 hat volume=1.6
+| x.X.x.X.x.X.x.X. | % | % | % | % | % | % | x.X.x.X.x.X.....
+| x.X.x.X.x.X.x.X. | % | % | % | % | % | % | x.X.x.X.x.X.....
+| x.X.x.X.x.X.x.X. | % | % | % | % | % | % | x.X.x.X.........
+
+@part music_night2_layer2 n2_lead
+| E5:3 G5:3 B5:2 E6:4 D6:2 B5:2 | C6:2 B5:2 A5:2 G5:2 A5:4 B5:4 | G5:3 E5:3 C5:2 G5:4 A5:2 G5:2 | F#5:4 A5:4 D6:6 C6:2
+| E5:3 G5:3 B5:2 E6:4 F#6:2 G6:2 | F#6:2 E6:2 D6:2 B5:2 D6:4 E6:4 | C6:3 B5:3 A5:2 G5:4 E5:2 G5:2 | F#5:4 D#5:4 B4:4 .:4
+| .:2 A5:2 C6:2 E6:4 D6:2 C6:2 B5:2 | A5:6 G5:2 A5:2 B5:2 C6:4 | .:2 B5:2 E6:2 G6:4 F#6:2 E6:2 D6:2 | B5:8 G5:4 B5:4
+| C6:3 E6:3 G6:2 E6:3 C6:3 G5:2 | D6:3 F#6:3 A6:2 F#6:3 D6:3 A5:2 | B5:4 D#6:4 F#6:4 A6:4 | B6:8 A6:2 F#6:2 D#6:2 B5:2
+| E6:8 D6:4 B5:4 | C6:8 E6:4 G6:4 | A6:8 G6:4 E6:4 | F#6:8 D#6:4 B5:4
+| E6:6 F#6:2 G6:4 B6:4 | A6:6 G6:2 E6:8 | F#6:6 E6:2 D6:4 F#6:4 | B5:4 D#6:4 F#6:4 B6:4
+
+# 뒷박 파워 코드 '짠 짠' — 달리는 베이스 위에서 박자를 앞으로 민다
+@part music_night2_layer2 n2_stab
+| .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 | % | .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 | .:2 D4+A4:2 .:2 D4+A4:2 .:2 D4+A4:2 .:2 D4+A4:2
+| .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 | % | .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 | .:2 B3+F#4:2 .:2 B3+F#4:2 .:2 B3+F#4:2 .:2 B3+F#4:2
+| .:2 A3+E4:2 .:2 A3+E4:2 .:2 A3+E4:2 .:2 A3+E4:2 | % | .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 | %
+| .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 | .:2 D4+A4:2 .:2 D4+A4:2 .:2 D4+A4:2 .:2 D4+A4:2 | .:2 B3+F#4:2 .:2 B3+F#4:2 .:2 B3+F#4:2 .:2 B3+F#4:2 | %
+| .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 | .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 | .:2 A3+E4:2 .:2 A3+E4:2 .:2 A3+E4:2 .:2 A3+E4:2 | .:2 B3+F#4:2 .:2 B3+F#4:2 .:2 B3+F#4:2 .:2 B3+F#4:2
+| .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 .:2 E4+B4:2 | .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 .:2 C4+G4:2 | .:2 D4+A4:2 .:2 D4+A4:2 .:2 D4+A4:2 .:2 D4+A4:2 | .:2 B3+F#4:2 .:2 B3+F#4:2 .:2 B3+F#4:2 .:2 B3+F#4:2
+
+# 3층: 1~16마디는 반음 떨림 '따다다다 땃', 17마디부터 16분음표로 쏟아지는 속주
+@part music_night2_layer3 n2_trill
+| B5 C6 B5 C6 B5:2 .:2 B5 C6 B5 C6 B5:2 .:2 | % | G5 Ab5 G5 Ab5 G5:2 .:2 G5 Ab5 G5 Ab5 G5:2 .:2 | A5 Bb5 A5 Bb5 A5:2 .:2 A5 Bb5 A5 Bb5 A5:2 .:2
+| B5 C6 B5 C6 B5:2 .:2 B5 C6 B5 C6 B5:2 .:2 | % | G5 Ab5 G5 Ab5 G5:2 .:2 G5 Ab5 G5 Ab5 G5:2 .:2 | F#5 G5 F#5 G5 F#5:2 .:2 F#5 G5 F#5 G5 F#5:2 .:2
+| E5 F5 E5 F5 E5:2 .:2 E5 F5 E5 F5 E5:2 .:2 | % | B5 C6 B5 C6 B5:2 .:2 B5 C6 B5 C6 B5:2 .:2 | %
+| G5 Ab5 G5 Ab5 G5:2 .:2 G5 Ab5 G5 Ab5 G5:2 .:2 | A5 Bb5 A5 Bb5 A5:2 .:2 A5 Bb5 A5 Bb5 A5:2 .:2 | F#5 G5 F#5 G5 F#5:2 .:2 F#5 G5 F#5 G5 F#5:2 .:2 | %
+| .:16 | % | % | % | % | % | % | %
+
+@part music_night2_layer3 n2_shred
+| .:16 | % | % | % | % | % | % | %
+| .:16 | % | % | % | % | % | % | %
+| E6 D6 B5 A5 G5 A5 B5 D6 E6 G6 E6 D6 B5 D6 E6 G6 | G6 E6 C6 G5 E5 G5 C6 E6 G6 C7 G6 E6 C6 E6 G6 E6
+| A6 G6 E6 C6 A5 C6 E6 G6 A6 C7 A6 G6 E6 G6 A6 C7 | B6 A6 F#6 D#6 B5 D#6 F#6 A6 B6 D#7 B6 A6 F#6 D#6 C6 B5
+| E6 G6 B6 E7 B6 G6 E6 B5 G5 B5 E6 G6 B6 G6 E6 B5 | C6 E6 G6 C7 G6 E6 C6 G5 E5 G5 C6 E6 G6 E6 C6 G5
+| D6 F#6 A6 D7 A6 F#6 D6 A5 F#5 A5 D6 F#6 A6 F#6 D6 A5 | B5 D#6 F#6 B6 F#6 D#6 B5 F#5 D#5 F#5 B5 D#6 F#6 A6 B6 D#7
+
+@part music_night2_layer3 ride volume=1.4
+| X.x.X.x.X.x.X.x. | % | % | % | % | % | % | %
+| X.x.X.x.X.x.X.x. | % | % | % | % | % | % | %
+| X.x.X.x.X.x.X.x. | % | % | % | % | % | % | %
+
+@part music_night2_layer3 tom volume=0.55
+| ................ | % | % | % | % | % | % | ........X.x.XxXx
+| ................ | % | % | % | % | % | % | ........X.x.XxXx
+| ................ | % | % | % | % | % | % | ....X.x.XxXxXXXX
+
+@part music_night2_layer3 crash volume=0.7
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+
+
+# ═════════ 셋째 밤: 다단조(프리지아 D♭) 135 BPM, 20마디(35.6초) — 어둡고 무겁게 ═════════
+# 화음: 1~8 Cm Cm D♭ Cm Cm Cm A♭ G | 9~16 Fm Fm D♭ D♭ Cm Cm G♭ G | 17~20 Cm D♭ Cm G
+# 작은북을 3박에만 치는 '반 박자' — 같은 빠르기라도 발을 끌듯 무겁다. 베이스는 '쿵 쿠쿵' 끊어 치며 끝에 반음 위(D♭)를 건드려 불안하게.
+@song music_night3 bpm=135 bars=20
+
+@part music_night3_layer1 n3_bass
+| C2:2 . C2 C2:2 . C2 C2:2 C2 C2 Db2:2 C2:2 | % | Db2:2 . Db2 Db2:2 . Db2 Db2:2 Db2 Db2 D2:2 Db2:2 | C2:2 . C2 C2:2 . C2 C2:2 C2 C2 Db2:2 C2:2
+| C2:2 . C2 C2:2 . C2 C2:2 C2 C2 Db2:2 C2:2 | % | Ab1:2 . Ab1 Ab1:2 . Ab1 Ab1:2 Ab1 Ab1 A1:2 Ab1:2 | G1:2 . G1 G1:2 . G1 G1:2 G1 G1 Ab1:2 G1:2
+| F1:2 . F1 F1:2 . F1 F1:2 F1 F1 Gb1:2 F1:2 | % | Db2:2 . Db2 Db2:2 . Db2 Db2:2 Db2 Db2 D2:2 Db2:2 | %
+| C2:2 . C2 C2:2 . C2 C2:2 C2 C2 Db2:2 C2:2 | % | Gb1:2 . Gb1 Gb1:2 . Gb1 Gb1:2 Gb1 Gb1 G1:2 Gb1:2 | G1:2 . G1 G1:2 . G1 G1:2 G1 G1 Ab1:2 G1:2
+| C2:2 . C2 C2:2 . C2 C2:2 C2 C2 Db2:2 C2:2 | Db2:2 . Db2 Db2:2 . Db2 Db2:2 Db2 Db2 D2:2 Db2:2 | C2:2 . C2 C2:2 . C2 C2:2 C2 C2 Db2:2 C2:2 | G1:2 . G1 G1:2 . G1 G1:2 G1 G1 Ab1:2 G1:2
+
+@part music_night3_layer1 n3_low
+| C2:16 | % | Db2:16 | C2:16 | C2:16 | % | Ab1:16 | G1:16
+| F1:16 | % | Db2:16 | % | C2:16 | % | Gb1:16 | G1:16
+| C2:16 | Db2:16 | C2:16 | G1:16
+
+@part music_night3_layer1 kick_heavy volume=0.6
+| X.....X...x..... | % | % | % | % | % | % | X.....X...X.X.X.
+| X.....X...x..... | % | % | % | % | % | % | X.....X...X.X.X.
+| X.....X...x..... | % | % | X.....X.X.X.XXXX
+
+@part music_night3_layer1 snare_heavy volume=0.65
+| ........X....... | % | % | % | % | % | % | ........X...X.XX
+| ........X....... | % | % | % | % | % | % | ........X...X.XX
+| ........X....... | % | % | ........X.x.XxXX
+
+@part music_night3_layer1 hat volume=1.3
+| x...x...x...x... | % | % | % | % | % | % | %
+| x...x...x...x... | % | % | % | % | % | % | %
+| x...x...x...x... | % | % | %
+
+@part music_night3_layer2 n3_lead
+| C5:6 Eb5:2 G5:8 | Ab5:4 G5:4 Eb5:4 D5:4 | Db5:6 F5:2 Ab5:8 | G5:6 F5:2 Eb5:4 D5:4
+| C5:6 Eb5:2 G5:4 C6:4 | Db6:8 C6:4 G5:4 | Ab5:6 G5:2 F5:4 Eb5:4 | D5:6 B4:2 G4:8
+| F5:6 Ab5:2 C6:8 | Db6:4 C6:4 Ab5:4 F5:4 | Db6:6 C6:2 Ab5:8 | F5:4 Ab5:4 Db6:4 F6:4
+| Eb6:8 D6:4 C6:4 | G5:8 Ab5:4 G5:4 | Gb5:6 F5:2 Db5:8 | B4:4 D5:4 F5:4 Ab5:4
+| C6:16 | Db6:16 | C6:8 B5:8 | .:16
+
+# 종: 솔-라♭ 반음이 곡 내내 맴돈다 — 어느 화음 위에서도 조금씩 어긋나 불안하다
+@part music_night3_layer2 n3_bell
+| G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4 | G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4
+| G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4 | G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4
+| G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4 | G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4
+| G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4 | G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4
+| G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | G6:2 Ab6:2 .:4 Ab6:2 G6:2 .:4 | G6:2 Ab6:2 .:4 G6:2 Ab6:2 .:4 | .:16
+
+# 3층: 반음씩 기어오르내리는 8분음표(1~8·17~20마디) + 9~16마디 떨리는 고음 + 큰북(타이코) + 끝에 차오르는 노이즈
+@part music_night3_layer3 n3_creep
+| C4:2 Db4:2 D4:2 Eb4:2 D4:2 Db4:2 C4:2 B3:2 | % | Db4:2 D4:2 Eb4:2 E4:2 Eb4:2 D4:2 Db4:2 C4:2 | C4:2 Db4:2 D4:2 Eb4:2 D4:2 Db4:2 C4:2 B3:2
+| C4:2 Db4:2 D4:2 Eb4:2 D4:2 Db4:2 C4:2 B3:2 | % | Ab3:2 A3:2 Bb3:2 B3:2 Bb3:2 A3:2 Ab3:2 G3:2 | G3:2 Ab3:2 A3:2 Bb3:2 B3:2 C4:2 Db4:2 D4:2
+| .:16 | % | % | % | % | % | % | %
+| C4:2 Db4:2 D4:2 Eb4:2 D4:2 Db4:2 C4:2 B3:2 | Db4:2 D4:2 Eb4:2 E4:2 Eb4:2 D4:2 Db4:2 C4:2 | C4:2 Db4:2 D4:2 Eb4:2 D4:2 Db4:2 C4:2 B3:2 | G3:2 Ab3:2 A3:2 Bb3:2 B3:2 C4:2 Db4:2 D4:2
+
+@part music_night3_layer3 n3_screech
+| .:16 | % | % | % | % | % | % | %
+| C6:16 | Db6:16 | Ab5:16 | F5:16 | G5:16 | Eb6:16 | Db6:8 Bb5:8 | B5:8 D6:8
+| .:16 | % | % | %
+
+@part music_night3_layer3 tom volume=0.8
+| X..x....X..x.... | % | % | % | % | % | % | X..x....X.XxXxXX
+| X..x....X..x.... | % | % | % | % | % | % | X..x....X.XxXxXX
+| X..x....X..x.... | % | % | X..x....XxXxXXXX
+
+@part music_night3_layer3 riser
+| .:16 | % | % | % | % | % | % | %
+| .:16 | % | % | % | % | % | % | C5:16
+| .:16 | % | % | C5:16
+
+@part music_night3_layer3 crash volume=0.75
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | %
+
+
+# ═════════ 넷째 밤 이후: 올림바단조 175 BPM, 32마디(43.9초) — 가장 빠르고 미친 듯이 ═════════
+# 화음: 1~8 F#m D E F#m F#m D E C# | 9~16 Bm C#m D E F#m D E C# | 17~24 D E C#m F#m D E C# C# | 25~32 = 1~8
+# 1층부터 16분음표 옥타브 베이스 + 네 박 북, 2층은 16분음표 펼침화음 + 후렴, 3층은 한 음 안에서 화음을 50번/초 돌리는 옛 게임기 아르페지오 + 비명 리드.
+@song music_night4 bpm=175 bars=32
+
+@part music_night4_layer1 n4_bass
+| F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 | D2 D2 D3 D2 D2 D3 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3
+| E2 E2 E3 E2 E2 E3 E2 E3 E2 E2 E3 E2 E2 E3 E2 E3 | F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 | %
+| D2 D2 D3 D2 D2 D3 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 | E2 E2 E3 E2 E2 E3 E2 E3 E2 E2 E3 E2 E2 E3 E2 E3
+| C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 C#2 C#2 C#3 C#2 G#2 G#2 B2 C#3
+| B1 B1 B2 B1 B1 B2 B1 B2 B1 B1 B2 B1 B1 B2 B1 B2 | C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3
+| D2 D2 D3 D2 D2 D3 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 | E2 E2 E3 E2 E2 E3 E2 E3 E2 E2 E3 E2 E2 E3 E2 E3
+| F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 | D2 D2 D3 D2 D2 D3 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3
+| E2 E2 E3 E2 E2 E3 E2 E3 E2 E2 E3 E2 E2 E3 E2 E3 | C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 C#2 C#2 C#3 C#2 G#2 G#2 B2 C#3
+| D2 D2 D3 D2 D2 D3 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 | E2 E2 E3 E2 E2 E3 E2 E3 E2 E2 E3 E2 E2 E3 E2 E3
+| C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 | F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3
+| D2 D2 D3 D2 D2 D3 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 | E2 E2 E3 E2 E2 E3 E2 E3 E2 E2 E3 E2 E2 E3 E2 E3
+| C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 | C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 C#2 C#2 C#3 C#2 G#2 G#2 B2 C#3
+| F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 | D2 D2 D3 D2 D2 D3 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3
+| E2 E2 E3 E2 E2 E3 E2 E3 E2 E2 E3 E2 E2 E3 E2 E3 | F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 F#2 F#2 F#3 F#2 F#2 F#3 F#2 F#3 | %
+| D2 D2 D3 D2 D2 D3 D2 D3 D2 D2 D3 D2 D2 D3 D2 D3 | E2 E2 E3 E2 E2 E3 E2 E3 E2 E2 E3 E2 E2 E3 E2 E3
+| C#2 C#2 C#3 C#2 C#2 C#3 C#2 C#3 C#2 C#2 C#3 C#2 G#2 G#2 B2 C#3
+
+@part music_night4_layer1 kick volume=0.5
+| X...X...X...X... | % | % | % | % | % | % | X...X...X.X.X.X.
+| X...X...X...X... | % | % | % | % | % | % | X...X...X.X.X.X.
+| X...X...X...X... | % | % | % | % | % | % | X...X...X.X.X.X.
+| X...X...X...X... | % | % | % | % | % | % | X...X...X.X.XXXX
+
+@part music_night4_layer1 snare volume=0.5
+| ....X.......X... | % | % | % | % | % | % | ....X...X.X.XXXX
+| ....X.......X... | % | % | % | % | % | % | ....X...X.X.XXXX
+| ....X.......X... | % | % | % | % | % | % | ....X...X.X.XXXX
+| ....X.......X... | % | % | % | % | % | % | ....X...XxXxXXXX
+
+@part music_night4_layer1 hat volume=1.4
+| xxXxxxXxxxXxxxXx | % | % | % | % | % | % | xxXxxxXxxxXx....
+| xxXxxxXxxxXxxxXx | % | % | % | % | % | % | xxXxxxXxxxXx....
+| xxXxxxXxxxXxxxXx | % | % | % | % | % | % | xxXxxxXxxxXx....
+| xxXxxxXxxxXxxxXx | % | % | % | % | % | % | xxXxxxXx........
+
+@part music_night4_layer2 n4_arp
+| F#4 A4 C#5 F#5 A5 C#6 A5 F#5 C#5 A4 F#4 A4 C#5 F#5 C#5 A4 | D4 F#4 A4 D5 F#5 A5 F#5 D5 A4 F#4 D4 F#4 A4 D5 A4 F#4
+| E4 G#4 B4 E5 G#5 B5 G#5 E5 B4 G#4 E4 G#4 B4 E5 B4 G#4 | F#4 A4 C#5 F#5 A5 C#6 A5 F#5 C#5 A4 F#4 A4 C#5 F#5 C#5 A4 | %
+| D4 F#4 A4 D5 F#5 A5 F#5 D5 A4 F#4 D4 F#4 A4 D5 A4 F#4 | E4 G#4 B4 E5 G#5 B5 G#5 E5 B4 G#4 E4 G#4 B4 E5 B4 G#4
+| C#4 F4 G#4 C#5 F5 G#5 F5 C#5 G#4 F4 C#4 F4 G#4 C#5 G#4 F4
+| B3 D4 F#4 B4 D5 F#5 D5 B4 F#4 D4 B3 D4 F#4 B4 F#4 D4 | C#4 E4 G#4 C#5 E5 G#5 E5 C#5 G#4 E4 C#4 E4 G#4 C#5 G#4 E4
+| D4 F#4 A4 D5 F#5 A5 F#5 D5 A4 F#4 D4 F#4 A4 D5 A4 F#4 | E4 G#4 B4 E5 G#5 B5 G#5 E5 B4 G#4 E4 G#4 B4 E5 B4 G#4
+| F#4 A4 C#5 F#5 A5 C#6 A5 F#5 C#5 A4 F#4 A4 C#5 F#5 C#5 A4 | D4 F#4 A4 D5 F#5 A5 F#5 D5 A4 F#4 D4 F#4 A4 D5 A4 F#4
+| E4 G#4 B4 E5 G#5 B5 G#5 E5 B4 G#4 E4 G#4 B4 E5 B4 G#4 | C#4 F4 G#4 C#5 F5 G#5 F5 C#5 G#4 F4 C#4 F4 G#4 C#5 G#4 F4
+| D4 F#4 A4 D5 F#5 A5 F#5 D5 A4 F#4 D4 F#4 A4 D5 A4 F#4 | E4 G#4 B4 E5 G#5 B5 G#5 E5 B4 G#4 E4 G#4 B4 E5 B4 G#4
+| C#4 E4 G#4 C#5 E5 G#5 E5 C#5 G#4 E4 C#4 E4 G#4 C#5 G#4 E4 | F#4 A4 C#5 F#5 A5 C#6 A5 F#5 C#5 A4 F#4 A4 C#5 F#5 C#5 A4
+| D4 F#4 A4 D5 F#5 A5 F#5 D5 A4 F#4 D4 F#4 A4 D5 A4 F#4 | E4 G#4 B4 E5 G#5 B5 G#5 E5 B4 G#4 E4 G#4 B4 E5 B4 G#4
+| C#4 F4 G#4 C#5 F5 G#5 F5 C#5 G#4 F4 C#4 F4 G#4 C#5 G#4 F4 | %
+| F#4 A4 C#5 F#5 A5 C#6 A5 F#5 C#5 A4 F#4 A4 C#5 F#5 C#5 A4 | D4 F#4 A4 D5 F#5 A5 F#5 D5 A4 F#4 D4 F#4 A4 D5 A4 F#4
+| E4 G#4 B4 E5 G#5 B5 G#5 E5 B4 G#4 E4 G#4 B4 E5 B4 G#4 | F#4 A4 C#5 F#5 A5 C#6 A5 F#5 C#5 A4 F#4 A4 C#5 F#5 C#5 A4 | %
+| D4 F#4 A4 D5 F#5 A5 F#5 D5 A4 F#4 D4 F#4 A4 D5 A4 F#4 | E4 G#4 B4 E5 G#5 B5 G#5 E5 B4 G#4 E4 G#4 B4 E5 B4 G#4
+| C#4 F4 G#4 C#5 F5 G#5 F5 C#5 G#4 F4 C#4 F4 G#4 C#5 G#4 F4
+
+@part music_night4_layer2 n4_lead
+| F#5:2 F#5:2 C#6:2 F#5:2 E6:3 C#6:3 A5:2 | D6:2 C#6:2 A5:2 F#5:2 A5:4 D6:4 | E6:2 E6:2 B5:2 E6:2 G#6:3 F#6:3 E6:2 | C#6:6 A5:2 F#5:8
+| F#5:2 F#5:2 C#6:2 F#5:2 E6:3 C#6:3 A5:2 | D6:2 E6:2 F#6:2 A6:2 F#6:4 D6:4 | E6:2 F#6:2 G#6:2 B6:2 G#6:4 E6:4 | F6:4 G#6:4 C#7:8
+| B5:3 D6:3 F#6:2 E6:3 D6:3 B5:2 | C#6:3 E6:3 G#6:2 F#6:3 E6:3 C#6:2 | D6:3 F#6:3 A6:2 G#6:3 F#6:3 D6:2 | E6:4 G#6:4 B6:8
+| A6:2 G#6:2 F#6:2 E6:2 F#6:4 C#6:4 | D6:2 E6:2 F#6:2 A6:2 F#6:4 D6:4 | E6:2 F#6:2 G#6:2 B6:2 E7:8 | F6:2 G#6:2 F6:2 C#6:2 G#5:8
+| F#6:8 E6:4 D6:4 | E6:8 F#6:4 G#6:4 | G#6:8 E6:4 C#6:4 | F#6:16
+| A6:8 G#6:4 F#6:4 | G#6:8 B6:4 G#6:4 | F6:8 G#6:4 C#7:4 | C#7:4 G#6:4 F6:4 C#6:4
+| F#5:2 F#5:2 C#6:2 F#5:2 E6:3 C#6:3 A5:2 | D6:2 C#6:2 A5:2 F#5:2 A5:4 D6:4 | E6:2 E6:2 B5:2 E6:2 G#6:3 F#6:3 E6:2 | C#6:6 A5:2 F#5:8
+| F#5:2 F#5:2 C#6:2 F#5:2 E6:3 C#6:3 A5:2 | D6:2 E6:2 F#6:2 A6:2 F#6:4 D6:4 | E6:2 F#6:2 G#6:2 B6:2 G#6:4 E6:4 | F6:4 G#6:4 C#7:8
+
+# 3층: 한 음 안에서 화음 돌리기 — 단조 화음과 장조 화음을 나눠 맡는다
+@part music_night4_layer3 n4_chip_min
+| F#5:8 F#5:8 | .:16 | % | F#5:8 F#5:8 | % | .:16 | % | %
+| B4:8 B4:8 | C#5:8 C#5:8 | .:16 | % | F#5:8 F#5:8 | .:16 | % | %
+| .:16 | % | C#5:8 C#5:8 | F#5:8 F#5:8 | .:16 | % | % | %
+| F#5:8 F#5:8 | .:16 | % | F#5:8 F#5:8 | % | .:16 | % | %
+
+@part music_night4_layer3 n4_chip_maj
+| .:16 | D5:8 D5:8 | E5:8 E5:8 | .:16 | % | D5:8 D5:8 | E5:8 E5:8 | C#5:8 C#5:8
+| .:16 | % | D5:8 D5:8 | E5:8 E5:8 | .:16 | D5:8 D5:8 | E5:8 E5:8 | C#5:8 C#5:8
+| D5:8 D5:8 | E5:8 E5:8 | .:16 | % | D5:8 D5:8 | E5:8 E5:8 | C#5:8 C#5:8 | %
+| .:16 | D5:8 D5:8 | E5:8 E5:8 | .:16 | % | D5:8 D5:8 | E5:8 E5:8 | C#5:8 C#5:8
+
+@part music_night4_layer3 n4_scream
+| .:16 | % | % | % | % | % | % | %
+| .:16 | % | % | % | % | % | % | %
+| .:16 | % | % | % | % | % | % | %
+| C#7:16 | D7:16 | B6:16 | C#7:16 | A6:16 | F#6:8 A6:8 | G#6:8 B6:8 | C#7:16
+
+@part music_night4_layer3 open_hat volume=1.3
+| ..x...x...x...x. | % | % | % | % | % | % | %
+| ..x...x...x...x. | % | % | % | % | % | % | %
+| ..x...x...x...x. | % | % | % | % | % | % | %
+| ..x...x...x...x. | % | % | % | % | % | % | %
+
+@part music_night4_layer3 tom volume=0.5
+| ................ | % | % | % | % | % | % | ........XxXxXXXX
+| ................ | % | % | % | % | % | % | ........XxXxXXXX
+| ................ | % | % | % | % | % | % | ........XxXxXXXX
+| ................ | % | % | % | % | % | % | ....X.x.XxXxXXXX
+
+@part music_night4_layer3 crash volume=0.65
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | % | % | % | % | %
+| X............... | ................ | % | % | % | % | % | %

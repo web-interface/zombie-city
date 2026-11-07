@@ -1,5 +1,5 @@
 ## [파일] scripts/run/night_flow.gd
-## [하는 일] 밤과 밤 사이: 헬기를 타면 남은 조각을 경험치로 바꾸고 멈춘 채 '밤 생존' 창을 띄우고, [다음 밤]을 누르면 길거리를 비우고(좀비·구급함·투사체·장판·위험물·잠깐 빛) 시간을 0:00 으로, 체력 회복 + 카드 한 장 더를 준 뒤 다음 밤을 연다. 시험 봇에 --max-nights 가 있으면 그 밤 수에서 판을 끝내게 알린다.
+## [하는 일] 밤과 밤 사이: 헬기를 타면 남은 조각을 경험치로 바꾸고 멈춘 채 '밤 생존' 창을 띄우고, [다음 밤]을 누르면 길거리를 비우고(좀비·구급함·투사체·장판·위험물·잠깐 빛) 시간을 0:00 으로, 체력 회복 + 카드 한 장 더를 준 뒤 그 밤의 분위기(날씨·어둠 색·음악)로 다음 밤을 연다. 시험 봇에 --max-nights 가 있으면 그 밤 수에서 판을 끝내게 알린다.
 ## [쓰는 곳] scripts/run/run.gd 가 자식으로 만들고 setup() 에 판의 부분들을 넘긴다. Extraction.extracted → on_night_survived(), Hud.next_night_requested → start_next_night().
 ## [근거 문서] 14 §1-1 밤 이어가기·§4 중독 설계(멈출 틈 없이 '다음 밤?')
 class_name NightFlow
@@ -56,6 +56,8 @@ func start_next_night() -> void:
 	_context.elapsed_seconds = 0.0
 	_context.survivor.heal(_context.night_cycle.heal_ratio_between_nights())
 	_level_up.grant_bonus_choice()
-	_hud.show_banner("%s — 좀비가 더 세졌어요" % _context.night_cycle.night_name(), "alert")
+	var theme := _context.night_cycle.theme()
+	_context.weather.apply_theme(theme)
+	_hud.show_banner("%s — %s. 좀비가 더 세졌어요" % [_context.night_cycle.night_name(), theme["name"]], "alert")
 	SoundPlayer.start_run_music(_context.night_cycle.night)   # 밤마다 다른 곡
 	_context.play_sound("night_start")

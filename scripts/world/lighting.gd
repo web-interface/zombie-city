@@ -18,18 +18,24 @@ var _flashlight: PointLight2D
 var _lamp_lights: Array[PointLight2D] = []
 var _lamp_positions: Array[Vector2] = []
 var _temporary_lights: Array[Dictionary] = []
+var _darkness: CanvasModulate
 
 
 func setup(context: RunContext) -> void:
 	_context = context
 	_rules = context.light_rules
-	var darkness := CanvasModulate.new()
-	darkness.color = Color(String(_rules["darkness_color"]))
-	add_child(darkness)
+	_darkness = CanvasModulate.new()
+	_darkness.color = Color(String(_rules["darkness_color"]))
+	add_child(_darkness)
 	_flashlight = _make_light(FLASHLIGHT_COLOR, float(_rules["flashlight_radius"]))
 	_flashlight.energy = 1.1
 	for index: int in range(MAX_LAMP_LIGHTS):
 		_lamp_lights.append(_make_light(LAMP_COLOR, float(_rules["street_lamp_radius"])))
+
+
+## 밤마다 다른 어둠 색 (scripts/world/weather.gd 가 그 밤의 분위기로 바꿈)
+func set_darkness_color(color: Color) -> void:
+	_darkness.color = color
 
 
 ## 지금 화면 근처 가로등 위치 (props.gd 가 넘김)

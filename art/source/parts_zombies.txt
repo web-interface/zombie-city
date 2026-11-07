@@ -464,12 +464,13 @@ ozZo
 # ───────── 들개 좀비 (hound): 네 발 짐승 — 방향마다 따로 그린 장면 ─────────
 # 옆모습(오른쪽을 봄) 달리기 4장: a 쭉 뻗음 → b 모음 → c 쭉 뻗음(다리 바뀜) → d 모음. 앞·뒤 모습은 2장 번갈아.
 # 털(t·T)이 찢겨 맨살(z)이 드러나고 옆구리에 갈비뼈(b), 벌린 입에 이빨(w). 귀 한쪽이 찢겨 짧음, 꼬리는 털 빠진 채 위로.
+# 목에 목걸이(n): 들개 좀비는 바랜 옛 목걸이(주인이 있던 개), 사냥꾼의 사냥개(outfits.json companions)는 같은 장면을 주황 목걸이·갈색 털로 칠해 쓴다.
 @part hound_side_a 16x10
 ...........oo...
 o.........oTtoo.
-To.ooooooottttto
-.TotTtTtTtttetzz
-..otbtbtztTttzzo
+To.ooooooontttto
+.TotTtTtTtntetzz
+..otbtbtztnttzzo
 ..oTbTbTtToTowow
 .oTtoooooottoooo
 oTo.......otTo..
@@ -479,9 +480,9 @@ o...........ooo.
 @part hound_side_b 16x10
 ...........oo...
 o.........oTtoo.
-To.ooooooottttto
-.TotTtTtTtttetzz
-..otbtbtztTttzzo
+To.ooooooontttto
+.TotTtTtTtntetzz
+..otbtbtztnttzzo
 ..oTbTbTtToTowow
 ..otooooootoooo.
 ...oto...oto....
@@ -491,9 +492,9 @@ To.ooooooottttto
 @part hound_side_c 16x10
 ...........oo...
 o.........oTtoo.
-To.ooooooottttto
-.TotTtTtTtttetzz
-..otbtbtztTttzzo
+To.ooooooontttto
+.TotTtTtTtntetzz
+..otbtbtztnttzzo
 ..oTbTbTtToTowow
 ..oTtooooottooo.
 .oTo.......oTo..
@@ -503,9 +504,9 @@ oo...........oo.
 @part hound_side_d 16x10
 ...........oo...
 o.........oTtoo.
-To.ooooooottttto
-.TotTtTtTtttetzz
-..otbtbtztTttzzo
+To.ooooooontttto
+.TotTtTtTtntetzz
+..otbtbtztnttzzo
 ..oTbTbTtToTowow
 ...otoooootooo..
 ....oto..oto....
@@ -520,7 +521,7 @@ To.ooooooottttto
 .oZttttTTo.oTo
 ..oTtootToooTo
 ...owwwwoTtTo.
-..oTtbtbtTtTo.
+..onnnnnnTtTo.
 ..otTbtbTtTto.
 ..oto.oto.oto.
 ..oto.oto.oto.
@@ -533,7 +534,7 @@ To.ooooooottttto
 .oZttttTTo.oTo
 ..oTtootToooTo
 ...owwwwoTtTo.
-..oTtbtbtTtTo.
+..onnnnnnTtTo.
 ..otTbtbTtTto.
 ..oto.oto.oto.
 ..oo..oto..oto
@@ -544,7 +545,7 @@ To.ooooooottttto
 .oTttttTto....
 .otttttTTo..o.
 .ottttttTo.oTo
-..oTttttToooTo
+..onnnnnToooTo
 ..otZttttbTTo.
 ..otttttTbTto.
 ..oTttttttTto.
@@ -558,7 +559,7 @@ To.ooooooottttto
 .oTttttTto....
 .otttttTTo..o.
 .ottttttTo.oTo
-..oTttttToooTo
+..onnnnnToooTo
 ..otZttttbTTo.
 ..otttttTbTto.
 ..oTttttttTto.
@@ -569,8 +570,8 @@ To.ooooooottttto
 @part hound_lying 16x7
 ...........oo...
 o.........oTtoo.
-To.ooooooottttto
-.TotTtTtTtttottz
-..otbtbtztTttzzo
+To.ooooooontttto
+.TotTtTtTtntottz
+..otbtbtztnttzzo
 ..oTbTbTtTooooo.
 ..ooto.ooto.....

@@ -1,7 +1,7 @@
 # [파일] art/source/icons.txt
-# [하는 일] 카드·스킬·줍기 아이콘(10×10) 글자 지도: 무기 19 · 장비 16 · 스킬 6 · 히든 스킬 4 · 줍기 3 · 응급 처치. 한 글자 = 한 점, '.' = 빈칸.
+# [하는 일] 카드·스킬·줍기·메뉴 아이콘(10×10) 글자 지도: 무기 27 · 장비 18 · 스킬 8 · 히든 스킬 6 · 줍기 3 · 응급 처치 · 메뉴 6 · 은신처 강화 10. 한 글자 = 한 점, '.' = 빈칸.
 # [쓰는 곳] tools/sprite_icons.py 가 outfits.json 의 "global_palette" 색으로 칠해 art/sprites/icons/icon_*.png 로 만들고, 무기 아이콘은 금색 진화 아이콘(_evolved)도 만든다. 게임에선 scripts/ui/*.gd 가 쓴다.
-# [근거 문서] 06 그림 규칙(아이콘 10×10), 14 §2-2 무기 · §2-3 장비 · §2-5 히든 스킬 · §2-6 줍기
+# [근거 문서] 06 그림 규칙(아이콘 10×10), 14 §2-2 무기 · §2-3 장비 · §2-5 히든 스킬 · §2-6 줍기 · §3 은신처·메뉴 · §3-1 새 생존자
 #
 # 글자 뜻 (global_palette — sprites.txt 와 같음, 더한 글자: k K 골판지 · N 짙은 주황 · m M 보라 · j J 산성 초록 · p P 분홍 · E 옅은 금빛)
 
@@ -621,3 +621,380 @@ ocwcwCo...
 occccCo...
 oCCCCCo...
 .ooooo....
+
+# ═════════ 새 생존자 무기 아이콘 (14 §3-1) ═════════
+# 야구선수: 야구 배트(나무 + 검은 손잡이 테이프 + 공) · 피칭 머신(공 바구니 달린 파란 기계 + 튀어나가는 공) · 공 바구니(쇠 바구니 + 빨간 실밥 공) · 구장 조명(조명판 + 기둥 + 빛)
+# 사냥꾼: 석궁(위에서 본 활 + 화살) · 곰 덫(톱니 이빨 고리 + 사슬) · 사냥개(갈색 개 머리 + 주황 목걸이) · 던지는 칼(부채꼴 칼 셋)
+
+@sprite icon_baseball_bat 10x10
+.oo....oo.
+owro..okko
+owwo.okkKo
+.oo.okkKo.
+...okkKo..
+..okKKo...
+.oqqo.....
+oqqo......
+ooo.......
+..........
+
+@sprite icon_pitching_machine 10x10
+..ooo..oo.
+.owrwoowro
+.owwwoowwo
+..oCCooGo.
+.oCCCCGGo.
+.oCCCGGo..
+.oCwCCCo..
+.oCCCCCo..
+..oGooGo..
+.oGo..oGo.
+
+@sprite icon_ball_bucket 10x10
+..oo..oo..
+.owro.owo.
+owwooowroo
+owroowwwro
+oGgggggGGo
+.ogggggGo.
+.oGgggGGo.
+.ogggggGo.
+.oGGGGGGo.
+..oooooo..
+
+@sprite icon_stadium_light 10x10
+oooooooo.u
+olulullo..
+olllulGo.u
+oGGGGGGo..
+...oGo..u.
+...oGo....
+...oGo....
+..oGGGo...
+.oGGGGGo..
+.ooooooo..
+
+@sprite icon_crossbow 10x10
+....oo....
+...ogGo...
+oo..gG..oo
+oGGGbBGGGo
+.ow.bB.wo.
+..owbBwo..
+...obBo...
+...obBo...
+...oBBo...
+....oo....
+
+@sprite icon_bear_trap 10x10
+..oooooo..
+.oGggggGo.
+oGwowowoGo
+ogo....wgo
+oGw.oo..Go
+og..oGowgo
+oGowowowGo
+.oGggggGo.
+..ooooGo..
+......oo..
+
+@sprite icon_hunting_dog 10x10
+.oo.......
+oKko......
+oKkkooo...
+.okkkkko..
+.okekkkkoo
+.okkkkkkqo
+.oKkkkooo.
+.onnnNo...
+.oKkKko...
+..oooo....
+
+@sprite icon_throwing_knives 10x10
+o...oo...o
+wo.owgo.ow
+gwoowgoowg
+.gwowgowg.
+..gowgog..
+..oBoBoBo.
+.oBo.Bo.Bo
+.oo..oo.oo
+..........
+..........
+
+# ───────── 새 생존자 전용 장비 · 스킬 (스킬 아이콘 이름 = icon_<스킬 ID>) ─────────
+# 배팅 장갑(흰 장갑 + 파란 찍찍이) · 위장 망토(얼룩 초록 후드 망토) · 홈런(빨간 실밥 공 + 금빛 튀는 빛) · 그물(밧줄 그물 + 추)
+
+@sprite icon_batting_gloves 10x10
+..o.o.o...
+.owowowo..
+.owowowoo.
+.owwwwwowo
+.owwwwwwo.
+.oCCCCCo..
+.oCwCCCo..
+.ogggggo..
+..ooooo...
+..........
+
+@sprite icon_camo_cloak 10x10
+...oooo...
+..oXxXbo..
+.oXbXXxXo.
+.oxXo.oXo.
+oXXbo.obXo
+oxXXXbXXxo
+oXbxXXXbXo
+obXXxXbXXo
+oXXbXXxXbo
+.oooooooo.
+
+@sprite icon_homerun 10x10
+.u..u...u.
+...oooo...
+u.orwwro..
+.orwwwwro.
+.owwwwwwou
+.orwwwwro.
+u.orwwro..
+...oooo.u.
+.u.....u..
+..........
+
+@sprite icon_trap_net 10x10
+..oooooo..
+.oaoaoaao.
+oa.a.a.aao
+oaaaaaaaao
+oa.a.a.a.o
+oaaaaaaaao
+oa.a.a.aao
+.oaoaoaao.
+..oGooGo..
+...o..o...
+
+# ───────── 새 생존자 히든 스킬 (금빛 테두리 카드 양식) ─────────
+# 만루 홈런(큰 공 + 날아가는 작은 공들) · 사냥개 무리(개 머리 둘 + 주황 목걸이)
+
+@sprite icon_hidden_grand_slam 10x10
+.uuuuuuuE.
+uqqqqqqowY
+uqqqqqqooY
+uqoooqowoY
+uorwwrooqY
+uowwwwoowY
+uowwwwooqY
+uorwwroqqY
+uqoooqqqqY
+.YYYYYYYY.
+
+@sprite icon_hidden_pack_hunt 10x10
+.uuuuuuuE.
+uqqoKoqqqY
+uqoKKKooqY
+uqoKKKKKoY
+uooKKoooqY
+uKkoKKoqqY
+uokkkkkoqY
+uokekkkkoY
+uonnoooqqY
+.YYYYYYYY.
+
+# ═════════ 메뉴·은신처 아이콘 (14 §3) ═════════
+# 고철(녹슨 쇠 더미) · 업적(금빛 트로피) · 도감(좀비 얼굴 표지 책) · 오늘의 도전(달력) · 설정(톱니바퀴) · 잠김(회색 자물쇠)
+
+@sprite icon_scrap 10x10
+..........
+...oo.....
+..ogGo.oo.
+.oGgobooGo
+ogGgGoBbGo
+oGboGgGoo.
+ooGGoGbGGo
+oGgGGoGGbo
+.oooooooo.
+..........
+
+@sprite icon_trophy 10x10
+.oooooooo.
+ouuuuuuYYo
+ouEuuuuYYo
+.ouuuuYYo.
+o.ouuuYo.o
+...ouYo...
+....oYo...
+...ouYYo..
+..oBBBBBo.
+..ooooooo.
+
+@sprite icon_codex 10x10
+.oooooooo.
+odDzzzzzDo
+odDzezzezo
+odDzzZzzDo
+odDzoooZDo
+odDDDDDDDo
+odDaaaaaDo
+odDDDDDDDo
+oaaaaaaaao
+.oooooooo.
+
+@sprite icon_daily 10x10
+.o.o..o.o.
+ooGooooGoo
+orrrrrrrRo
+owwwwwwwAo
+owqqwqqwAo
+owwqwwqwAo
+owqqwwqwAo
+owqqwwqwAo
+owwwwwwAAo
+.oooooooo.
+
+@sprite icon_settings 10x10
+...o..o...
+..ogoogo..
+.oggggGGo.
+ogggooGGGo
+.ogo..oGo.
+.ogo..oGo.
+ogGGooGGGo
+.oGGGGGGo.
+..oGooGo..
+...o..o...
+
+@sprite icon_lock 10x10
+...oooo...
+..ogGGGo..
+.ogo..oGo.
+.ogo..oGo.
+oooooooooo
+ogggggggGo
+ogggooggGo
+ogggoGggGo
+oGGGGGGGGo
+.oooooooo.
+
+# ───────── 은신처 강화 10종 — 모두 오른쪽 아래에 같은 초록 ▲(강화) 표시 (같은 뜻은 같은 표시로) ─────────
+# 체력(하트) · 피해(총알) · 속도(운동화) · 줍기(큰 배낭) · 경험치(백신 조각) · 다시 뽑기(카드 + 돌아가는 화살표) · 빼 버리기(카드 + 빨간 X)
+# 부활(분홍 하트 + 후광) · 시작 레벨(금빛 겹 화살표) · 고철 보너스(고철 더미)
+
+@sprite icon_shelter_health 10x10
+..........
+.ooo.ooo..
+orrrorrRo.
+orwrrrrRo.
+orrrrrrRo.
+.orrrrRo..
+..orrRoo..
+...oRooxo.
+....ooxxxo
+.....ooooo
+
+@sprite icon_shelter_damage 10x10
+..oo......
+.oyyo.....
+oyuyYo....
+oyuyYo....
+oyyyYo....
+oYYYYo....
+oRrrRo.o..
+orrrRooxo.
+oRRRRoxxxo
+.ooooooooo
+
+@sprite icon_shelter_speed 10x10
+.ooo......
+orrro.o...
+orRrwowo..
+orrrrwrwo.
+orrrrrrrro
+owwwwwwwwo
+.ogggggoo.
+..oooooxo.
+.....oxxxo
+.....ooooo
+
+@sprite icon_shelter_pickup 10x10
+....oo....
+..ooBBoo..
+.oXXXXXXo.
+oXxxxxxxXo
+oXXXXXXXXo
+oXBXuuXBXo
+oXBXXXXoXo
+oXXXXXoxoo
+.oooooxxxo
+.....ooooo
+
+@sprite icon_shelter_exp 10x10
+...oXo....
+..oXxXo...
+.oXxwxXo..
+oXxwwwxXo.
+.oXxwxXo..
+..oXxXo...
+...oXo.o..
+....o.oxo.
+.....oxxxo
+.....ooooo
+
+@sprite icon_shelter_reroll 10x10
+.oooooo...
+owwwwwwo..
+owoCCowo..
+owCowCwo..
+owCwoCwo..
+owwCCowo..
+owwwwwwo..
+owwwwwoxo.
+.oooooxxxo
+.....ooooo
+
+@sprite icon_shelter_banish 10x10
+.oooooo...
+owwwwwwo..
+owrowrwo..
+owworwwo..
+owrowrwo..
+owwwwwwo..
+owwwwwwo..
+owwwwwoxo.
+.oooooxxxo
+.....ooooo
+
+@sprite icon_shelter_revive 10x10
+..ouuuo...
+.ou...uo..
+..ooooo...
+.ooo.ooo..
+opppopPPo.
+opwppppPo.
+.oppppPo..
+..oppPoxo.
+...oPoxxxo
+....oooooo
+
+@sprite icon_shelter_start_level 10x10
+...o......
+..ouo.....
+.ouYuo....
+ouYoYuo...
+ooo.ooo...
+..ouo.....
+.ouYuo.o..
+ouYoYuoxo.
+ooo.ooxxxo
+.....ooooo
+
+@sprite icon_shelter_scrap_bonus 10x10
+..........
+...oo.....
+..ogGo.oo.
+.oGgobooGo
+ogGgGoBbGo
+oGboGgGoo.
+ooGGoGboGo
+oGgGGooxoo
+.oooooxxxo
+.....ooooo

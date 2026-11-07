@@ -1,7 +1,7 @@
 """
 [파일] tools/sprite_sheet.py
 [하는 일] 동작 묶음(걷기 4장 × 3방향 + 쓰러지기 3장) 공통 도구: 줄 배치, 걷는 자세(몸 1점 내려감), 다리·모자 찍기, 쓰러지기 3장, 하얀 실루엣과 함께 저장.
-[쓰는 곳] tools/build_sprites.py(생존자) · tools/sprite_zombies.py(좀비·보스)가 불러 쓴다. tools/pixel_png.py 를 쓴다.
+[쓰는 곳] tools/sprite_people.py(생존자) · tools/sprite_zombies.py(좀비·보스·사냥개) · sprite_icons.py · sprite_title.py 가 불러 쓴다. tools/pixel_png.py 를 쓴다.
 [근거 문서] 06 그림 규칙(걷기 4장·3방향·쓰러지기 3장), 11 §11 그림 만드는 길
 """
 from __future__ import annotations

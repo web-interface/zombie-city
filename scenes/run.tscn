@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene load_steps=27 format=3]
 
 [ext_resource type="Script" path="res://scripts/run/run.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/ground.gd" id="2"]
@@ -27,6 +27,7 @@
 [ext_resource type="Script" path="res://scripts/systems/horde_events.gd" id="25"]
 [ext_resource type="Script" path="res://scripts/world/pickups.gd" id="26"]
 [ext_resource type="Script" path="res://scripts/world/speech_bubble.gd" id="27"]
+[ext_resource type="Script" path="res://scripts/world/weather.gd" id="28"]
 
 [node name="Run" type="Node2D"]
 editor_description = "[파일] scenes/run.tscn
@@ -116,6 +117,9 @@ script = ExtResource("19")
 
 [node name="Camera" type="Camera2D" parent="."]
 script = ExtResource("20")
+
+[node name="Weather" type="CanvasLayer" parent="."]
+script = ExtResource("28")
 
 [node name="Hud" type="CanvasLayer" parent="."]
 script = ExtResource("21")

@@ -5,11 +5,23 @@
 |---|---|
 | `icon_ammo.png` | 아이콘 'ammo' (10×10) |
 | `icon_backpack.png` | 아이콘 'backpack' (10×10) |
+| `icon_ball_bucket.png` | 아이콘 'ball_bucket' (10×10) |
+| `icon_ball_bucket_evolved.png` | 진화 아이콘 'ball_bucket' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_baseball_bat.png` | 아이콘 'baseball_bat' (10×10) |
+| `icon_baseball_bat_evolved.png` | 진화 아이콘 'baseball_bat' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_battery.png` | 아이콘 'battery' (10×10) |
+| `icon_batting_gloves.png` | 아이콘 'batting_gloves' (10×10) |
+| `icon_bear_trap.png` | 아이콘 'bear_trap' (10×10) |
+| `icon_bear_trap_evolved.png` | 진화 아이콘 'bear_trap' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_bomb.png` | 아이콘 'bomb' (10×10) |
 | `icon_box_toss.png` | 아이콘 'box_toss' (10×10) |
 | `icon_box_toss_evolved.png` | 진화 아이콘 'box_toss' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_camo_cloak.png` | 아이콘 'camo_cloak' (10×10) |
+| `icon_codex.png` | 아이콘 'codex' (10×10) |
 | `icon_coffee.png` | 아이콘 'coffee' (10×10) |
+| `icon_crossbow.png` | 아이콘 'crossbow' (10×10) |
+| `icon_crossbow_evolved.png` | 진화 아이콘 'crossbow' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_daily.png` | 아이콘 'daily' (10×10) |
 | `icon_defibrillator.png` | 아이콘 'defibrillator' (10×10) |
 | `icon_defibrillator_evolved.png` | 진화 아이콘 'defibrillator' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_delivery_bag.png` | 아이콘 'delivery_bag' (10×10) |
@@ -31,8 +43,14 @@
 | `icon_hidden_airstrike.png` | 아이콘 'hidden_airstrike' (10×10) |
 | `icon_hidden_backdraft.png` | 아이콘 'hidden_backdraft' (10×10) |
 | `icon_hidden_express.png` | 아이콘 'hidden_express' (10×10) |
+| `icon_hidden_grand_slam.png` | 아이콘 'hidden_grand_slam' (10×10) |
 | `icon_hidden_miracle.png` | 아이콘 'hidden_miracle' (10×10) |
+| `icon_hidden_pack_hunt.png` | 아이콘 'hidden_pack_hunt' (10×10) |
+| `icon_homerun.png` | 아이콘 'homerun' (10×10) |
+| `icon_hunting_dog.png` | 아이콘 'hunting_dog' (10×10) |
+| `icon_hunting_dog_evolved.png` | 진화 아이콘 'hunting_dog' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_knee_pads.png` | 아이콘 'knee_pads' (10×10) |
+| `icon_lock.png` | 아이콘 'lock' (10×10) |
 | `icon_lucky_charm.png` | 아이콘 'lucky_charm' (10×10) |
 | `icon_magnet.png` | 아이콘 'magnet' (10×10) |
 | `icon_megaphone.png` | 아이콘 'megaphone' (10×10) |
@@ -45,6 +63,8 @@
 | `icon_parcel_drone_evolved.png` | 진화 아이콘 'parcel_drone' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_pistol.png` | 아이콘 'pistol' (10×10) |
 | `icon_pistol_evolved.png` | 진화 아이콘 'pistol' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_pitching_machine.png` | 아이콘 'pitching_machine' (10×10) |
+| `icon_pitching_machine_evolved.png` | 진화 아이콘 'pitching_machine' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_radio.png` | 아이콘 'radio' (10×10) |
 | `icon_rescue_saw.png` | 아이콘 'rescue_saw' (10×10) |
 | `icon_rescue_saw_evolved.png` | 진화 아이콘 'rescue_saw' — 금색 색바꿈 + 금빛 테두리 (자동) |
@@ -53,12 +73,26 @@
 | `icon_saw_drone_evolved.png` | 진화 아이콘 'saw_drone' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_scalpel.png` | 아이콘 'scalpel' (10×10) |
 | `icon_scalpel_evolved.png` | 진화 아이콘 'scalpel' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_scrap.png` | 아이콘 'scrap' (10×10) |
+| `icon_settings.png` | 아이콘 'settings' (10×10) |
+| `icon_shelter_banish.png` | 아이콘 'shelter_banish' (10×10) |
+| `icon_shelter_damage.png` | 아이콘 'shelter_damage' (10×10) |
+| `icon_shelter_exp.png` | 아이콘 'shelter_exp' (10×10) |
+| `icon_shelter_health.png` | 아이콘 'shelter_health' (10×10) |
+| `icon_shelter_pickup.png` | 아이콘 'shelter_pickup' (10×10) |
+| `icon_shelter_reroll.png` | 아이콘 'shelter_reroll' (10×10) |
+| `icon_shelter_revive.png` | 아이콘 'shelter_revive' (10×10) |
+| `icon_shelter_scrap_bonus.png` | 아이콘 'shelter_scrap_bonus' (10×10) |
+| `icon_shelter_speed.png` | 아이콘 'shelter_speed' (10×10) |
+| `icon_shelter_start_level.png` | 아이콘 'shelter_start_level' (10×10) |
 | `icon_shield_dash.png` | 아이콘 'shield_dash' (10×10) |
 | `icon_shotgun.png` | 아이콘 'shotgun' (10×10) |
 | `icon_shotgun_evolved.png` | 진화 아이콘 'shotgun' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_sneakers.png` | 아이콘 'sneakers' (10×10) |
 | `icon_snipe.png` | 아이콘 'snipe' (10×10) |
 | `icon_sprint.png` | 아이콘 'sprint' (10×10) |
+| `icon_stadium_light.png` | 아이콘 'stadium_light' (10×10) |
+| `icon_stadium_light_evolved.png` | 진화 아이콘 'stadium_light' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_stethoscope.png` | 아이콘 'stethoscope' (10×10) |
 | `icon_syringe_gun.png` | 아이콘 'syringe_gun' (10×10) |
 | `icon_syringe_gun_evolved.png` | 진화 아이콘 'syringe_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
@@ -68,6 +102,10 @@
 | `icon_taser_evolved.png` | 진화 아이콘 'taser' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icon_tear_gas.png` | 아이콘 'tear_gas' (10×10) |
 | `icon_tear_gas_evolved.png` | 진화 아이콘 'tear_gas' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_throwing_knives.png` | 아이콘 'throwing_knives' (10×10) |
+| `icon_throwing_knives_evolved.png` | 진화 아이콘 'throwing_knives' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icon_trap_net.png` | 아이콘 'trap_net' (10×10) |
+| `icon_trophy.png` | 아이콘 'trophy' (10×10) |
 | `icon_turnout_gear.png` | 아이콘 'turnout_gear' (10×10) |
 | `icon_vest.png` | 아이콘 'vest' (10×10) |
 | `icon_vitamins.png` | 아이콘 'vitamins' (10×10) |

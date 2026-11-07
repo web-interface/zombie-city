@@ -1,7 +1,7 @@
 # [파일] art/source/parts_people.txt
-# [하는 일] 사람(생존자)을 이루는 부품 그림: 머리·몸통·팔·다리·모자를 방향별로 그린 글자 지도. 한 글자 = 한 점, '.' = 빈칸. 다리·모자는 좀비도 같이 쓴다 (좀비 부품은 parts_zombies.txt).
-# [쓰는 곳] tools/build_sprites.py 가 부품을 겹쳐서 걷기 4장 × 3방향 동작을 만든다. 색은 art/source/outfits.json 의 팔레트로 칠한다.
-# [근거 문서] 06 그림 규칙(16×16, 걷기 4장·3방향), 11 §9 픽셀 그림 만드는 길
+# [하는 일] 사람(생존자)을 이루는 부품 그림: 머리·몸통·팔·다리·모자를 방향별로 그린 글자 지도. 한 글자 = 한 점, '.' = 빈칸. 다리·모자는 좀비도 같이 쓴다 (좀비 부품은 parts_zombies.txt). 새 생존자 옷 부품(줄무늬·조끼·앞치마·흙 묻은 바지·아이블랙·새 모자)과 덧그림(배트·글러브·털 망토·목줄·석궁)도 여기.
+# [쓰는 곳] tools/sprite_people.py 가 부품을 겹쳐서 걷기 4장 × 3방향 동작을 만든다. 색은 art/source/outfits.json 의 팔레트로 칠한다.
+# [근거 문서] 06 그림 규칙(16×16, 걷기 4장·3방향), 14 §3-1 새 생존자, 11 §11 픽셀 그림 만드는 길
 #
 # 글자 뜻 (옷마다 색이 다름)
 #   o 테두리   s 피부   e 눈   h 머리카락   t 옷   T 옷 그늘   a 포인트(배지·벨트·반사띠)
@@ -186,3 +186,345 @@ occcccco
 ..oooo..
 .occcco.
 occcccco
+
+# ═════════ 새 생존자 2명 — 야구선수·사냥꾼 (14 §3-1) ═════════
+# 옷 표(outfits.json)에서 "torso"·"legs"·"head" 로 아래 부품 묶음을 고르고, "extras" 로 덧그림을 얹는다 (tools/sprite_people.py 의 OVERLAYS).
+# 더 쓰는 글자: k K 조끼·가죽·털·글러브  g 쇠사슬·쇠  G 짙은 쇠  b B 나무(배트·석궁)  v 렌즈  w 시위  q 아이블랙  d 흙  r 목줄
+
+# ───────── 몸통 묶음 ─────────
+# 줄무늬 동네 야구단 유니폼(stripe): 흰 바탕(t)에 세로 줄(T), 왼쪽 가슴에 팀 글자(a) 한쪽만, 등에 등번호(a).
+@part torso_stripe_down 6x4
+otTtTo
+oaTtTo
+otTtTo
+oaaaao
+
+@part torso_stripe_up 6x4
+otTtTo
+otaaTo
+otaaTo
+oaaaao
+
+@part torso_stripe_side 6x4
+oTtTto
+otTaTo
+oTtTto
+oaaaao
+
+# 사냥 조끼(vest): 국방색 조끼(k·K)를 앞을 열어 입어 안의 체크 셔츠(t)가 보임, 주머니(K)는 좌우 다르게.
+@part torso_vest_down 6x4
+okttko
+okTtKo
+oKttko
+oaaaao
+
+@part torso_vest_up 6x4
+okkkko
+okKkko
+okkkKo
+oaaaao
+
+@part torso_vest_side 6x4
+oKkkto
+okkkTo
+okKkto
+oaaaao
+
+# 가죽 앞치마 + 쇠사슬(apron): 가죽 앞치마(k·K) 위로 쇠사슬(g)이 어깨에서 허리로 비스듬히. 뒤는 앞치마 끈이 엇갈림.
+@part torso_apron_down 6x4
+ogkkTo
+otgkTo
+otkgko
+oaKKgo
+
+@part torso_apron_up 6x4
+oktTko
+otkkto
+oktTko
+oaKKao
+
+@part torso_apron_side 6x4
+oTtkko
+otgkko
+otTgko
+oaKKgo
+
+# ───────── 흙 묻은 바지 (dirty) — 대도(도루) 갈래: 무릎·정강이에 흙(d)이 좌우 다르게 ─────────
+@part legs_dirty_stand 6x4
+opdppo
+opoodo
+odoopo
+ofoofo
+
+@part legs_dirty_contact_a 6x3
+opdppo
+odoofo
+ofo.o.
+
+@part legs_dirty_contact_b 6x3
+oppdpo
+ofoodo
+.o.ofo
+
+@part legs_dirty_side_stand 6x4
+.opdo.
+.oppo.
+.odpo.
+.offo.
+
+@part legs_dirty_side_stride 6x3
+.opdo.
+odo.po
+fo..of
+
+@part legs_dirty_side_cross 6x3
+.odpo.
+.oppo.
+.offo.
+
+# ───────── 아이블랙 머리 (eyeblack) — 슬러거 갈래: 눈 밑 검은 칠(q) ─────────
+@part head_eyeblack_down 8x7
+.oooooo.
+ohhhhhho
+ohhhhhho
+ohhsssho
+osesseso
+osqssqso
+.oooooo.
+
+@part head_eyeblack_up 8x7
+.oooooo.
+ohhhhhho
+ohhhhhho
+ohhhhhho
+ohhhhhho
+oshhhhso
+.oooooo.
+
+@part head_eyeblack_side 8x7
+.oooooo.
+ohhhhhho
+ohhhhhho
+ohhhssso
+ohhssses
+ohssssqo
+.oooooo.
+
+# ───────── 새 모자 ─────────
+# batting = 타자 헬멧: 귀덮개가 한쪽에만 (슬러거)
+@part hat_batting_down 8x7
+.oooooo.
+occcCcco
+occcccco
+occcccco
+oCCCCCCo
+oc......
+oo......
+
+@part hat_batting_up 8x7
+.oooooo.
+occcccco
+occcccco
+occcccco
+occcccco
+......co
+......oo
+
+@part hat_batting_side 8x6
+.oooooo.
+occcccco
+occcccco
+occcccCC
+occco...
+occo....
+
+# headband = 이마 띠 (대도): 뒤로 묶은 매듭 끝이 날림
+@part hat_headband_down 8x5
+........
+........
+........
+........
+oCCCCCCo
+
+@part hat_headband_up 8x7
+........
+........
+........
+........
+oCCCCCCo
+...oCC..
+....Co..
+
+@part hat_headband_side 8x6
+........
+........
+........
+........
+oCCCCCCo
+Co......
+
+# hood = 후드 (명사수): 머리 위·옆을 덮고 얼굴만 보임
+@part hat_hood_down 8x8
+.oooooo.
+occcccco
+occcccco
+oCCCCCCo
+oc....co
+oc....co
+oc....co
+.o....o.
+
+@part hat_hood_up 8x8
+.oooooo.
+occcccco
+occcccco
+occcCcco
+occcccco
+occcccco
+occcccco
+.oooooo.
+
+@part hat_hood_side 8x8
+.oooooo.
+occcccco
+occcccco
+occccCCo
+occcC...
+occcC...
+occcC...
+.ooo....
+
+# ───────── 덧그림 (tools/sprite_people.py 의 OVERLAYS 가 자리를 정함) ─────────
+# bat = 등에 멘 야구 배트: 앞모습은 오른쪽 어깨 뒤로 굵은 끝이 솟고, 뒷모습은 등을 비스듬히 가로지름.
+@part bat_down 4x7
+.oo.
+obbo
+obBo
+.obo
+.obo
+.oBo
+..o.
+
+@part bat_up 8x9
+.oo.....
+obbo....
+obBbo...
+.obBo...
+..obo...
+...obo..
+....obo.
+.....oBo
+......o.
+
+@part bat_side 3x9
+.oo
+obo
+obo
+oBo
+obo
+obo
+oBo
+oBo
+.o.
+
+# glove = 투수 글러브 (에이스): 왼손에 낀 갈색 글러브
+@part glove 4x4
+.oo.
+okKo
+oKKo
+.oo.
+
+# apron_skirt = 앞치마 아랫단 (덫 사냥꾼): 허벅지까지 내려옴
+@part apron_skirt_down 4x2
+okKo
+oKKo
+
+@part apron_skirt_side 3x2
+kKo
+KKo
+
+# fur_cape = 털 망토 (사냥개 조련사): 앞은 어깨 털 목도리, 뒤는 등을 덮고 밑단이 들쭉날쭉
+@part fur_cape_down_back 12x6
+ok........ko
+oK........Ko
+ok........ko
+oK........Ko
+ok........ko
+.o........o.
+
+@part fur_cape_down 10x2
+okKkkkkKko
+.oKkKKkKo.
+
+@part fur_cape_up 10x8
+okkKkkKkko
+okKkkKkkKo
+oKkkKkkkko
+okkkkKkKko
+okKkkkkkKo
+oKkkKkkKko
+.okKkkKko.
+..oo.oo...
+
+@part fur_cape_side_back 3x7
+okK
+okk
+oKk
+okK
+oKk
+okk
+.oo
+
+@part fur_cape_side 6x2
+okKkko
+.oKko.
+
+# leash = 개 목줄 (사냥개 조련사): 손에서 빨간 줄이 바깥쪽 아래로 늘어짐
+@part leash_down 3x5
+..r
+.r.
+.r.
+r..
+r..
+
+@part leash_up 3x5
+r..
+.r.
+.r.
+..r
+..r
+
+@part leash_side 3x4
+r..
+.r.
+..r
+..r
+
+# scoped_crossbow = 등에 멘 조준경 석궁 (명사수): 앞모습은 어깨 양쪽으로 활 끝과 오른쪽 위 조준경, 뒷모습은 석궁 전체.
+@part crossbow_down_back 14x4
+..........ogvo
+..........oGGo
+oGGo......oGGo
+.oo........oo.
+
+@part crossbow_up 10x9
+...ogvo...
+...oboo...
+oGGGbGGGGo
+.ow.bo.wo.
+....bo....
+....bo....
+....Bo....
+....Bo....
+....o.....
+
+@part crossbow_side_back 4x9
+ogvo
+oGGo
+.obo
+oGbo
+oGbo
+.obo
+.oBo
+.oBo
+..o.

@@ -1,20 +1,22 @@
 """
 [파일] tools/build_sprites.py
-[하는 일] art/source 의 글자 지도와 색 표로 게임 그림을 모두 만든다: 생존자 16벌 동작 묶음(서 있기·걷기 4장 × 3방향·쓰러지기)과 하얀 실루엣, 좀비·보스(sprite_zombies.py), 아이콘(sprite_icons.py), 소품·상자·드론, 바닥 타일, 빛 그림, 폴더 README.
-[쓰는 곳] 그림 원본을 고친 뒤 `py -3 tools/build_sprites.py` 로 실행 → art/sprites/*.png. scripts/world/*.gd · scripts/ui/*.gd 가 이 PNG 를 쓴다. tools/pixel_png.py · sprite_sheet.py · sprite_zombies.py · sprite_icons.py 를 쓴다.
-[근거 문서] 06 그림 규칙, 11 §11 픽셀 그림 만드는 길, 14 §1-2·§1-3·§2 (새 좀비·보스·아이콘)
+[하는 일] art/source 의 글자 지도와 색 표로 게임 그림을 모두 만든다 (실행 입구): 생존자(sprite_people.py), 좀비·보스·사냥개(sprite_zombies.py), 아이콘(sprite_icons.py), 소품·상자·드론·덫, 바닥 타일, 빛 그림, 타이틀 배경(sprite_title.py), 폴더 README.
+[쓰는 곳] 그림 원본을 고친 뒤 `py -3 tools/build_sprites.py` 로 실행 → art/sprites/*.png. scripts/world/*.gd · scripts/ui/*.gd 가 이 PNG 를 쓴다. tools/pixel_png.py · sprite_sheet.py · sprite_people.py · sprite_zombies.py · sprite_icons.py · sprite_title.py 를 쓴다.
+[근거 문서] 06 그림 규칙, 11 §11 픽셀 그림 만드는 길, 14 §1-2·§1-3·§2·§3-1 (새 좀비·보스·아이콘·새 생존자)
 """
 from __future__ import annotations
 
 import json
-import sys
 import math
 import random
+import sys
 
 from pixel_png import Canvas, PixelMap, read_pixel_maps, save_png
 from sprite_icons import build_icons
-from sprite_sheet import FRAME, HUMAN_ROWS, OUTPUT, SOURCE, Made, Palette, Parts, build_sheet, death_frame, save_with_flash, stamp_hat, stamp_legs, walk_pose
-from sprite_zombies import build_boss_sheets, build_zombie_sheets
+from sprite_people import build_survivor_sheets
+from sprite_sheet import FRAME, OUTPUT, SOURCE, Made, Palette
+from sprite_title import build_title_skyline
+from sprite_zombies import build_boss_sheets, build_companion_sheets, build_zombie_sheets
 
 sys.stdout.reconfigure(encoding="utf-8")   # 윈도 콘솔(cp949)에서 한글이 깨지지 않게
 
@@ -23,48 +25,17 @@ def main() -> None:
     parts = {**read_pixel_maps(SOURCE / "parts_people.txt"), **read_pixel_maps(SOURCE / "parts_zombies.txt")}
     sprites = read_pixel_maps(SOURCE / "sprites.txt")
     colors = json.loads((SOURCE / "outfits.json").read_text(encoding="utf-8"))
-    made: Made = []
-    for outfit_name, outfit in colors["human_outfits"].items():
-        palette = {**colors["human_common"], **outfit}
-        sheet = build_sheet(lambda row, index: human_frame(parts, palette, outfit["hat"], row, index), HUMAN_ROWS)
-        made += save_with_flash(sheet, f"survivor_{outfit_name}", f"생존자 옷 '{outfit_name}' 동작 묶음 (16×16, 줄: {', '.join(HUMAN_ROWS)})")
+    made: Made = build_survivor_sheets(parts, colors)
     made += build_zombie_sheets(parts, colors)
+    made += build_companion_sheets(parts, colors)
     made += build_boss_sheets(read_pixel_maps(SOURCE / "bosses.txt"), colors["global_palette"])
     made += build_icons(read_pixel_maps(SOURCE / "icons.txt"), colors["global_palette"], colors["evolved_icons"])
     made += build_single_sprites(sprites, colors["global_palette"])
     made += build_ground_tiles()
     made += build_light_textures()
+    made += build_title_skyline()
     write_readme(made)
     print(f"그림 {len(made)}장을 만들었어요 → {OUTPUT}")
-
-
-# ───────── 생존자 ─────────
-
-def human_frame(parts: Parts, palette: Palette, hat: str, row_name: str, index: int) -> Canvas:
-    if row_name == "death":
-        return death_frame(human_frame(parts, palette, hat, "idle_down", 0), index)
-    direction, action, body_drop = walk_pose(row_name, index)
-    canvas = Canvas(FRAME, FRAME)
-    stamp_legs(canvas, parts, palette, direction, action, index)
-    canvas.stamp(parts[f"torso_{direction}"], 5, 8 + body_drop, palette)
-    left_swing, right_swing = arm_swing(action, index)
-    if direction == "side":
-        canvas.stamp(parts["arm_side"], 7 + left_swing - right_swing, 8 + body_drop, palette)
-    else:
-        canvas.stamp(parts["arm_left"], 3, 8 + body_drop + left_swing, palette)
-        canvas.stamp(parts["arm_right"], 11, 8 + body_drop + right_swing, palette)
-    breathing = 1 if action == "idle" and index == 1 else 0
-    head_top = 1 + body_drop + breathing
-    canvas.stamp(parts[f"head_{direction}"], 4, head_top, palette)
-    stamp_hat(canvas, parts, palette, hat, direction, 4, head_top)
-    return canvas
-
-
-def arm_swing(action: str, index: int) -> tuple[int, int]:
-    """걸을 때 팔을 번갈아 흔든다: (왼팔, 오른팔) 이 1점씩 내려감."""
-    if action != "walk":
-        return 0, 0
-    return {0: (1, 0), 2: (0, 1)}.get(index, (0, 0))
 
 
 # ───────── 한 장 그림 (소품·헬기·백신 조각·드론·상자) ─────────
@@ -73,6 +44,7 @@ def arm_swing(action: str, index: int) -> tuple[int, int]:
 SINGLE_SPRITE_NOTES = {
     "chest": "보물 상자 — 16×16 두 칸 가로 (왼쪽 닫힘 · 오른쪽 열림)",
     "drone_parcel": "배달 드론 — 소포를 매단 드론 (9×10, 한 장)",
+    "bear_trap": "곰 덫 — 12×8 두 칸 가로 (왼쪽 열림 · 오른쪽 닫힘)",
 }
 
 

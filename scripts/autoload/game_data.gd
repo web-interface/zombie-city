@@ -7,7 +7,7 @@ extends Node
 const DATA_FOLDER := "res://data/"
 const TABLE_NAMES: Array[String] = [
 	"survivors", "skills", "promotions", "weapons", "gear", "zombies", "spawn_curve", "run_rules",
-	"flavor_texts", "city_decor", "survivor_lines",
+	"flavor_texts", "city_decor", "survivor_lines", "night_themes",
 ]
 
 var _tables: Dictionary = {}

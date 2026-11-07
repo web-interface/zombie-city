@@ -1,0 +1,41 @@
+{
+  "_설명": {
+    "파일": "data/night_themes.json",
+    "하는 일": "밤마다 다른 분위기: 어둠 색, 날씨(비·재·안개), 좀비 빠르기 배율, 알림에 붙는 이름. 첫째 밤은 첫 칸, 그 뒤로 둘째 칸부터 돌아가며 쓴다.",
+    "쓰는 곳": "scripts/systems/night_cycle.gd 가 그 밤의 칸을 고르고, scripts/world/weather.gd 가 날씨를 그리고 어둠 색을 바꾼다.",
+    "근거 문서": "14 §4 중독 설계(사용자 '개성 넘치고, 계속 하고 싶게'), 06 밤 분위기"
+  },
+  "themes": [
+    {
+      "name": "새벽시 도심",
+      "darkness": "#3a3f63",
+      "weather": "none",
+      "zombie_speed_multiplier": 1.0
+    },
+    {
+      "name": "비 오는 밤",
+      "darkness": "#2c3858",
+      "weather": "rain",
+      "zombie_speed_multiplier": 1.0
+    },
+    {
+      "name": "붉은 달",
+      "darkness": "#53303b",
+      "weather": "ash",
+      "zombie_speed_multiplier": 1.08
+    },
+    {
+      "name": "짙은 안개",
+      "darkness": "#41444f",
+      "weather": "fog",
+      "zombie_speed_multiplier": 1.0
+    },
+    {
+      "name": "정전된 밤",
+      "darkness": "#1c1e2a",
+      "weather": "none",
+      "zombie_speed_multiplier": 1.0
+    }
+  ],
+  "_근거": "밤이 늘 같은 모습이면 둘째 밤부터 지루해서 — 밤마다 날씨·색이 바뀌어 '다음 밤엔 뭐가 나올까'. 붉은 달은 좀비가 조금 빠르고, 정전된 밤은 빛(손전등·가로등)이 더 귀하다."
+}

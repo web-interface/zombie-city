@@ -1,6 +1,6 @@
 ## [파일] scripts/systems/night_cycle.gd
-## [하는 일] 끝없는 밤의 '몇째 밤'과 그 밤의 세기를 들고 있다: 좀비 체력(시간 성장을 밤 사이에도 이어 감)·나오는 수·닿는 피해·빠르기·보스 체력·정예 확률 배율, 밤 이름("둘째 밤"). 다음 밤으로 넘기면 숫자만 하나 올린다.
-## [쓰는 곳] RunContext.night_cycle 로 들고 다닌다. zombie_spawner·boss_director·horde_events 가 배율을 묻고, run_night_flow.gd 가 advance() 를 부르고, HUD·기록이 night 를 읽는다.
+## [하는 일] 끝없는 밤의 '몇째 밤'과 그 밤의 세기를 들고 있다: 좀비 체력(시간 성장을 밤 사이에도 이어 감)·나오는 수·닿는 피해·빠르기·보스 체력·정예 확률 배율, 밤 이름("둘째 밤"), 그 밤의 분위기(날씨·어둠 색 — data/night_themes.json). 다음 밤으로 넘기면 숫자만 하나 올린다.
+## [쓰는 곳] RunContext.night_cycle 로 들고 다닌다. zombie_spawner·boss_director·horde_events 가 배율을 묻고, night_flow.gd 가 advance() 를 부르고, HUD·기록이 night 를, weather.gd 가 theme() 을 읽는다.
 ## [근거 문서] 14 §1-1 밤 이어가기, data/run_rules.json nights, data/spawn_curve.json
 class_name NightCycle
 extends RefCounted
@@ -46,7 +46,16 @@ func contact_damage_multiplier() -> float:
 
 
 func speed_multiplier() -> float:
-	return minf(1.0 + float(_rules["speed_growth_per_night"]) * (night - 1), float(_rules["max_speed_multiplier"]))
+	var growth := minf(1.0 + float(_rules["speed_growth_per_night"]) * (night - 1), float(_rules["max_speed_multiplier"]))
+	return growth * float(theme().get("zombie_speed_multiplier", 1.0))
+
+
+## 그 밤의 분위기 {name, darkness, weather, zombie_speed_multiplier} — 첫째 밤은 첫 칸, 그 뒤는 둘째 칸부터 돌아가며
+func theme() -> Dictionary:
+	var themes: Array = GameData.table("night_themes")["themes"]
+	if night <= 1 or themes.size() <= 1:
+		return themes[0]
+	return themes[1 + (night - 2) % (themes.size() - 1)]
 
 
 func boss_health_multiplier() -> float:

@@ -20,6 +20,8 @@ var camera: RunCamera
 var hazards: Hazards
 ## 바닥의 보물 상자·자석·폭탄·냉각 스프레이 (scripts/world/pickups.gd)
 var pickups: Pickups
+## 밤마다 다른 날씨·어둠 색 (scripts/world/weather.gd)
+var weather: Weather
 ## 몇째 밤인지와 그 밤의 세기 배율 (scripts/systems/night_cycle.gd)
 var night_cycle: NightCycle
 ## 빛과 어둠 숫자 (data/run_rules.json lighting)

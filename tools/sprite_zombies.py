@@ -1,15 +1,15 @@
 """
 [파일] tools/sprite_zombies.py
-[하는 일] 좀비 동작 묶음(16×16)과 보스 동작 묶음(24×24)을 만든다. 서서 걷는 좀비는 '몸 설계'(머리·몸통·팔·다리 부품과 자리)만 바꿔 같은 방법으로 찍고, 기어다니는 좀비·들개 좀비는 따로 그린 장면으로, 보스는 걷기 2장(a·b)을 a·b·a·b 로 쓴다.
-[쓰는 곳] tools/build_sprites.py 가 부른다 → art/sprites/zombie_*.png, boss_*.png (+ _flash). 원본: art/source/parts_zombies.txt · bosses.txt, 색: outfits.json 의 zombie_kinds.
-[근거 문서] 06 그림 규칙(16×16·걷기 4장·비대칭), 14 §1-2 새 좀비 6종 · §1-3 보스 3종, 11 §11
+[하는 일] 좀비 동작 묶음(16×16)과 보스 동작 묶음(24×24), 생존자 곁 동물(사냥개)을 만든다. 서서 걷는 좀비는 '몸 설계'(머리·몸통·팔·다리 부품과 자리)만 바꿔 같은 방법으로 찍고, 기어다니는 좀비·들개 좀비는 따로 그린 장면으로, 보스는 걷기 2장(a·b)을 a·b·a·b 로 쓴다.
+[쓰는 곳] tools/build_sprites.py 가 부른다 → art/sprites/zombie_*.png, boss_*.png (+ _flash), hunting_dog.png. 원본: art/source/parts_zombies.txt · bosses.txt, 색: outfits.json 의 zombie_kinds · companions.
+[근거 문서] 06 그림 규칙(16×16·걷기 4장·비대칭), 14 §1-2 새 좀비 6종 · §1-3 보스 3종 · §3-1 사냥개, 11 §11
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
-from pixel_png import Canvas
-from sprite_sheet import FRAME, ZOMBIE_ROWS, Made, Palette, Parts, build_sheet, death_frame, save_with_flash, stamp_hat, stamp_legs, walk_pose
+from pixel_png import Canvas, save_png
+from sprite_sheet import FRAME, OUTPUT, ZOMBIE_ROWS, Made, Palette, Parts, build_sheet, death_frame, save_with_flash, stamp_hat, stamp_legs, walk_pose
 
 HEAD_SWAY = {0: -1, 2: 1}            # 좀비는 걸을 때 머리를 좌우로 흔든다 (장면 번호 → 옆으로 몇 점)
 DROOL_LENGTHS = (1, 2, 3, 1)         # 침 좀비: 턱에서 흐르는 침 길이가 장면마다 늘었다 줄어든다
@@ -182,4 +182,17 @@ def build_boss_sheets(bosses: Parts, palette: Palette) -> Made:
             sheet.paste(death_frame(standing, frame_index), frame_index * size, size)
         title = BOSS_TITLES.get(boss_id, boss_id)
         made += save_with_flash(sheet, f"boss_{boss_id}", f"보스 {title} ({size}×{size}, 1줄 걷기 4장 · 2줄 쓰러지기 3장)")
+    return made
+
+
+def build_companion_sheets(parts: Parts, colors: dict) -> Made:
+    """생존자 곁 동물(outfits.json companions): 좀비 장면 함수를 색만 바꿔 쓴다. 좀비와 같은 4줄 배치, 맞을 일이 없어 하얀 실루엣은 안 만든다."""
+    made: Made = []
+    scene_makers = {"hound": hound_frame}
+    for name, companion in colors["companions"].items():
+        palette = {key: value for key, value in companion.items() if len(key) == 1}
+        make_scene = scene_makers[companion["scene"]]
+        sheet = build_sheet(lambda row, index, palette=palette, make_scene=make_scene: make_scene(parts, palette, row, index), ZOMBIE_ROWS)
+        save_png(sheet, OUTPUT / f"{name}.png")
+        made.append((f"{name}.png", f"곁 동물 '{name}' 동작 묶음 (16×16, 좀비와 같은 줄: {', '.join(ZOMBIE_ROWS)})"))
     return made
