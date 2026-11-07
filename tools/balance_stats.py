@@ -101,7 +101,7 @@ def fun_table(runs: list[dict]) -> list[str]:
         ("가장 낮았던 체력 (첫째 밤 넘긴 판)", f"{mean([r.get('lowest_health_ratio', 1.0) for r in first_night_full]):.0%}", "30% 밑으로 한 번은"),
         ("분당 처치 3분째 ÷ 1분째 (첫째 밤)", f"{mean(kill_growth):.1f}배", "3배+"),
         ("밤 후반 화면 좀비 수 (최대)", f"{mean([r.get('max_zombies_late_night', 0) for r in runs]):.0f}", "120~300"),
-        ("보스 처치 시간", f"{mean(boss_seconds):.0f}초 ({len(boss_seconds)}번)", "15~35초"),
+        ("보스 처치 시간", f"{mean(boss_seconds):.0f}초 ({len(boss_seconds)}번)", "30~60초"),   # 사용자 '보스 진짜 잡기 어렵게' (문서 12 §4)
         ("전직 체감 (전후 30초 처치 배율)", f"{mean(speedups):.2f}배", "1.3배+"),
         ("탈출 때 맞은 비율 (첫째 밤 넘긴 판)", f"{mean([1.0 if r['took_damage_while_extracting'] else 0.0 for r in first_night_full]):.0%} ({len(first_night_full)}판)", "60%+"),
         ("최대 연속 처치", f"{mean([r.get('max_combo', 0) for r in runs]):.0f}", "100+ (보상이 자주 터지게)"),
