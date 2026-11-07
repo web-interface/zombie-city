@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/title_screen.gd
-## [하는 일] 타이틀 화면: 밤거리에 좀비 몇 마리가 비틀거리며 지나가고 가로등이 깜빡인다. 게임 이름 아래 버튼 — 큰 [출동!](생존자 고르기), [은신처]·[오늘의 도전], [도감]·[업적]·[설정] — 과 가진 고철·최고 기록. 강화할 고철이 있거나 오늘의 도전을 아직 안 했으면 그 버튼이 깜빡인다. 자동 플레이면 바로 판으로 넘어간다.
+## [하는 일] 타이틀 화면: 새벽시 밤 도시 실루엣 앞 밤거리에 좀비 몇 마리가 비틀거리며 지나가고 가로등이 깜빡인다. 게임 이름 아래 버튼 — 큰 [출동!](생존자 고르기), [은신처]·[오늘의 도전], [도감]·[업적]·[설정] — 과 가진 고철·최고 기록. 강화할 고철이 있거나 오늘의 도전을 아직 안 했으면 그 버튼이 깜빡인다. 자동 플레이면 바로 판으로 넘어간다.
 ## [쓰는 곳] scenes/title.tscn (게임을 켜면 처음 여는 장면). 설정 창(settings_panel.gd)·오늘의 도전 창(daily_challenge_panel.gd)을 겹쳐 띄운다.
 ## [근거 문서] 05 화면 목록(타이틀), 04 §1 설정, 06 밤 분위기, 14 §3·§4
 extends Control
@@ -10,6 +10,8 @@ const STREET_TOP := 122.0       # 좀비가 걷는 줄 (제목 아래, 버튼 �
 const GROUND_LINE := 164.0
 const BUTTON_TOP := 176.0
 const MENU_WIDTH := 152.0
+const SKYLINE: Texture2D = preload("res://art/sprites/title_skyline.png")   # 새벽시 밤 도시 실루엣 (180×90, 하늘 투명)
+const SKYLINE_ALPHA := 0.55     # 제목 글자가 묻히지 않게 흐리게
 
 var _time: float = 0.0
 var _zombies: Array[Sprite2D] = []
@@ -136,6 +138,7 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color("0f1117"))   # 배경 (자식 노드보다 먼저 그려져 가로등 빛을 가리지 않게 여기서)
+	draw_texture(SKYLINE, Vector2(roundf((size.x - SKYLINE.get_width()) * 0.5), GROUND_LINE - SKYLINE.get_height()), Color(1, 1, 1, SKYLINE_ALPHA))
 	# 가로등 하나가 가끔 깜빡인다 (계단식 빛 원 세 겹)
 	var is_on := fmod(_time, 3.1) > 0.18
 	var lamp := Vector2(size.x * 0.72, STREET_TOP - 4.0)
