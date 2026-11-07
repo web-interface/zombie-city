@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/hud.gd
-## [하는 일] 한 판 화면 위 UI 묶음(CanvasLayer): 맨 위 정보 줄, 조이스틱, 스킬 버튼, 알림 띠, 착륙 화살표, 레벨 업 창, 전직 창, 일시정지를 만들고 run.gd 와 이어 준다. 창을 고르면 멈춤을 푼다. 멈춘 동안에도 돌아간다.
+## [하는 일] 한 판 화면 위 UI 묶음(CanvasLayer): 맨 위 정보 줄·앞으로 올 일 시간 줄, 조이스틱, 스킬 버튼, 알림 띠, 착륙 화살표, 레벨 업 창, 전직 창, 일시정지를 만들고 run.gd 와 이어 준다. 창을 고르면 멈춤을 푼다. 멈춘 동안에도 돌아간다.
 ## [쓰는 곳] scenes/run.tscn 의 Hud. run.gd 가 setup()·update_display()·show_banner() 를 부르고, 자동 플레이가 choose_card()·choose_branch() 를 부른다.
 ## [근거 문서] 05 화면 목록·게임 화면 배치, 11 §4
 class_name Hud
@@ -30,6 +30,7 @@ var night_clear_panel: NightClearPanel
 var _boss_bar: BossHealthBar
 var chest_panel: ChestPanel
 var _top_bar: HudTopBar
+var _timeline: NightTimeline
 var _joystick: FloatingJoystick
 var _skill_button: SkillButton
 var _banner: Banner
@@ -59,6 +60,8 @@ func _build_play_parts(root: Control, context: RunContext, rack: WeaponRack, lev
 	_top_bar = HudTopBar.new()
 	root.add_child(_top_bar)
 	_top_bar.setup(context, level_up, rack)
+	_timeline = NightTimeline.new()
+	root.add_child(_timeline)
 	_boss_bar = BossHealthBar.new()
 	root.add_child(_boss_bar)
 	_arrow = ExtractionArrow.new()
@@ -151,6 +154,11 @@ func update_display(elapsed_seconds: float, _alive_zombies: int, kills: int) -> 
 ## 보스 체력 줄이 볼 보스 담당 (run.gd 가 준비 뒤 부름)
 func watch_bosses(director: BossDirector) -> void:
 	_boss_bar.watch(director)
+
+
+## 위쪽 시간 줄이 볼 밤 감독 (앞으로 올 정예·보스·헬기)
+func watch_night(director: NightDirector) -> void:
+	_timeline.watch(director)
 
 
 ## 위 표시줄의 '둘째 밤'·연속 처치

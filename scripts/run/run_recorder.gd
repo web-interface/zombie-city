@@ -1,7 +1,7 @@
 ## [파일] scripts/run/run_recorder.gd
-## [하는 일] 한 판(여러 밤) 기록 담당: 결과 화면에 보여 줄 것(버틴 밤·마지막 밤 시간·처치·보스·정예·최대 연속·레벨·무엇에 당했나·만난 좀비)과 난이도 테스터가 쓸 재미 지표(레벨 업 간격, 아슬아슬하게 산 횟수, 분당 처치, 밤 후반 화면 좀비 수, 보스 처치 시간, 전직 전후 처치 속도, 탈출 때 맞았나, 지루한 구간, 밤마다 생존 시각)를 모은다. 시험 옵션 --stats=파일 이면 한 줄 JSON 으로 덧붙여 저장한다.
+## [하는 일] 한 판(여러 밤) 기록 담당: 결과 화면에 보여 줄 것(버틴 밤·마지막 밤 시간·처치·보스·정예·최대 연속·레벨·무엇에 당했나·만난 좀비)과 난이도 테스터가 쓸 재미 지표(레벨 업 간격, 아슬아슬하게 산 횟수, 분당 처치, 밤 후반 화면 좀비 수, 보스 처치 시간, 전직 전후 처치 속도, 탈출 때 맞았나, 지루한 구간, 밤마다 생존 시각)와 흐름 지표(30초 구간별 처치 시간·필드 좀비·레벨, 큰 일 겹침 — flow_metrics.gd)를 모은다. 시험 옵션 --stats=파일 이면 한 줄 JSON 으로 덧붙여 저장한다.
 ## [쓰는 곳] scenes/run.tscn 의 Systems/RunRecorder. run.gd 가 신호를 잇고 판이 끝나면 build_result() 를 부른다. 결과 화면·SaveData(은신처·업적·도감)·tools/balance_stats.py 가 결과를 읽는다.
-## [근거 문서] 12 §4 판마다 기록·§5 재미 지표, 14 §1-1 밤 이어가기·§3 결과 사전 키
+## [근거 문서] 15 §9 목표 표, 12 §4 판마다 기록·§5 재미 지표, 14 §1-1 밤 이어가기·§3 결과 사전 키
 class_name RunRecorder
 extends Node
 
@@ -34,10 +34,20 @@ var _kill_times: Array[float] = []
 var _event_times: Array[float] = [0.0]
 var _is_in_danger: bool = false
 var _context: RunContext
+var _level: int = 1
+var _flow: FlowMetrics
 
 
 func setup(context: RunContext) -> void:
 	_context = context
+	_flow = FlowMetrics.new()   # 표(GameData)를 읽으니 장면이 만들어질 때가 아니라 준비 때
+	context.shards.collected.connect(func(amount: float) -> void: _flow.note_shards(amount, context.night_cycle.night, context.elapsed_seconds))
+
+
+## 밤 감독의 큰 일 시작·끝을 흐름 지표에 적는다 (run.gd 가 이음)
+func watch_night(director: NightDirector) -> void:
+	director.big_event_started.connect(func(kind: String) -> void: _flow.note_big_event_started(kind, _context.night_cycle.night, _context.elapsed_seconds))
+	director.big_event_ended.connect(func(kind: String) -> void: _flow.note_big_event_ended(kind, _context.night_cycle.night, _context.elapsed_seconds))
 
 
 func note_kill(zombie: Zombie) -> void:
@@ -48,11 +58,13 @@ func note_kill(zombie: Zombie) -> void:
 	kills_by_minute[minute] += 1
 	_kill_times.append(_context.run_seconds)
 	_zombie_kinds_met[zombie.kind_id] = true
+	_flow.note_kill(zombie, _context.night_cycle.night, _context.elapsed_seconds)
 	if zombie.is_elite:
 		elite_kills += 1
 
 
 func note_level_up() -> void:
+	_level += 1
 	level_up_times.append(_context.run_seconds)
 	note_event()
 
@@ -90,11 +102,13 @@ func note_survivor_damaged(is_extracting: bool) -> void:
 func note_night_survived() -> void:
 	nights_survived += 1
 	night_clear_times.append(snappedf(_context.run_seconds, 0.1))
+	_flow.clear_night()
 	note_event()
 
 
-## 매 프레임: 아슬아슬 판정·화면 좀비 수
+## 매 프레임: 아슬아슬 판정·화면 좀비 수·흐름 지표
 func sample(alive_zombies: int) -> void:
+	_flow.sample(_context.horde, _context.night_cycle.night, _context.elapsed_seconds, _level)
 	var ratio := _context.survivor.health_ratio()
 	if not _context.survivor.is_dead:
 		lowest_health_ratio = minf(lowest_health_ratio, ratio)
@@ -131,6 +145,7 @@ func build_result(end_reason: String, level: int, branch_name: String, max_combo
 		"daily_challenge": bool(_router_value("is_daily_challenge", false)),
 	}
 	result.merge(_balance_metrics())
+	result.merge(_flow.to_result())
 	_save_for_balance_test(result)
 	return result
 
