@@ -104,8 +104,16 @@
     "hidden_skill_min_level": 8,
     "hidden_skill_chance": 0.02,
     "hidden_skill_cutin_seconds": 0.75,
-    "evolution_slow_motion_seconds": 0.8
+    "evolution_slow_motion_seconds": 0.8,
+    "heal_offer_below_health_ratio": 0.5,
+    "limit_break_cards": [
+      {"id": "limit_damage", "name": "한계 돌파: 힘", "icon": "icon_shelter_damage", "description": "피해 +5% (계속 쌓임)", "modifier": {"multiply": {"damage_multiplier": 1.05}}},
+      {"id": "limit_speed", "name": "한계 돌파: 손", "icon": "icon_shelter_speed", "description": "공격 속도 +4% (계속 쌓임)", "modifier": {"multiply": {"attack_speed_multiplier": 1.04}}},
+      {"id": "limit_area", "name": "한계 돌파: 품", "icon": "icon_battery", "description": "공격 범위 +6% (계속 쌓임)", "modifier": {"multiply": {"area_multiplier": 1.06}}},
+      {"id": "limit_health", "name": "한계 돌파: 몸", "icon": "icon_shelter_health", "description": "최대 체력 +8 (계속 쌓임)", "modifier": {"add": {"max_health": 8}}}
+    ]
   },
+  "_한계돌파_근거": "문서 15 §5-1 (2026-11-07 저녁): 칸이 다 차고 단계도 다 오르면 구급상자만 남아 레벨 40~50 부터 회복만 골랐다(가장 많이 고른 카드 = 회복 2,323번). 이제 모자란 칸은 한계 돌파 카드(작게, 끝없이 쌓임)로 채우고, 구급상자는 체력이 heal_offer_below_health_ratio(50%) 아래일 때만 한 장. 진화 카드는 레벨 업엔 없고 보물 상자에서만.",
   "_build_묶음2_뜻": "문서 14 §2-1: 레벨 업 카드는 생존자 전용(survivors.json weapon_pool·gear_pool) + 공용(common_weapons·common_gear)에서만. banishes_per_run = 판마다 빼 버리기 횟수. min_weapon_cards = 레벨 업 카드에 무기 카드가 적어도 이만큼 (있으면 — 장비만 3장 뜨는 것 막기). 히든 카드는 레벨 hidden_skill_min_level 부터 레벨 업마다 hidden_skill_chance(+행운 부적), 한 판에 한 번. hidden_skill_cutin_seconds = 히든 스킬 컷인 동안 화면 멈춤, evolution_slow_motion_seconds = 진화 순간 느린 화면.",
   "promotion": {
     "first_promotion_level": 10,
