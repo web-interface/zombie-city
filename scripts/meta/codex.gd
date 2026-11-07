@@ -21,10 +21,29 @@ static func entry_ids(category: Dictionary) -> Array[String]:
 	var table_name := String(category["table"])
 	if not GameData.has_table(table_name):
 		return ids
+	if category.has("nested_key"):   # 진화처럼 다른 항목 안에 든 것 (weapons.json 무기마다 evolution 칸)
+		for owner_id: String in GameData.entry_ids(table_name):
+			var nested: Variant = GameData.table(table_name)[owner_id].get(String(category["nested_key"]), {})
+			if typeof(nested) == TYPE_DICTIONARY and nested.has("id"):
+				ids.append(String(nested["id"]))
+		return ids
 	for entry_id: String in GameData.entry_ids(table_name):
 		if _belongs(category, entry_id, GameData.table(table_name)[entry_id]):
 			ids.append(entry_id)
 	return ids
+
+
+## 칸의 항목 이름·아이콘 {name, icon} — 표의 항목이든 무기 안의 진화든 같은 모양으로
+static func entry_info(category: Dictionary, entry_id: String) -> Dictionary:
+	var table: Dictionary = GameData.table(String(category["table"]))
+	if category.has("nested_key"):
+		for owner_id: String in GameData.entry_ids(String(category["table"])):
+			var nested: Variant = table[owner_id].get(String(category["nested_key"]), {})
+			if typeof(nested) == TYPE_DICTIONARY and String(nested.get("id", "")) == entry_id:
+				return {"name": String(nested.get("name", entry_id)), "icon": String(nested.get("icon", "icon_%s_evolved" % owner_id))}
+		return {"name": entry_id, "icon": "icon_" + entry_id}
+	var entry: Dictionary = table.get(entry_id, {})
+	return {"name": String(entry.get("name", entry_id)), "icon": String(entry.get("icon", "icon_" + entry_id))}
 
 
 static func is_found(category_id: String, entry_id: String) -> bool:
@@ -70,7 +89,7 @@ static func note_run(result: Dictionary) -> Array[String]:
 		var seen: Array = seen_by_table.get(String(category["table"]), [])
 		for entry_id: String in entry_ids(category):
 			if seen.has(entry_id) and _add_found(String(category["id"]), entry_id):
-				new_names.append(String(GameData.table(String(category["table"]))[entry_id].get("name", entry_id)))
+				new_names.append(String(entry_info(category, entry_id)["name"]))
 	return new_names
 
 

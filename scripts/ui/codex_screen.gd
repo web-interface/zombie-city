@@ -76,9 +76,9 @@ func _build_cell(category: Dictionary, entry_id: String) -> PanelContainer:
 	holder.custom_minimum_size = Vector2(CELL_SIZE.x - 8.0, PICTURE_HEIGHT)
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_child(holder)
-	_add_picture(holder, String(category["table"]), entry_id, is_found)
-	var entry: Dictionary = GameData.table(String(category["table"]))[entry_id]
-	var name_text := String(entry.get("name", entry_id)) if is_found else "???"
+	var info := Codex.entry_info(category, entry_id)
+	_add_picture(holder, String(category["table"]), entry_id, String(info["icon"]), is_found)
+	var name_text := String(info["name"]) if is_found else "???"
 	var name_lines := PixelUi.small_lines(name_text, PixelUi.INK if is_found else PixelUi.MUTED, CELL_SIZE.x - 8.0, 2)
 	for line_label: Node in name_lines.get_children():
 		(line_label as Label).horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -87,7 +87,7 @@ func _build_cell(category: Dictionary, entry_id: String) -> PanelContainer:
 
 
 ## 좀비는 걸어 다니는 그림, 무기·스킬은 아이콘. 못 만난 것은 검은 실루엣 (무엇이 남았는지 모양만 보이게)
-func _add_picture(holder: Control, table_name: String, entry_id: String, is_found: bool) -> void:
+func _add_picture(holder: Control, table_name: String, entry_id: String, icon_name: String, is_found: bool) -> void:
 	var center := Vector2((CELL_SIZE.x - 8.0) * 0.5, PICTURE_HEIGHT * 0.5)
 	if table_name == "zombies":
 		var zombie: Dictionary = GameData.entry("zombies", entry_id)
@@ -102,13 +102,13 @@ func _add_picture(holder: Control, table_name: String, entry_id: String, is_foun
 		if is_found and not bool(zombie.get("is_boss", false)):
 			_walking_sprites.append(sprite)
 		return
-	var icon_path := "res://art/sprites/icons/icon_%s.png" % entry_id
+	var icon_path := "res://art/sprites/icons/%s.png" % icon_name
 	if not ResourceLoader.exists(icon_path):
 		var unknown := PixelUi.label("?", PixelUi.MUTED, false, true)
 		unknown.position = center - Vector2(3, 7)
 		holder.add_child(unknown)
 		return
-	var icon := PixelUi.icon("icon_" + entry_id, 3)
+	var icon := PixelUi.icon(icon_name, 3)
 	icon.position = center - Vector2(15, 15)
 	icon.modulate = Color.WHITE if is_found else SILHOUETTE
 	holder.add_child(icon)

@@ -29,10 +29,10 @@
   "codex": [
     {"id": "zombies", "name": "좀비", "table": "zombies"},
     {"id": "weapons", "name": "무기", "table": "weapons", "exclude_key": "is_evolution"},
-    {"id": "evolutions", "name": "진화", "table": "weapons", "filter_key": "is_evolution"},
+    {"id": "evolutions", "name": "진화", "table": "weapons", "nested_key": "evolution"},
     {"id": "hidden_skills", "name": "히든 스킬", "table": "skills", "id_prefix": "hidden_"}
   ],
-  "_codex_설명": "칸마다 표 하나에서 항목을 고른다. filter_key 가 참인 것만 / exclude_key 가 참인 것은 빼고 / id_prefix 로 시작하는 것만. 항목이 0개인 칸(아직 없는 진화 등)은 도감에서 숨기고 % 계산에서도 뺀다",
+  "_codex_설명": "칸마다 표 하나에서 항목을 고른다. nested_key 는 항목 안의 칸(무기마다 evolution)을 항목으로 / filter_key 가 참인 것만 / exclude_key 가 참인 것은 빼고 / id_prefix 로 시작하는 것만. 항목이 0개인 칸(아직 없는 진화 등)은 도감에서 숨기고 % 계산에서도 뺀다",
   "daily_challenge": {
     "first_day": "2026-11-07",
     "rules": {
