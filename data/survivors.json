@@ -123,8 +123,8 @@
     "trait_text": "야근 수당 30초마다 피해 +6% (최대 +36%)",
     "trait": {
       "add": {
-        "overtime_bonus_per_step": 0.06,
-        "overtime_max_bonus": 0.36
+        "overtime_bonus_per_step": 0.08,
+        "overtime_max_bonus": 0.48
       }
     },
     "interns": {

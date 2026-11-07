@@ -1125,7 +1125,7 @@
     "description": "딸깍딸깍 빠르게 박는다",
     "levels": [
       {
-        "damage": 5.5,
+        "damage": 6.2,
         "interval_seconds": 0.28,
         "range": 95,
         "projectile_count": 1,
