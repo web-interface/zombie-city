@@ -147,7 +147,7 @@
     "role": "야구선수",
     "intro": "동네 야구단 4번 타자, 배트 하나로 버틴다",
     "difficulty_stars": 3,
-    "max_health": 85,
+    "max_health": 95,
     "move_speed": 55,
     "start_weapon": "baseball_bat",
     "weapon_pool": [
