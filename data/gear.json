@@ -69,6 +69,10 @@
     "name": "사원증", "icon": "icon_employee_badge", "description": "모든 피해 +6%, 줍는 범위 +10% (직장인 전용)",
     "per_level": { "multiply": { "damage_multiplier": 1.06, "pickup_radius": 1.1 } }
   },
+  "stethoscope": {
+    "name": "청진기", "icon": "icon_stethoscope", "description": "회복 효과 +30% (간호사 전용)",
+    "per_level": { "multiply": { "heal_multiplier": 1.3 } }
+  },
   "batting_gloves": {
     "name": "배팅 장갑", "icon": "icon_batting_gloves", "description": "공격 간격 -10% (야구선수 전용)",
     "per_level": { "multiply": { "attack_speed_multiplier": 1.11 } }

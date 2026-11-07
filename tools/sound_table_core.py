@@ -41,6 +41,10 @@ CORE_EFFECTS: dict[str, dict] = {
         layer("square", [2000, 650], 0.035, curve=2.0, duty=0.125, env=(0.0005, 0, 1.8), volume=0.45),
         layer("noise", 22050, 0.06, env=(0.004, 0, 2.5), highpass=3000, lowpass=9000, volume=0.3),
         layer("sine", [300, 120], 0.03, volume=0.4)]},
+    "syringe_shot": {"about": "주사기 총 '퓨슉' — 바람 빠지는 소리 + 올라가는 '뿅'(주입) + 유리 '틱'", "variants": 4, "spread": 2.5, "peak_db": -11.0, "layers": [
+        layer("noise", 22050, 0.1, env=(0.008, 0.01, 2.2), highpass=1800, lowpass=7500, volume=0.55),
+        layer("triangle", [1100, 1900], 0.06, curve=0.7, env=(0.002, 0.01, 1.5), volume=0.45),
+        layer("square", 2600, 0.018, start=0.045, duty=0.25, env=(0.001, 0, 2.0), volume=0.18)]},
     "axe_swing": {"about": "소방 도끼 '휙' — 걸러내는 높이가 올라가는 바람 소리 + 낮게 떨어지는 휘두름", "variants": 4, "spread": 2.0, "peak_db": -9.0, "layers": [
         layer("noise", 22050, 0.24, env=(0.07, 0.02, 2.0), lowpass=[700, 3800], highpass=200),
         layer("triangle", [260, 120], 0.18, curve=1.5, env=(0.04, 0, 1.8), volume=0.35)]},

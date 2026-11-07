@@ -9,6 +9,7 @@
     "pistol": "신입 순경 지급품",
     "fire_axe": "원래는 문 따는 용도",
     "nail_gun": "공사장에서 '잠깐' 빌림",
+    "syringe_gun": "주사 놓는 손은 안 떨림",
     "shotgun": "경비실 금고에서 꺼냄",
     "saw_drone": "반품 불가 배달 드론",
     "taser": "충전은 파출소 콘센트",
@@ -24,6 +25,9 @@
     "paper_storm": "내일까지 다 검토하래",
     "approval_stamp": "전결 처리합니다",
     "laptop_toss": "저장은 했겠지…",
+    "disinfectant": "복도 소독 시간입니다",
+    "defibrillator": "물러나세요, 쇼크!",
+    "scalpel": "손이 기억하는 각도",
     "molotov": "빈 소주병 재활용",
     "baseball_bat": "동네 야구단 4번 배트",
     "pitching_machine": "타격 연습장에서 뜯어 옴",
@@ -51,6 +55,7 @@
     "turnout_gear": "땀 냄새는 덤",
     "delivery_bag": "보온 보냉 겸용",
     "employee_badge": "출입 기록은 남는다",
+    "stethoscope": "심장 소리가 들려",
     "batting_gloves": "땀에 전 손목 밴드까지",
     "camo_cloak": "풀잎을 꽂아 둠"
   },
@@ -61,6 +66,7 @@
     "hidden_backdraft": "문 열지 마세요",
     "hidden_express": "오늘 도착 보장",
     "hidden_clock_out": "6시 땡, 수고하셨습니다",
+    "hidden_miracle": "아직 안 끝났어요",
     "hidden_grand_slam": "9회 말 투아웃 만루",
     "hidden_pack_hunt": "다들 물어!"
   }

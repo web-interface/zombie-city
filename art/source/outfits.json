@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "art/source/outfits.json",
-    "하는 일": "그림 색 표. 생존자 옷 25벌(기본 6 + 전직 18 + 팀장 인턴)·좀비 10종의 부품별 색과 모자 종류, 한 장 그림·보스·아이콘에 쓰는 공통 색, 진화 아이콘 금색 규칙을 정한다.",
+    "하는 일": "그림 색 표. 생존자 옷 29벌(기본 7 + 전직 21 + 팀장 인턴)·좀비 10종의 부품별 색과 모자 종류, 한 장 그림·보스·아이콘에 쓰는 공통 색, 진화 아이콘 금색 규칙을 정한다.",
     "쓰는 곳": "tools/build_sprites.py · sprite_zombies.py · sprite_icons.py 가 읽어 art/source/*.txt 의 글자를 색으로 바꾼다.",
     "근거 문서": "04 §2 생존자 모습·전직 옷차림, 06 색 표, 14 §1-2 새 좀비 · §2-4 진화"
   },
@@ -21,6 +21,7 @@
     "weapons": ["pistol", "fire_axe", "nail_gun", "stapler", "shotgun", "saw_drone",
                 "taser", "tear_gas", "megaphone", "fire_hose", "rescue_saw", "flare", "box_toss",
                 "tape_gun", "parcel_drone", "paper_storm", "approval_stamp", "laptop_toss", "molotov",
+                "syringe_gun", "disinfectant", "defibrillator", "scalpel",
                 "baseball_bat", "pitching_machine", "ball_bucket", "stadium_light", "crossbow", "bear_trap", "hunting_dog", "throwing_knives"],
     "outline": "#3a1d06",
     "gold_steps": [[195, "#fff1a8"], [140, "#f7c843"], [95, "#d8902a"], [60, "#a35f1b"], [0, "#6b3810"]],
@@ -52,6 +53,11 @@
     "office_overtime":      { "hat": "none",     "torso": "torso_shirt", "head": "head_eyeblack", "extras": ["coffee"], "w": "#f4f4f4", "h": "#3a3028", "t": "#e9edf2", "T": "#b9c0ca", "a": "#4f86c6", "k": "#e8f0f8", "K": "#3fae9a", "q": "#8a7a9a", "b": "#15161c", "p": "#2f3440", "f": "#15161c", "d": "#a0703c" },
     "office_teamlead":      { "hat": "none",     "torso": "torso_suit", "extras": ["folder"], "h": "#6a6a6a", "t": "#27324a", "T": "#1b2336", "w": "#eef2f6", "a": "#c9a13b", "k": "#e8f0f8", "K": "#c9a13b", "b": "#101114", "p": "#1f2533", "f": "#101114", "g": "#5a4632" },
     "office_intern":        { "hat": "none",     "torso": "torso_shirt", "h": "#2a2420", "t": "#a9cbe8", "T": "#7fa6c8", "a": "#a9cbe8", "k": "#f4f4f4", "K": "#3fae9a", "b": "#4a4234", "p": "#8a7f6a", "f": "#2a2a2a" },
+
+    "nurse":                { "hat": "softcap", "h": "#4a3428", "t": "#8cc8e8", "T": "#5fa0c4", "a": "#f4f4f4", "p": "#8cc8e8", "f": "#f4f4f4", "c": "#f4f4f4", "C": "#d0453c" },
+    "nurse_emergency":      { "hat": "none",    "h": "#4a3428", "t": "#d0453c", "T": "#9e3029", "a": "#f4f4f4", "p": "#3a3f4a", "f": "#2a2a2a", "c": "#d0453c", "C": "#f4f4f4" },
+    "nurse_epidemiology":   { "hat": "softcap", "h": "#4a3428", "t": "#e9ecef", "T": "#b9bec6", "a": "#7fc8d8", "p": "#e9ecef", "f": "#b9bec6", "c": "#e9ecef", "C": "#7fc8d8" },
+    "nurse_surgeon":        { "hat": "softcap", "h": "#4a3428", "t": "#4f9a6e", "T": "#3a7552", "a": "#f4f4f4", "p": "#4f9a6e", "f": "#f4f4f4", "c": "#4f9a6e", "C": "#3a7552" },
 
     "batter":               { "hat": "cap",      "torso": "torso_stripe", "extras": ["bat"], "h": "#2a2420", "t": "#eef0f2", "T": "#8a97b5", "a": "#24345e", "p": "#d9dce2", "f": "#1b1c22", "c": "#24345e", "C": "#c73a32", "b": "#d9b27a", "B": "#9a6b35" },
     "batter_slugger":       { "hat": "batting",  "torso": "torso_stripe", "head": "head_eyeblack", "extras": ["bat"], "h": "#2a2420", "t": "#b9bec8", "T": "#7d8494", "a": "#8f2219", "p": "#b9bec8", "f": "#1b1c22", "c": "#22252c", "C": "#8f2219", "q": "#101114", "b": "#3a3f4a", "B": "#22252c" },

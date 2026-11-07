@@ -151,7 +151,7 @@ func _run_effect(effect: Dictionary) -> void:
 			_trait_effects.start_boost(skill_id, float(effect["seconds"]), effect["multiply"], float(effect.get("after_seconds", 0.0)), effect.get("after_multiply", {}))
 			_context.effects.ring(center, 16.0, Color("bfe9ff"), 0.4)
 			_context.play_sound("skill_caffeine")
-		"airstrike", "backdraft", "express", "clock_out", "grand_slam", "pack_hunt":
+		"airstrike", "backdraft", "express", "clock_out", "miracle", "grand_slam", "pack_hunt":
 			_hidden_effects.start(effect)
 		_:
 			push_error("data/skills.json: 모르는 효과 조각 '%s'" % effect["type"])

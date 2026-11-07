@@ -9,6 +9,8 @@ signal damaged(amount: float)
 ## 맞은 출처와 방향 (화면 가장자리 빨강·받은 피해 숫자 — DamageVignette). from_position 이 NO_DIRECTION 이면 방향 없음
 signal hit_taken(amount: float, source: String, from_position: Vector2)
 signal healed(amount: float)
+## 체력이 가득해서 넘친 회복량 (간호사 특성 '넘친 회복은 주변 피해' — TraitEffects 가 듣는다)
+signal overhealed(amount: float)
 signal died
 
 const HURT_FLASH_SECONDS := 0.08
@@ -112,6 +114,7 @@ func heal(ratio: float) -> void:
 	var before := health
 	health = minf(health + amount, stats.value("max_health"))
 	healed.emit(health - before)
+	_report_overflow(amount - (health - before))
 
 
 func start_dash(seconds: float, speed_multiplier: float, contact_damage: float, knockback: float, is_invulnerable: bool) -> void:
@@ -167,7 +170,15 @@ func revive(health_ratio_after: float, guard_seconds: float) -> void:
 func _regenerate(delta: float) -> void:
 	var regen := stats.value("regen_per_second") * stats.value("heal_multiplier")
 	if regen > 0.0:
+		var before := health
 		health = minf(health + regen * delta, stats.value("max_health"))
+		_report_overflow(regen * delta - (health - before))
+
+
+## 넘친 회복량을 알린다 — 그 특성이 있는 생존자만 (다른 생존자는 매 프레임 신호를 보내지 않게)
+func _report_overflow(amount: float) -> void:
+	if amount > 0.0 and stats.value("overheal_damage_ratio") > 0.0:
+		overhealed.emit(amount)
 
 
 func _tick_timers(delta: float) -> void:

@@ -1010,3 +1010,77 @@ ooGGoGboGo
 oGgGGooxoo
 .oooooxxxo
 .....ooooo
+
+# 간호사 (2026-11-07 밤 되살림): 주사기 총 · 소독약 분무 · 제세동기 · 메스 · 청진기 · 기적의 처방
+
+@sprite icon_syringe_gun 10x10
+........o.
+.......owo
+.....oowo.
+....oggo..
+...ogxxgo.
+..ogxxXgo.
+..ogxXgo..
+.ogoggo...
+ogo.oo....
+.o........
+
+@sprite icon_disinfectant 10x10
+.....c.c..
+..oooo.c.c
+.oggggoc..
+.oGoooo.c.
+..owo.....
+.owwwo....
+owwwwwo...
+oCCCCwo...
+owCCwwo...
+.ooooo....
+
+@sprite icon_defibrillator 10x10
+..........
+.ooo.ooo..
+orrroruRo.
+orrrrurRo.
+orrruuuRo.
+.orrruRo..
+..oruRo...
+...oRo....
+....o.....
+..........
+
+@sprite icon_scalpel 10x10
+........o.
+.......owo
+......owgo
+.....owgo.
+....ogGo..
+...oGGo...
+..oGGo....
+.oGGo.....
+oGGo......
+.oo.......
+
+@sprite icon_stethoscope 10x10
+.g....g...
+oCo..oCo..
+.oCooCo...
+..oCCo....
+...oCo....
+...oCo.oo.
+...oCoowgo
+...oCCCggo
+....oooGo.
+.......o..
+
+@sprite icon_hidden_miracle 10x10
+.uuuuuuuE.
+uqqqEqqqqY
+uqqoxxoqqY
+uqqoxXoqEY
+uoxxxxXXoY
+uoXxXXXXoY
+uqqoxXoqqY
+uEqoXXoqqY
+uqqqooqqqY
+.YYYYYYYY.

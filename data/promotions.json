@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "data/promotions.json",
-    "하는 일": "전직 갈래 18개 (생존자 6명 × 3 — 직장인: 영업왕·야근왕·팀장). 레벨 10 에 1차(stage_1), 레벨 20 에 2차(stage_2) 가 적용된다. 능력치 바꾸기(add·multiply)와 스킬 바꾸기(skill_changes), 바뀐 옷 그림(outfit)을 정한다.",
+    "하는 일": "전직 갈래 21개 (생존자 7명 × 3 — 직장인: 영업왕·야근왕·팀장, 간호사: 응급의학·역학조사관·수술팀). 레벨 10 에 1차(stage_1), 레벨 20 에 2차(stage_2) 가 적용된다. 능력치 바꾸기(add·multiply)와 스킬 바꾸기(skill_changes), 바뀐 옷 그림(outfit)을 정한다.",
     "쓰는 곳": "scripts/systems/promotion.gd 가 적용하고, scripts/ui/promotion_panel.gd 가 갈래 카드를 보여 준다.",
     "근거 문서": "02 §5 전직, 03 §1-2 전직 숫자, 04 §2 전직 옷차림"
   },
@@ -152,6 +152,50 @@
     "stage_2": {
       "text": "모든 피해 +30%",
       "multiply": { "damage_multiplier": 1.3 }
+    }
+  },
+
+  "nurse_emergency": {
+    "name": "응급의학", "survivor": "nurse", "outfit": "nurse_emergency",
+    "summary": "끝까지 버틴다",
+    "stage_1": {
+      "text": "회복 효과 2배, 초당 회복 +1",
+      "multiply": { "heal_multiplier": 2.0 },
+      "add": { "regen_per_second": 1.0 }
+    },
+    "stage_2": {
+      "text": "쓰러질 피해를 한 번 버팀(체력 1), 다시 쓰기 x0.7",
+      "add": { "last_stand": 1 },
+      "skill_changes": [ { "change": "scale_cooldown", "by": 0.7 } ]
+    }
+  },
+  "nurse_epidemiology": {
+    "name": "역학조사관", "survivor": "nurse", "outfit": "nurse_epidemiology",
+    "summary": "독이 번진다",
+    "stage_1": {
+      "text": "독으로 쓰러진 좀비가 주변 2마리에 독을 옮김, 독 피해 x1.5",
+      "add": { "poison_spread": 1 },
+      "multiply": { "poison_damage_multiplier": 1.5 }
+    },
+    "stage_2": {
+      "text": "응급 처치에 독 폭발 (반경 60, 초당 6, 6초)",
+      "skill_changes": [
+        { "change": "add_effect", "effect": { "type": "poison_burst", "radius": 60, "damage_per_second": 6, "seconds": 6 } }
+      ]
+    }
+  },
+  "nurse_surgeon": {
+    "name": "수술팀", "survivor": "nurse", "outfit": "nurse_surgeon",
+    "summary": "정확하게 끊는다",
+    "stage_1": {
+      "text": "치명타 +20%",
+      "add": { "crit_chance": 0.2 }
+    },
+    "stage_2": {
+      "text": "응급 처치에 기절 (반경 50, 1.5초)",
+      "skill_changes": [
+        { "change": "add_effect", "effect": { "type": "radial_stun", "radius": 50, "seconds": 1.5, "damage": 0 } }
+      ]
     }
   },
 

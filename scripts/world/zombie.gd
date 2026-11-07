@@ -65,8 +65,9 @@ func _init(new_kind_id: String, new_info: Dictionary, start_position: Vector2, h
 	animation_time = randf() * 2.0   # 좀비마다 걸음 박자가 조금씩 다르게 (06 AI 티 안 나게)
 
 
-func apply_poison(damage_per_second: float, seconds: float) -> void:
-	poison_stacks = mini(poison_stacks + 1, MAX_POISON_STACKS)
+## max_stacks = 몇 번까지 겹치나 (보통 3, 간호사 특성 5 — run_rules poison_max_stacks + 생존자 특성)
+func apply_poison(damage_per_second: float, seconds: float, max_stacks: int = MAX_POISON_STACKS) -> void:
+	poison_stacks = mini(poison_stacks + 1, max_stacks)
 	poison_damage_per_second = damage_per_second * poison_stacks
 	poison_time_left = seconds
 
