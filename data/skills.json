@@ -8,7 +8,7 @@
   "_효과_조각_종류": {
     "radial_stun": "반경 안 좀비 기절 (radius, seconds, damage)",
     "radial_push": "반경 안 좀비를 바깥으로 밀기 (radius, push_distance, damage)",
-    "cone_push": "바라보는 쪽 부채꼴 좀비 밀고 느리게 (angle_degrees, range, push_distance, slow_ratio, slow_seconds, damage)",
+    "cone_push": "바라보는 쪽 부채꼴 좀비 밀고 느리게 (angle_degrees, range, push_distance, slow_ratio, slow_seconds, damage, 소리 sound·알갱이 색 color 는 고를 수 있음)",
     "light_burst": "그 자리를 잠깐 밝힘 — 빛과 어둠 (radius, seconds)",
     "dash": "돌진 (seconds, speed_multiplier, contact_damage, knockback, invulnerable)",
     "heal": "최대 체력의 비율만큼 회복 (ratio)",
@@ -20,7 +20,9 @@
     "airstrike": "히든: 예고 원 뒤 폭격 (strikes 발을 seconds 동안, search_radius 안 좀비 쪽, 반경 radius·피해 damage)",
     "backdraft": "히든: 몸에서 화염 고리 rings 번(ring_gap_seconds 간격, 반경 radius_start + radius_step × 번째, 피해 damage·밀기 push_distance) + 큰 불 장판(fire_radius·fire_seconds·fire_damage_per_second)",
     "express": "히든: 무적 돌진 dashes 번(dash_seconds·gap_seconds·speed_multiplier, 부딪힘 contact_damage·knockback), 지나간 길에 blast_gap_seconds 마다 폭발(blast_radius·blast_damage)",
-    "miracle": "히든: 체력 heal_ratio 회복 + invulnerable_seconds 무적 + 주변 독(poison_radius·poison_damage_per_second·poison_seconds)"
+    "miracle": "히든: 체력 heal_ratio 회복 + invulnerable_seconds 무적 + 주변 독(poison_radius·poison_damage_per_second·poison_seconds)",
+    "grand_slam": "히든: 거대한 공 balls 개가 몸에서 사방으로 화면을 가로지름 (speed·distance·radius, 닿으면 damage·knockback)",
+    "pack_hunt": "사냥개 dogs 마리가 seconds 동안 가까운 좀비를 쫓아다니며 문다 (speed·bite_radius·damage·bite_interval_seconds) — 히든 '사냥개 무리', 조련사 전직은 작게"
   },
   "flashbang": {
     "name": "섬광탄",
@@ -119,6 +121,50 @@
     "cooldown_seconds": 60,
     "effects": [
       { "type": "miracle", "heal_ratio": 1.0, "invulnerable_seconds": 10, "poison_radius": 70, "poison_damage_per_second": 12, "poison_seconds": 6 }
+    ]
+  },
+  "homerun": {
+    "name": "홈런",
+    "icon": "icon_homerun",
+    "cooldown_seconds": 15,
+    "effects": [
+      { "type": "cone_push", "angle_degrees": 100, "range": 80, "push_distance": 60, "slow_ratio": 0.6, "slow_seconds": 1.5, "damage": 60, "sound": "axe_swing", "color": "fff2b0" }
+    ]
+  },
+  "trap_net": {
+    "name": "그물",
+    "icon": "icon_trap_net",
+    "cooldown_seconds": 16,
+    "effects": [
+      { "type": "radial_stun", "radius": 70, "seconds": 2.5, "damage": 10 }
+    ]
+  },
+  "beanball": {
+    "name": "빈볼 강속구",
+    "icon": "icon_pitching_machine",
+    "cooldown_seconds": 9,
+    "effects": [
+      { "type": "line_shot", "damage": 200, "width": 8 }
+    ]
+  },
+  "hidden_grand_slam": {
+    "name": "만루 홈런",
+    "icon": "icon_hidden_grand_slam",
+    "is_hidden": true,
+    "description": "거대한 공 4개가 화면을 가로지른다",
+    "cooldown_seconds": 35,
+    "effects": [
+      { "type": "grand_slam", "balls": 4, "speed": 210, "distance": 260, "radius": 11, "damage": 120, "knockback": 50, "shake_trauma": 0.4 }
+    ]
+  },
+  "hidden_pack_hunt": {
+    "name": "사냥개 무리",
+    "icon": "icon_hidden_pack_hunt",
+    "is_hidden": true,
+    "description": "사냥개 6마리가 화면을 휩쓸고 다닌다",
+    "cooldown_seconds": 40,
+    "effects": [
+      { "type": "pack_hunt", "dogs": 6, "seconds": 7, "speed": 130, "bite_radius": 8, "damage": 35, "bite_interval_seconds": 0.35 }
     ]
   }
 }

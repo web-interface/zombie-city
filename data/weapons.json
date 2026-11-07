@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "data/weapons.json",
-    "하는 일": "무기 19종(생존자 전용 4개씩 + 공용 3)의 단계별 숫자와 진화. levels 의 1번째 = 1단계 … 5번째 = 5단계. behavior 는 공격 방식(어느 스크립트가 쏘는지), look 은 같은 방식 안에서 모양·장판 종류. evolution = 5단계 + 짝 장비(gear)일 때 바뀌는 이름·아이콘·숫자 전부(numbers).",
+    "하는 일": "무기 27종(생존자 6명 전용 4개씩 + 공용 3)의 단계별 숫자와 진화. levels 의 1번째 = 1단계 … 5번째 = 5단계. behavior 는 공격 방식(어느 스크립트가 쏘는지), look 은 같은 방식 안에서 모양·장판 종류. evolution = 5단계 + 짝 장비(gear)일 때 바뀌는 이름·아이콘·숫자 전부(numbers).",
     "쓰는 곳": "scripts/weapons/weapon.gd 와 공격 방식별 스크립트(projectile·spread·melee_arc·orbit·chain·lob_area·pulse·line)가 읽는다. 레벨 업 카드(scripts/systems/card_deck.gd)가 이름·설명·진화 짝을 쓴다.",
     "근거 문서": "03 §2 무기·§4 진화, 14 §2-2·§2-4·§2-7, 04 §3 무기 모습"
   },
@@ -26,7 +26,7 @@
     "heal_on_hit_ratio": "맞힐 때마다 최대 체력의 이 비율만큼 회복",
     "chain_count": "번개가 튀는 좀비 수 (첫 좀비 포함) / 제세동기는 고리 밖으로 뻗는 번개 수",
     "chain_range": "다음 좀비를 찾는 거리",
-    "stun_seconds": "맞은 좀비 기절 초 (보스는 짧게)",
+    "stun_seconds": "맞은 좀비 기절 초 (보스는 짧게) / 곰 덫은 밟은 좀비를 묶는 초 / 배트 진화는 맞은 좀비 기절",
     "sky_strikes": "하늘에서 내리꽂는 번개 수 (낙뢰): strike_range 안 좀비에게, 반경 strike_radius·피해 strike_damage",
     "throw_count": "한 번에 던지는 개수",
     "zone_seconds": "장판(구름·불)이 남는 초 (0 이면 장판 없이 터지기만)",
@@ -44,7 +44,10 @@
     "fire_zone_radius": "휘두른 자리 불 장판 반경 (fire_zone_seconds 동안 초당 fire_damage_per_second)",
     "sound_every_attacks": "아주 자주 때리는 무기는 이 횟수마다 한 번만 소리 (무기 칸, 단계와 상관없음)",
     "shake_trauma": "큰 공격(폭발·충격파·낙뢰)의 화면 흔들림 0~1 (무기 칸, 진화하면 1.5배)",
-    "look": "같은 공격 방식 안에서 모양·장판 종류 (예: lob_area 의 gas·fire·flare·parcel, pulse 의 shockwave·fog·electric, line 의 water·tape)"
+    "look": "같은 공격 방식 안에서 모양·장판 종류 (예: lob_area 의 gas·fire·flare·parcel, pulse 의 shockwave·fog·electric, line 의 water·tape)",
+    "sound_pitch": "공격 소리 높낮이 (같은 소리를 다른 무기에 다시 쓸 때 차이를 둠, 0 = 그대로)",
+    "trigger_sound": "덫이 닫힐 때 소리 (곰 덫)",
+    "trap_blast_radius": "덫이 닫힐 때 둘레 폭발 반경 (0 이면 덫 자리만 — 지뢰밭)"
   },
   "pistol": {
     "name": "권총",
@@ -1498,7 +1501,642 @@
       }
     }
   },
+  "baseball_bat": {
+    "name": "야구 배트",
+    "icon": "icon_baseball_bat",
+    "behavior": "melee_arc",
+    "look": "bat",
+    "sound": "axe_swing",
+    "sound_pitch": -0.12,
+    "description": "넓게 휘둘러 멀리 날려 버린다",
+    "levels": [
+      {
+        "damage": 13,
+        "interval_seconds": 1.3,
+        "radius": 22,
+        "knockback": 22,
+        "both_sides": false,
+        "stun_seconds": 0
+      },
+      {
+        "damage": 15,
+        "interval_seconds": 1.25,
+        "radius": 23,
+        "knockback": 25,
+        "both_sides": false,
+        "stun_seconds": 0
+      },
+      {
+        "damage": 17,
+        "interval_seconds": 1.2,
+        "radius": 24,
+        "knockback": 28,
+        "both_sides": false,
+        "stun_seconds": 0
+      },
+      {
+        "damage": 19,
+        "interval_seconds": 1.12,
+        "radius": 26,
+        "knockback": 31,
+        "both_sides": false,
+        "stun_seconds": 0
+      },
+      {
+        "damage": 22,
+        "interval_seconds": 1.05,
+        "radius": 28,
+        "knockback": 34,
+        "both_sides": true,
+        "stun_seconds": 0
+      }
+    ],
+    "evolution": {
+      "id": "home_run_king",
+      "gear": "knee_pads",
+      "name": "홈런왕 배트",
+      "icon": "icon_baseball_bat_evolved",
+      "description": "휘두르면 좀비가 장외로 — 금빛 충격파·기절",
+      "numbers": {
+        "damage": 34,
+        "interval_seconds": 1.0,
+        "radius": 32,
+        "knockback": 60,
+        "both_sides": true,
+        "stun_seconds": 0.5
+      }
+    }
+  },
+  "pitching_machine": {
+    "name": "피칭 머신",
+    "icon": "icon_pitching_machine",
+    "behavior": "projectile",
+    "look": "ball",
+    "sound": "nail_shot",
+    "sound_pitch": -0.25,
+    "description": "공을 빠르게 연사한다",
+    "levels": [
+      {
+        "damage": 6,
+        "interval_seconds": 0.32,
+        "range": 110,
+        "projectile_count": 1,
+        "projectile_speed": 240,
+        "pierce": 0,
+        "spread_degrees": 4,
+        "knockback": 2
+      },
+      {
+        "damage": 7,
+        "interval_seconds": 0.3,
+        "range": 110,
+        "projectile_count": 1,
+        "projectile_speed": 240,
+        "pierce": 0,
+        "spread_degrees": 4,
+        "knockback": 2
+      },
+      {
+        "damage": 7,
+        "interval_seconds": 0.27,
+        "range": 110,
+        "projectile_count": 2,
+        "projectile_speed": 240,
+        "pierce": 0,
+        "spread_degrees": 4,
+        "knockback": 2
+      },
+      {
+        "damage": 8,
+        "interval_seconds": 0.25,
+        "range": 110,
+        "projectile_count": 2,
+        "projectile_speed": 240,
+        "pierce": 1,
+        "spread_degrees": 4,
+        "knockback": 2
+      },
+      {
+        "damage": 9,
+        "interval_seconds": 0.22,
+        "range": 110,
+        "projectile_count": 2,
+        "projectile_speed": 240,
+        "pierce": 1,
+        "spread_degrees": 4,
+        "knockback": 2
+      }
+    ],
+    "evolution": {
+      "id": "fastball",
+      "gear": "energy_drink",
+      "name": "강속구",
+      "icon": "icon_pitching_machine_evolved",
+      "description": "불붙은 공이 꿰뚫고 날아간다",
+      "numbers": {
+        "damage": 16,
+        "interval_seconds": 0.16,
+        "range": 140,
+        "projectile_count": 2,
+        "projectile_speed": 340,
+        "pierce": 3,
+        "spread_degrees": 6,
+        "knockback": 6
+      }
+    }
+  },
+  "ball_bucket": {
+    "name": "공 바구니",
+    "icon": "icon_ball_bucket",
+    "behavior": "spread",
+    "look": "ball",
+    "sound": "box_toss_thud",
+    "sound_pitch": 0.2,
+    "description": "튀는 공을 부채꼴로 쏟는다",
+    "levels": [
+      {
+        "damage": 7,
+        "interval_seconds": 1.3,
+        "range": 70,
+        "projectile_count": 4,
+        "projectile_speed": 170,
+        "pierce": 0,
+        "spread_degrees": 50,
+        "knockback": 3,
+        "bounces": 1,
+        "bounce_range": 40
+      },
+      {
+        "damage": 8,
+        "interval_seconds": 1.25,
+        "range": 72,
+        "projectile_count": 5,
+        "projectile_speed": 170,
+        "pierce": 0,
+        "spread_degrees": 52,
+        "knockback": 3,
+        "bounces": 1,
+        "bounce_range": 40
+      },
+      {
+        "damage": 8,
+        "interval_seconds": 1.15,
+        "range": 75,
+        "projectile_count": 5,
+        "projectile_speed": 170,
+        "pierce": 0,
+        "spread_degrees": 55,
+        "knockback": 3,
+        "bounces": 2,
+        "bounce_range": 40
+      },
+      {
+        "damage": 9,
+        "interval_seconds": 1.1,
+        "range": 78,
+        "projectile_count": 6,
+        "projectile_speed": 170,
+        "pierce": 0,
+        "spread_degrees": 58,
+        "knockback": 3,
+        "bounces": 2,
+        "bounce_range": 40
+      },
+      {
+        "damage": 10,
+        "interval_seconds": 1.0,
+        "range": 80,
+        "projectile_count": 7,
+        "projectile_speed": 170,
+        "pierce": 0,
+        "spread_degrees": 60,
+        "knockback": 3,
+        "bounces": 3,
+        "bounce_range": 40
+      }
+    ],
+    "evolution": {
+      "id": "ball_storm",
+      "gear": "sneakers",
+      "name": "공 폭풍",
+      "icon": "icon_ball_bucket_evolved",
+      "description": "사방으로 튀는 공이 쏟아진다",
+      "numbers": {
+        "damage": 12,
+        "interval_seconds": 0.9,
+        "range": 90,
+        "projectile_count": 14,
+        "projectile_speed": 190,
+        "pierce": 0,
+        "spread_degrees": 330,
+        "knockback": 4,
+        "bounces": 5,
+        "bounce_range": 50
+      }
+    }
+  },
+  "stadium_light": {
+    "name": "구장 조명",
+    "icon": "icon_stadium_light",
+    "behavior": "lob_area",
+    "look": "stadium",
+    "sound": "flare_burst",
+    "sound_pitch": 0.15,
+    "description": "빛 기둥을 세운다 (빛 안 좀비는 느리고 더 아프다)",
+    "levels": [
+      {
+        "interval_seconds": 4.5,
+        "range": 100,
+        "throw_count": 1,
+        "radius": 26,
+        "zone_seconds": 5,
+        "damage_per_second": 4,
+        "impact_damage": 0,
+        "slow_ratio": 1.0,
+        "stun_seconds": 0
+      },
+      {
+        "interval_seconds": 4.3,
+        "range": 100,
+        "throw_count": 1,
+        "radius": 28,
+        "zone_seconds": 5.5,
+        "damage_per_second": 5,
+        "impact_damage": 0,
+        "slow_ratio": 1.0,
+        "stun_seconds": 0
+      },
+      {
+        "interval_seconds": 4.0,
+        "range": 100,
+        "throw_count": 1,
+        "radius": 30,
+        "zone_seconds": 6,
+        "damage_per_second": 6,
+        "impact_damage": 0,
+        "slow_ratio": 1.0,
+        "stun_seconds": 0
+      },
+      {
+        "interval_seconds": 3.8,
+        "range": 100,
+        "throw_count": 2,
+        "radius": 32,
+        "zone_seconds": 6.5,
+        "damage_per_second": 7,
+        "impact_damage": 0,
+        "slow_ratio": 1.0,
+        "stun_seconds": 0
+      },
+      {
+        "interval_seconds": 3.5,
+        "range": 100,
+        "throw_count": 2,
+        "radius": 34,
+        "zone_seconds": 7,
+        "damage_per_second": 8,
+        "impact_damage": 0,
+        "slow_ratio": 1.0,
+        "stun_seconds": 0
+      }
+    ],
+    "evolution": {
+      "id": "night_game",
+      "gear": "battery",
+      "name": "야간 경기",
+      "icon": "icon_stadium_light_evolved",
+      "description": "구장 조명 3개 — 넓게 밝히고 태운다",
+      "numbers": {
+        "interval_seconds": 3.2,
+        "range": 120,
+        "throw_count": 3,
+        "radius": 44,
+        "zone_seconds": 8,
+        "damage_per_second": 12,
+        "impact_damage": 20,
+        "slow_ratio": 1.0,
+        "stun_seconds": 0
+      }
+    }
+  },
+  "crossbow": {
+    "name": "석궁",
+    "icon": "icon_crossbow",
+    "behavior": "projectile",
+    "look": "bolt",
+    "sound": "pistol_shot",
+    "sound_pitch": -0.3,
+    "description": "느리지만 일직선으로 여러 마리를 꿰뚫는다",
+    "levels": [
+      {
+        "damage": 26,
+        "interval_seconds": 1.4,
+        "range": 150,
+        "projectile_count": 1,
+        "projectile_speed": 260,
+        "pierce": 5,
+        "spread_degrees": 6,
+        "knockback": 4
+      },
+      {
+        "damage": 30,
+        "interval_seconds": 1.35,
+        "range": 155,
+        "projectile_count": 1,
+        "projectile_speed": 270,
+        "pierce": 6,
+        "spread_degrees": 6,
+        "knockback": 4
+      },
+      {
+        "damage": 34,
+        "interval_seconds": 1.25,
+        "range": 160,
+        "projectile_count": 1,
+        "projectile_speed": 280,
+        "pierce": 7,
+        "spread_degrees": 6,
+        "knockback": 4
+      },
+      {
+        "damage": 38,
+        "interval_seconds": 1.2,
+        "range": 165,
+        "projectile_count": 2,
+        "projectile_speed": 290,
+        "pierce": 8,
+        "spread_degrees": 6,
+        "knockback": 4
+      },
+      {
+        "damage": 42,
+        "interval_seconds": 1.1,
+        "range": 170,
+        "projectile_count": 2,
+        "projectile_speed": 300,
+        "pierce": 9,
+        "spread_degrees": 6,
+        "knockback": 4
+      }
+    ],
+    "evolution": {
+      "id": "piercing_arrow",
+      "gear": "lucky_charm",
+      "name": "관통 화살",
+      "icon": "icon_crossbow_evolved",
+      "description": "화면 끝까지 모두 꿰뚫는 금빛 화살·치명타",
+      "numbers": {
+        "damage": 60,
+        "interval_seconds": 0.9,
+        "range": 200,
+        "projectile_count": 3,
+        "projectile_speed": 340,
+        "pierce": 99,
+        "spread_degrees": 10,
+        "knockback": 6,
+        "extra_crit_chance": 0.25
+      }
+    }
+  },
+  "bear_trap": {
+    "name": "곰 덫",
+    "icon": "icon_bear_trap",
+    "behavior": "lob_area",
+    "look": "trap",
+    "sound": "tape_gun_rip",
+    "sound_pitch": -0.3,
+    "trigger_sound": "shield_block",
+    "description": "바닥에 덫 — 밟으면 묶이고 크게 다친다",
+    "levels": [
+      {
+        "interval_seconds": 2.2,
+        "range": 70,
+        "throw_count": 1,
+        "radius": 7,
+        "zone_seconds": 10,
+        "damage_per_second": 0,
+        "impact_damage": 40,
+        "slow_ratio": 1.0,
+        "stun_seconds": 1.5,
+        "trap_blast_radius": 0
+      },
+      {
+        "interval_seconds": 2.1,
+        "range": 70,
+        "throw_count": 1,
+        "radius": 7,
+        "zone_seconds": 10,
+        "damage_per_second": 0,
+        "impact_damage": 46,
+        "slow_ratio": 1.0,
+        "stun_seconds": 1.7,
+        "trap_blast_radius": 0
+      },
+      {
+        "interval_seconds": 1.9,
+        "range": 70,
+        "throw_count": 2,
+        "radius": 8,
+        "zone_seconds": 10,
+        "damage_per_second": 0,
+        "impact_damage": 52,
+        "slow_ratio": 1.0,
+        "stun_seconds": 2.0,
+        "trap_blast_radius": 0
+      },
+      {
+        "interval_seconds": 1.8,
+        "range": 70,
+        "throw_count": 2,
+        "radius": 8,
+        "zone_seconds": 10,
+        "damage_per_second": 0,
+        "impact_damage": 60,
+        "slow_ratio": 1.0,
+        "stun_seconds": 2.2,
+        "trap_blast_radius": 0
+      },
+      {
+        "interval_seconds": 1.6,
+        "range": 70,
+        "throw_count": 2,
+        "radius": 9,
+        "zone_seconds": 10,
+        "damage_per_second": 0,
+        "impact_damage": 70,
+        "slow_ratio": 1.0,
+        "stun_seconds": 2.5,
+        "trap_blast_radius": 0
+      }
+    ],
+    "evolution": {
+      "id": "minefield",
+      "gear": "duct_tape",
+      "name": "지뢰밭",
+      "icon": "icon_bear_trap_evolved",
+      "description": "덫이 터지며 둘레까지 날려 버린다",
+      "numbers": {
+        "interval_seconds": 1.3,
+        "range": 80,
+        "throw_count": 4,
+        "radius": 10,
+        "zone_seconds": 12,
+        "damage_per_second": 0,
+        "impact_damage": 90,
+        "slow_ratio": 1.0,
+        "stun_seconds": 2.5,
+        "trap_blast_radius": 24
+      }
+    }
+  },
+  "hunting_dog": {
+    "name": "사냥개",
+    "icon": "icon_hunting_dog",
+    "behavior": "orbit",
+    "look": "dog",
+    "sound": "hound_bark",
+    "sound_pitch": 0.1,
+    "sound_every_attacks": 6,
+    "description": "곁을 돌며 무는 개",
+    "levels": [
+      {
+        "damage": 9,
+        "drone_count": 1,
+        "radius": 20,
+        "hit_interval_seconds": 0.5,
+        "spin_speed": 2.6,
+        "knockback": 3
+      },
+      {
+        "damage": 10,
+        "drone_count": 1,
+        "radius": 22,
+        "hit_interval_seconds": 0.45,
+        "spin_speed": 2.7,
+        "knockback": 3
+      },
+      {
+        "damage": 12,
+        "drone_count": 2,
+        "radius": 23,
+        "hit_interval_seconds": 0.45,
+        "spin_speed": 2.8,
+        "knockback": 3
+      },
+      {
+        "damage": 14,
+        "drone_count": 2,
+        "radius": 24,
+        "hit_interval_seconds": 0.4,
+        "spin_speed": 2.9,
+        "knockback": 3
+      },
+      {
+        "damage": 16,
+        "drone_count": 3,
+        "radius": 26,
+        "hit_interval_seconds": 0.35,
+        "spin_speed": 3.0,
+        "knockback": 3
+      }
+    ],
+    "evolution": {
+      "id": "wolf_pack",
+      "gear": "vitamins",
+      "name": "늑대 무리",
+      "icon": "icon_hunting_dog_evolved",
+      "description": "개 5마리가 넓게 돌며 문다",
+      "numbers": {
+        "damage": 22,
+        "drone_count": 5,
+        "radius": 34,
+        "hit_interval_seconds": 0.3,
+        "spin_speed": 3.4,
+        "knockback": 5,
+        "radius_wave": 0.35
+      }
+    }
+  },
+  "throwing_knives": {
+    "name": "던지는 칼",
+    "icon": "icon_throwing_knives",
+    "behavior": "spread",
+    "look": "knife",
+    "sound": "scalpel_slice",
+    "sound_pitch": 0.1,
+    "description": "칼 여러 자루를 부채꼴로",
+    "levels": [
+      {
+        "damage": 9,
+        "interval_seconds": 0.9,
+        "range": 90,
+        "projectile_count": 3,
+        "projectile_speed": 260,
+        "pierce": 1,
+        "spread_degrees": 30,
+        "knockback": 2
+      },
+      {
+        "damage": 10,
+        "interval_seconds": 0.85,
+        "range": 92,
+        "projectile_count": 4,
+        "projectile_speed": 260,
+        "pierce": 1,
+        "spread_degrees": 34,
+        "knockback": 2
+      },
+      {
+        "damage": 11,
+        "interval_seconds": 0.8,
+        "range": 95,
+        "projectile_count": 4,
+        "projectile_speed": 260,
+        "pierce": 1,
+        "spread_degrees": 38,
+        "knockback": 2
+      },
+      {
+        "damage": 12,
+        "interval_seconds": 0.75,
+        "range": 98,
+        "projectile_count": 5,
+        "projectile_speed": 260,
+        "pierce": 2,
+        "spread_degrees": 42,
+        "knockback": 2
+      },
+      {
+        "damage": 14,
+        "interval_seconds": 0.7,
+        "range": 100,
+        "projectile_count": 6,
+        "projectile_speed": 260,
+        "pierce": 2,
+        "spread_degrees": 45,
+        "knockback": 2
+      }
+    ],
+    "evolution": {
+      "id": "blade_rain",
+      "gear": "camo_cloak",
+      "name": "칼날 비",
+      "icon": "icon_throwing_knives_evolved",
+      "description": "사방으로 칼날이 쏟아진다",
+      "numbers": {
+        "damage": 16,
+        "interval_seconds": 0.55,
+        "range": 110,
+        "projectile_count": 12,
+        "projectile_speed": 280,
+        "pierce": 3,
+        "spread_degrees": 330,
+        "knockback": 3
+      }
+    }
+  },
   "_3차_근거": "난이도 테스터 3차(2026-11-07): 네일건 2~5단계를 올림 (피해 7·7.5·7.5·8.5 → 8.5·9.5·9.5·11, 간격 조금 짧게, 4단계부터 못 2개) — 2~4단계 초당 피해가 권총의 절반(20~24 vs 40~76)이었다. 택배기사 탈출률에 효과가 있었는지는 판 수가 적어 확인 못 함 (택배기사가 약한 주된 까닭은 봇이 보스와 너무 멀리 떨어지는 것으로 보임). docs/balance_log.md",
   "_4차_근거": "총책임관 4차(2026-11-07 새벽): 도끼가 가장 가까운 좀비 쪽으로 휘두르게 바뀌어(물러서면 헛스윙만 하던 '끼임' 해결) 소방관 보통 봇 8/8 탈출 → 도끼 피해 ×0.75(10.5·12.5·14.5·14.5·17), 휘두르는 간격 ×1.3(1.43·1.43·1.37·1.3·1.23). 밀어내기 절반은 시험만 하고 되돌림(92%로 거의 그대로, 손맛만 줄어서). 결과 소방관 보통 75%(20판) — 다른 셋보다 높지만 별 2개 '튼튼한 입문 캐릭터'로 둠. docs/balance_log.md",
-  "_묶음2_근거": "무기·카드 담당(2026-11-07): 문서 14 §2-2·§2-4 대로 새 무기 13개·진화 19개. 처음 값은 지금 무기(권총 1단계 초당 20 피해)와 비슷한 세기로 잡음 — 난이도 테스터가 맞춘다. 간호사 전용 3개(소독약·제세동기·메스)는 첫 시험에서 간호사 보통 봇 0/5 탈출(처치가 다른 생존자의 1/5)이라 처음 값을 조금 올림."
+  "_묶음2_근거": "무기·카드 담당(2026-11-07): 문서 14 §2-2·§2-4 대로 새 무기 13개·진화 19개. 처음 값은 지금 무기(권총 1단계 초당 20 피해)와 비슷한 세기로 잡음 — 난이도 테스터가 맞춘다. 간호사 전용 3개(소독약·제세동기·메스)는 첫 시험에서 간호사 보통 봇 0/5 탈출(처치가 다른 생존자의 1/5)이라 처음 값을 조금 올림.",
+  "_새_생존자_근거": "무기·카드 담당(2026-11-07): 문서 14 §3-1 야구선수·사냥꾼 전용 무기 8개·진화 8개. 처음 값은 지금 무기와 비슷한 세기. 던지는 칼 진화 짝은 문서엔 '배팅 장갑'인데 야구선수 전용 장비라 사냥꾼은 얻을 수 없어 사냥꾼 전용 '위장 망토'로 바꿈 (09 결정)."
 }

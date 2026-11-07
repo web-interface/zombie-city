@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "data/survivors.json",
-    "하는 일": "생존자(플레이어 캐릭터)마다 이름·체력·속도·시작 무기·특성·스킬·전직 갈래·옷 그림·난이도를 정한다. weapon_pool = 레벨 업 카드에 나오는 전용 무기 4개(시작 무기 포함), gear_pool = 전용 장비, hidden_skill = 아주 가끔 나오는 금색 카드의 스킬. v0.1 은 4명.",
+    "하는 일": "생존자(플레이어 캐릭터)마다 이름·체력·속도·시작 무기·특성·스킬·전직 갈래·옷 그림·난이도를 정한다. weapon_pool = 레벨 업 카드에 나오는 전용 무기 4개(시작 무기 포함), gear_pool = 전용 장비, hidden_skill = 아주 가끔 나오는 금색 카드의 스킬. 6명 (야구선수·사냥꾼은 해금 — data/meta_rules.json unlocks).",
     "쓰는 곳": "scripts/world/survivor.gd 가 능력치를, scripts/ui/survivor_select.gd 가 고르기 카드를, scripts/systems/card_deck.gd 가 카드 풀·히든 스킬을 이 표로 만든다.",
     "근거 문서": "03 §1 생존자, 04 §2 생존자 이름·모습, 14 §2-1·§2-2·§2-5"
   },
@@ -13,8 +13,15 @@
     "max_health": 65,
     "move_speed": 55,
     "start_weapon": "pistol",
-    "weapon_pool": ["pistol", "taser", "tear_gas", "megaphone"],
-    "gear_pool": ["radio"],
+    "weapon_pool": [
+      "pistol",
+      "taser",
+      "tear_gas",
+      "megaphone"
+    ],
+    "gear_pool": [
+      "radio"
+    ],
     "skill": "flashbang",
     "hidden_skill": "hidden_airstrike",
     "outfit": "police",
@@ -38,8 +45,15 @@
     "max_health": 90,
     "move_speed": 50,
     "start_weapon": "fire_axe",
-    "weapon_pool": ["fire_axe", "fire_hose", "rescue_saw", "flare"],
-    "gear_pool": ["turnout_gear"],
+    "weapon_pool": [
+      "fire_axe",
+      "fire_hose",
+      "rescue_saw",
+      "flare"
+    ],
+    "gear_pool": [
+      "turnout_gear"
+    ],
     "skill": "extinguisher",
     "hidden_skill": "hidden_backdraft",
     "outfit": "firefighter",
@@ -66,8 +80,15 @@
     "max_health": 65,
     "move_speed": 66,
     "start_weapon": "nail_gun",
-    "weapon_pool": ["nail_gun", "box_toss", "tape_gun", "parcel_drone"],
-    "gear_pool": ["delivery_bag"],
+    "weapon_pool": [
+      "nail_gun",
+      "box_toss",
+      "tape_gun",
+      "parcel_drone"
+    ],
+    "gear_pool": [
+      "delivery_bag"
+    ],
     "skill": "sprint",
     "hidden_skill": "hidden_express",
     "outfit": "courier",
@@ -91,8 +112,15 @@
     "max_health": 60,
     "move_speed": 55,
     "start_weapon": "syringe_gun",
-    "weapon_pool": ["syringe_gun", "disinfectant", "defibrillator", "scalpel"],
-    "gear_pool": ["stethoscope"],
+    "weapon_pool": [
+      "syringe_gun",
+      "disinfectant",
+      "defibrillator",
+      "scalpel"
+    ],
+    "gear_pool": [
+      "stethoscope"
+    ],
     "skill": "first_aid",
     "hidden_skill": "hidden_miracle",
     "outfit": "nurse",
@@ -109,6 +137,71 @@
       "nurse_surgeon"
     ]
   },
+  "batter": {
+    "name": "홍민석",
+    "role": "야구선수",
+    "intro": "동네 야구단 4번 타자, 배트 하나로 버틴다",
+    "difficulty_stars": 3,
+    "max_health": 80,
+    "move_speed": 54,
+    "start_weapon": "baseball_bat",
+    "weapon_pool": [
+      "baseball_bat",
+      "pitching_machine",
+      "ball_bucket",
+      "stadium_light"
+    ],
+    "gear_pool": [
+      "batting_gloves"
+    ],
+    "skill": "homerun",
+    "hidden_skill": "hidden_grand_slam",
+    "outfit": "batter",
+    "trait_text": "밀어내기 +40%",
+    "trait": {
+      "multiply": {
+        "knockback_multiplier": 1.4
+      }
+    },
+    "branches": [
+      "batter_slugger",
+      "batter_ace",
+      "batter_thief"
+    ]
+  },
+  "hunter": {
+    "name": "서은재",
+    "role": "사냥꾼",
+    "intro": "산에서 내려온 멧돼지 사냥꾼",
+    "difficulty_stars": 3,
+    "max_health": 60,
+    "move_speed": 60,
+    "start_weapon": "crossbow",
+    "weapon_pool": [
+      "crossbow",
+      "bear_trap",
+      "hunting_dog",
+      "throwing_knives"
+    ],
+    "gear_pool": [
+      "camo_cloak"
+    ],
+    "skill": "trap_net",
+    "hidden_skill": "hidden_pack_hunt",
+    "outfit": "hunter",
+    "trait_text": "치명타 피해 +40%",
+    "trait": {
+      "multiply": {
+        "crit_damage_multiplier": 1.4
+      }
+    },
+    "branches": [
+      "hunter_marksman",
+      "hunter_trapper",
+      "hunter_beastmaster"
+    ]
+  },
   "_3차_근거": "난이도 테스터 3차(2026-11-07): 택배기사 체력 90→100 — 탈출이 네 명 중 가장 낮아서(38%) 경찰과 같게 (100 으로 50%, 판 수가 적어 확실하지 않음). 소방관 체력 140→115 는 시험했지만 그대로 8/8 탈출이라 되돌림. docs/balance_log.md",
-  "_체력_근거": "사용자 '난이도 진짜 빡세게, 다들 개고수라고 생각하고' + '기본 체력도 많이 줄여' (2026-11-07): 생존자 기본 체력 약 35% 줄임 (경찰 100→65, 소방관 140→90 …). 한 대 한 대가 아프게."
+  "_체력_근거": "사용자 '난이도 진짜 빡세게, 다들 개고수라고 생각하고' + '기본 체력도 많이 줄여' (2026-11-07): 생존자 기본 체력 약 35% 줄임 (경찰 100→65, 소방관 140→90 …). 한 대 한 대가 아프게.",
+  "_새_생존자_근거": "문서 14 §3-1 (2026-11-07): 야구선수 80·사냥꾼 60 — 개고수 난이도라 체력을 낮게, 별 3개."
 }

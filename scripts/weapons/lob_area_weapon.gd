@@ -1,5 +1,5 @@
 ## [파일] scripts/weapons/lob_area_weapon.gd
-## [하는 일] 던져서 떨어진 자리에 터지는·남는 무기: 최루탄(look "gas", 연기 구름 — 느려짐), 화염병(look "fire", 불 장판), 조명탄(look "flare", 폭발 + 불타는 빛 기둥), 배달 드론(look "parcel", 머리 위 드론이 소포 폭탄을 떨굼 — 폭발만). 사거리 안 무작위 좀비 쪽으로 throw_count 개를 포물선으로 던지고(드론은 위에서 떨굼), 떨어지면 impact_damage 폭발·zone_seconds 장판. 불바다(화염병 진화)는 장판이 줄줄이 이어진다.
+## [하는 일] 던져서 떨어진 자리에 터지는·남는 무기: 최루탄(look "gas", 연기 구름 — 느려짐), 화염병(look "fire", 불 장판), 조명탄(look "flare", 폭발 + 불타는 빛 기둥), 배달 드론(look "parcel", 머리 위 드론이 소포 폭탄을 떨굼 — 폭발만), 구장 조명(look "stadium", 하얀 빛 기둥 — 빛 안 좀비는 느리고 더 아픔), 곰 덫(look "trap", 바닥에 놓여 밟으면 닫힘). 사거리 안 무작위 좀비 쪽으로 throw_count 개를 포물선으로 던지고(드론은 위에서 떨굼), 떨어지면 impact_damage 폭발·zone_seconds 장판. 불바다(화염병 진화)는 장판이 줄줄이 이어진다.
 ## [쓰는 곳] scripts/weapons/weapon_rack.gd 가 behavior 가 "lob_area" 인 무기로 만들고, 그리기 때 draw_on()(날아가는 물건·드론)을 부른다. 장판은 WeaponZones, 폭발 그림은 WeaponVisuals.
 ## [근거 문서] 14 §2-2 최루탄·조명탄·배달 드론·화염병, §2-4 진압 작전·대낮·드론 편대·불바다, §2-7 (폭발 = 원 + 파편 + 흔들림)
 class_name LobAreaWeapon
@@ -20,7 +20,11 @@ const THROWN_LOOKS := {
 	"fire": {"body": Color("5f8f4e"), "size": Vector2(2, 3), "tip": Color("ff9a3c")},
 	"flare": {"body": Color("e8434f"), "size": Vector2(1, 4), "tip": Color("fff2b0")},
 	"parcel": {"body": Color("b07a43"), "size": Vector2(3, 3), "tip": Color("e8d9a8")},
+	"stadium": {"body": Color("9aa3b5"), "size": Vector2(1, 5), "tip": Color("fffbe0")},
+	"trap": {"body": Color("5b5f6b"), "size": Vector2(3, 2), "tip": Color("c9ced8")},
 }
+## 모양 → 장판 종류 (구장 조명은 '빛' 장판, 나머지는 이름 그대로)
+const ZONE_KINDS := {"stadium": "light"}
 const SHADOW_COLOR := Color(0.0, 0.0, 0.0, 0.35)
 const GLASS_COLOR := Color("cfe8d6")
 
@@ -79,11 +83,15 @@ func _drone_position(index: int) -> Vector2:
 	return context.survivor.position + DRONE_HOVER + Vector2(side, bob)
 
 
-## 떨어진 자리: 폭발 피해 → 장판 → 소리·흔들림
+## 떨어진 자리: 폭발 피해 → 장판 → 소리·흔들림. 곰 덫은 터지지 않고 바닥에 놓인다 (밟으면 닫힘 — WeaponZones).
 func _land(center: Vector2) -> void:
 	var stats := numbers()
 	var radius := area_radius(float(stats["radius"]))
 	var impact := float(stats["impact_damage"])
+	if look == "trap":
+		zones().add_trap(center, radius, float(stats["zone_seconds"]), impact, float(stats["stun_seconds"]), area_radius(float(stats.get("trap_blast_radius", 0.0))), String(info.get("trigger_sound", "")), is_evolved)
+		context.play_sound(String(info["sound"]), sound_pitch())
+		return
 	if impact > 0.0:
 		for zombie: Zombie in context.horde.in_radius(center, radius):
 			strike(zombie, impact, center, IMPACT_KNOCKBACK)
@@ -91,12 +99,12 @@ func _land(center: Vector2) -> void:
 		shake_screen()
 	var zone_seconds := float(stats["zone_seconds"])
 	if zone_seconds > 0.0:
-		zones().add_zone(look, center, radius, zone_seconds, float(stats["damage_per_second"]), float(stats["slow_ratio"]), float(stats["stun_seconds"]), is_evolved)
+		zones().add_zone(ZONE_KINDS.get(look, look), center, radius, zone_seconds, float(stats["damage_per_second"]), float(stats["slow_ratio"]), float(stats["stun_seconds"]), is_evolved)
 	if look == "fire":
 		visuals().spray(center, GLASS_COLOR, 5, 35.0)   # 병 깨지는 유리 조각
 	elif look == "gas":
 		visuals().puff(center, THROWN_LOOKS["gas"]["tip"], 6, radius * 0.6)
-	context.play_sound(String(info["sound"]))
+	context.play_sound(String(info["sound"]), sound_pitch())
 
 
 func draw_on(canvas: CanvasItem) -> void:

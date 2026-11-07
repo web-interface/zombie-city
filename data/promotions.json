@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "data/promotions.json",
-    "하는 일": "전직 갈래 12개 (생존자 4명 × 3). 레벨 10 에 1차(stage_1), 레벨 20 에 2차(stage_2) 가 적용된다. 능력치 바꾸기(add·multiply)와 스킬 바꾸기(skill_changes), 바뀐 옷 그림(outfit)을 정한다.",
+    "하는 일": "전직 갈래 18개 (생존자 6명 × 3). 레벨 10 에 1차(stage_1), 레벨 20 에 2차(stage_2) 가 적용된다. 능력치 바꾸기(add·multiply)와 스킬 바꾸기(skill_changes), 바뀐 옷 그림(outfit)을 정한다.",
     "쓰는 곳": "scripts/systems/promotion.gd 가 적용하고, scripts/ui/promotion_panel.gd 가 갈래 카드를 보여 준다.",
     "근거 문서": "02 §5 전직, 03 §1-2 전직 숫자, 04 §2 전직 옷차림"
   },
@@ -195,6 +195,99 @@
       "text": "응급 처치에 기절 (반경 50, 1.5초)",
       "skill_changes": [
         { "change": "add_effect", "effect": { "type": "radial_stun", "radius": 50, "seconds": 1.5, "damage": 0 } }
+      ]
+    }
+  },
+
+  "batter_slugger": {
+    "name": "슬러거", "survivor": "batter", "outfit": "batter_slugger",
+    "summary": "한 방에 담장 너머로",
+    "stage_1": {
+      "text": "모든 피해 +20%, 밀어내기 x1.5",
+      "multiply": { "damage_multiplier": 1.2, "knockback_multiplier": 1.5 }
+    },
+    "stage_2": {
+      "text": "홈런 범위 x1.4·피해 2배",
+      "skill_changes": [
+        { "change": "scale_effect", "effect": "cone_push", "field": "range", "by": 1.4 },
+        { "change": "scale_effect", "effect": "cone_push", "field": "damage", "by": 2 }
+      ]
+    }
+  },
+  "batter_ace": {
+    "name": "에이스 투수", "survivor": "batter", "outfit": "batter_ace",
+    "summary": "멀리서 꽂아 넣는다",
+    "stage_1": {
+      "text": "모든 투사체 무기 +1발, 공격 속도 +10%",
+      "add": { "extra_projectiles": 1 },
+      "multiply": { "attack_speed_multiplier": 1.1 }
+    },
+    "stage_2": {
+      "text": "스킬이 '빈볼 강속구'로 (화면 끝까지 꿰뚫는 공 한 발, 피해 200)",
+      "skill_changes": [ { "change": "replace_skill", "skill": "beanball" } ]
+    }
+  },
+  "batter_thief": {
+    "name": "대도", "survivor": "batter", "outfit": "batter_thief",
+    "summary": "치고 달린다",
+    "stage_1": {
+      "text": "이동 속도 +15%, 홈런 다시 쓰기 x0.7",
+      "multiply": { "move_speed": 1.15 },
+      "skill_changes": [ { "change": "scale_cooldown", "by": 0.7 } ]
+    },
+    "stage_2": {
+      "text": "홈런 뒤 1초 무적 질주 (부딪힌 좀비 피해 25)",
+      "skill_changes": [
+        { "change": "add_effect", "effect": { "type": "dash", "seconds": 1.0, "speed_multiplier": 2.5, "contact_damage": 25, "knockback": 20, "invulnerable": true } }
+      ]
+    }
+  },
+
+  "hunter_marksman": {
+    "name": "명사수", "survivor": "hunter", "outfit": "hunter_marksman",
+    "summary": "멀리서 급소만",
+    "stage_1": {
+      "text": "치명타 +15%, 사거리 +30%",
+      "add": { "crit_chance": 0.15 },
+      "multiply": { "range_multiplier": 1.3 }
+    },
+    "stage_2": {
+      "text": "스킬이 '저격'으로 (화면 끝까지 꿰뚫는 한 발), 치명타 피해 +50%",
+      "add": { "crit_damage_multiplier": 0.5 },
+      "skill_changes": [ { "change": "replace_skill", "skill": "snipe" } ]
+    }
+  },
+  "hunter_trapper": {
+    "name": "덫 사냥꾼", "survivor": "hunter", "outfit": "hunter_trapper",
+    "summary": "길목을 막는다",
+    "stage_1": {
+      "text": "그물 범위 x1.4·묶기 +1초, 공격 범위 +15%",
+      "multiply": { "area_multiplier": 1.15 },
+      "skill_changes": [
+        { "change": "scale_effect", "effect": "radial_stun", "field": "radius", "by": 1.4 },
+        { "change": "add_to_effect", "effect": "radial_stun", "field": "seconds", "by": 1 }
+      ]
+    },
+    "stage_2": {
+      "text": "그물에 독 (반경 70, 초당 8, 6초), 다시 쓰기 x0.7",
+      "skill_changes": [
+        { "change": "add_effect", "effect": { "type": "poison_burst", "radius": 70, "damage_per_second": 8, "seconds": 6 } },
+        { "change": "scale_cooldown", "by": 0.7 }
+      ]
+    }
+  },
+  "hunter_beastmaster": {
+    "name": "사냥개 조련사", "survivor": "hunter", "outfit": "hunter_beastmaster",
+    "summary": "개들과 함께 버틴다",
+    "stage_1": {
+      "text": "체력 +30, 받는 피해 -15%",
+      "add": { "max_health": 30 },
+      "multiply": { "damage_taken_multiplier": 0.85 }
+    },
+    "stage_2": {
+      "text": "그물을 쓰면 사냥개 3마리가 4초 동안 쫓아가 문다",
+      "skill_changes": [
+        { "change": "add_effect", "effect": { "type": "pack_hunt", "dogs": 3, "seconds": 4, "speed": 120, "bite_radius": 8, "damage": 25, "bite_interval_seconds": 0.4 } }
       ]
     }
   }

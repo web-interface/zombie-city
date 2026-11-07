@@ -39,6 +39,8 @@ var _beams: Array[Dictionary] = []
 ## 고리·폭발·예고 원·화면 번쩍 — "style" 로 구분해 한 목록에
 var _shapes: Array[Dictionary] = []
 var _particles := ParticleBuffer.new(PARTICLE_CAPACITY)
+## 무기 말고도 빛 층에 그릴 것 (draw_glow_on(canvas) 를 가진 것 — 히든 스킬의 공·사냥개)
+var glow_drawers: Array[Object] = []
 var _context: RunContext
 
 
@@ -184,6 +186,8 @@ func _zigzag(from_position: Vector2, to_position: Vector2) -> PackedVector2Array
 func _draw() -> void:
 	for weapon: Weapon in _context.weapon_rack.weapons:
 		weapon.draw_glow_on(self)   # 무기가 늘 띄워 두는 빛나는 것 (소독약 안개·불꽃 심지)
+	for drawer: Object in glow_drawers:
+		drawer.call("draw_glow_on", self)
 	for shape: Dictionary in _shapes:
 		_draw_shape(shape)
 	for beam_item: Dictionary in _beams:

@@ -1,5 +1,5 @@
 ## [파일] scripts/skills/hidden_skill_effects.gd
-## [하는 일] 히든 스킬 4개의 큰 효과 조각을 시간에 맞춰 실행한다: 항공 지원 요청(예고 원 → 폭격 20발을 3초에 걸쳐), 백드래프트(화염 고리 3번 + 큰 불 장판), 총알 배송(무적 돌진 3번 연속, 지나간 길 폭발), 기적의 처방(체력 전부 회복 + 10초 무적 + 주변 독, 무적 동안 금빛 반짝임). 숫자는 data/skills.json 의 효과 조각에.
+## [하는 일] 히든 스킬의 큰 효과 조각을 시간에 맞춰 실행한다 (만루 홈런·사냥개 무리는 HiddenRunners 에 맡김): 항공 지원 요청(예고 원 → 폭격 20발을 3초에 걸쳐), 백드래프트(화염 고리 3번 + 큰 불 장판), 총알 배송(무적 돌진 3번 연속, 지나간 길 폭발), 기적의 처방(체력 전부 회복 + 10초 무적 + 주변 독, 무적 동안 금빛 반짝임). 숫자는 data/skills.json 의 효과 조각에.
 ## [쓰는 곳] scripts/skills/skill_runner.gd 가 만들고, 효과 조각 종류가 airstrike·backdraft·express·miracle 이면 start() 를, 매 프레임 update() 를 부른다.
 ## [근거 문서] 14 §2-5 히든 스킬·§2-7 (히든 = 컷인 + 화면 번쩍 + 큰 흔들림), 03 §4-1
 class_name HiddenSkillEffects
@@ -19,10 +19,13 @@ var _express: Dictionary = {}
 var _miracle_time_left: float = 0.0
 var _sparkle_timer: float = 0.0
 var _context: RunContext
+## 화면을 뛰어다니는 효과 (만루 홈런 공·사냥개 무리)
+var _runners: HiddenRunners
 
 
 func _init(context: RunContext) -> void:
 	_context = context
+	_runners = HiddenRunners.new(context)
 
 
 func start(effect: Dictionary) -> void:
@@ -38,6 +41,8 @@ func start(effect: Dictionary) -> void:
 			_express["blast_timer"] = 0.0
 		"miracle":
 			_cast_miracle(effect)
+		"grand_slam", "pack_hunt":
+			_runners.start(effect)
 
 
 func update(delta: float) -> void:
@@ -57,6 +62,7 @@ func update(delta: float) -> void:
 	_events.resize(write_index)
 	_update_express(delta)
 	_update_miracle(delta)
+	_runners.update(delta)
 
 
 ## ── 항공 지원 요청: 폭격마다 예고 원(warning_seconds) 뒤에 펑 ──
