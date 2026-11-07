@@ -21,7 +21,7 @@
     "radius": 4,
     "max_health": 10,
     "move_speed": 19,
-    "contact_damage_per_second": 33,
+    "contact_damage_per_second": 30,
     "shard_value": 1,
     "sprite": "zombie_walker",
     "frame_size": 16
@@ -31,7 +31,7 @@
     "radius": 4,
     "max_health": 6,
     "move_speed": 30,
-    "contact_damage_per_second": 13,
+    "contact_damage_per_second": 24,
     "shard_value": 1,
     "sprite": "zombie_runner",
     "frame_size": 16
@@ -51,7 +51,7 @@
     "radius": 3,
     "max_health": 8,
     "move_speed": 20,
-    "contact_damage_per_second": 14,
+    "contact_damage_per_second": 22,
     "shard_value": 1,
     "sprite": "zombie_crawler",
     "frame_size": 16,
@@ -75,7 +75,7 @@
       "projectile_speed": 60,
       "puddle_radius": 12,
       "puddle_seconds": 3.0,
-      "puddle_damage_per_second": 10
+      "puddle_damage_per_second": 8
     }
   },
   "bloater": {
