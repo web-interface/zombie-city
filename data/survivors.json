@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "data/survivors.json",
-    "하는 일": "생존자(플레이어 캐릭터)마다 직업 이름(role — 사람 이름은 쓰지 않음)·체력·속도·시작 무기·특성·스킬·전직 갈래·옷 그림·난이도를 정한다. weapon_pool = 레벨 업 카드에 나오는 전용 무기 4개(시작 무기 포함), gear_pool = 전용 장비, hidden_skill = 아주 가끔 나오는 금색 카드의 스킬. 처음부터 4명(경찰·소방관·택배기사·직장인) + 해금 2명(야구선수·사냥꾼 — data/meta_rules.json unlocks). interns = 직장인 팀장 전직의 인턴 숫자(scripts/skills/trait_effects.gd).",
+    "하는 일": "생존자(플레이어 캐릭터)마다 직업 이름(role — 사람 이름은 쓰지 않음)·체력·속도·시작 무기·특성·스킬·전직 갈래·옷 그림·난이도를 정한다. weapon_pool = 레벨 업 카드에 나오는 전용 무기 4개(시작 무기 포함), gear_pool = 전용 장비, extra_start_weapons = 시작 무기 말고 처음부터 주는 무기(사냥꾼 사냥개 — 문서 16), hidden_skill = 아주 가끔 나오는 금색 카드의 스킬. 처음부터 4명(경찰·소방관·택배기사·직장인) + 해금 2명(야구선수·사냥꾼 — data/meta_rules.json unlocks). interns = 직장인 팀장 전직의 인턴 숫자(scripts/skills/trait_effects.gd).",
     "쓰는 곳": "scripts/world/survivor.gd 가 능력치를, scripts/ui/survivor_select.gd 가 고르기 카드를, scripts/systems/card_deck.gd 가 카드 풀·히든 스킬을 이 표로 만든다.",
     "근거 문서": "03 §1 생존자, 04 §2 생존자 모습, 15 부록 B 생존자 10명, 14 §2-1·§2-2·§2-5"
   },
@@ -103,7 +103,7 @@
   },
   "office_worker": {
     "role": "직장인",
-    "intro": "막차 놓치고 회사에 갇힌 7년 차 대리",
+    "intro": "막차 놓친 7년 차 대리",
     "difficulty_stars": 2,
     "max_health": 75,
     "move_speed": 55,
@@ -120,7 +120,7 @@
     "skill": "caffeine_rush",
     "hidden_skill": "hidden_clock_out",
     "outfit": "office_worker",
-    "trait_text": "야근 수당: 이 밤 30초마다 피해 +6% (최대 +36%)",
+    "trait_text": "야근 수당 30초마다 피해 +6% (최대 +36%)",
     "trait": {
       "add": {
         "overtime_bonus_per_step": 0.06,
@@ -181,6 +181,9 @@
     "max_health": 70,
     "move_speed": 60,
     "start_weapon": "crossbow",
+    "extra_start_weapons": [
+      "hunting_dog"
+    ],
     "weapon_pool": [
       "crossbow",
       "bear_trap",

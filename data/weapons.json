@@ -60,43 +60,43 @@
       {
         "damage": 12,
         "interval_seconds": 0.6,
-        "range": 110,
+        "range": 120,
         "projectile_count": 1,
         "projectile_speed": 200,
         "pierce": 3,
         "spread_degrees": 8
       },
       {
-        "damage": 12,
+        "damage": 14,
         "interval_seconds": 0.6,
-        "range": 110,
+        "range": 120,
         "projectile_count": 2,
         "projectile_speed": 200,
         "pierce": 3,
         "spread_degrees": 8
       },
       {
-        "damage": 14,
+        "damage": 16,
         "interval_seconds": 0.55,
-        "range": 115,
+        "range": 125,
         "projectile_count": 2,
         "projectile_speed": 210,
         "pierce": 4,
         "spread_degrees": 8
       },
       {
-        "damage": 14,
+        "damage": 18,
         "interval_seconds": 0.55,
-        "range": 115,
+        "range": 125,
         "projectile_count": 3,
         "projectile_speed": 210,
         "pierce": 4,
         "spread_degrees": 10
       },
       {
-        "damage": 17,
+        "damage": 21,
         "interval_seconds": 0.5,
-        "range": 120,
+        "range": 130,
         "projectile_count": 3,
         "projectile_speed": 220,
         "pierce": 5,
@@ -108,14 +108,14 @@
       "gear": "radio",
       "name": "지원 사격 권총",
       "icon": "icon_pistol_evolved",
-      "description": "탄 3배·꿰뚫기·금빛 탄환",
+      "description": "탄 2배·꿰뚫기·금빛 탄환",
       "numbers": {
         "damage": 20,
         "interval_seconds": 0.45,
         "range": 130,
-        "projectile_count": 9,
+        "projectile_count": 6,
         "projectile_speed": 260,
-        "pierce": 6,
+        "pierce": 4,
         "spread_degrees": 34
       }
     }
@@ -129,36 +129,36 @@
     "description": "가까운 좀비 쪽을 넓게 휘두른다",
     "levels": [
       {
-        "damage": 13.5,
-        "interval_seconds": 1.43,
+        "damage": 14.7,
+        "interval_seconds": 1.6,
         "radius": 22,
         "knockback": 6,
         "both_sides": false
       },
       {
         "damage": 15.5,
-        "interval_seconds": 1.43,
+        "interval_seconds": 1.55,
         "radius": 24,
         "knockback": 7,
         "both_sides": false
       },
       {
-        "damage": 17.5,
-        "interval_seconds": 1.37,
+        "damage": 16.5,
+        "interval_seconds": 1.5,
         "radius": 24,
         "knockback": 8,
         "both_sides": false
       },
       {
-        "damage": 18.5,
-        "interval_seconds": 1.3,
+        "damage": 17,
+        "interval_seconds": 1.42,
         "radius": 27,
         "knockback": 9,
         "both_sides": false
       },
       {
-        "damage": 21,
-        "interval_seconds": 1.23,
+        "damage": 19,
+        "interval_seconds": 1.35,
         "radius": 27,
         "knockback": 10,
         "both_sides": true
@@ -196,43 +196,43 @@
         "range": 100,
         "projectile_count": 1,
         "projectile_speed": 230,
-        "pierce": 2,
+        "pierce": 3,
         "spread_degrees": 0
       },
       {
-        "damage": 8.5,
+        "damage": 9.5,
         "interval_seconds": 0.33,
         "range": 100,
         "projectile_count": 1,
         "projectile_speed": 230,
-        "pierce": 3,
+        "pierce": 4,
         "spread_degrees": 0
       },
       {
-        "damage": 9.5,
+        "damage": 11,
         "interval_seconds": 0.3,
         "range": 105,
         "projectile_count": 1,
         "projectile_speed": 240,
-        "pierce": 3,
+        "pierce": 4,
         "spread_degrees": 0
       },
       {
-        "damage": 9.5,
+        "damage": 11,
         "interval_seconds": 0.3,
         "range": 105,
         "projectile_count": 2,
         "projectile_speed": 240,
-        "pierce": 4,
+        "pierce": 5,
         "spread_degrees": 6
       },
       {
-        "damage": 11,
+        "damage": 12.5,
         "interval_seconds": 0.26,
         "range": 110,
         "projectile_count": 2,
         "projectile_speed": 250,
-        "pierce": 4,
+        "pierce": 5,
         "spread_degrees": 6
       }
     ],
@@ -409,7 +409,7 @@
     "description": "번개가 좀비 사이를 튀며 감전·기절",
     "levels": [
       {
-        "damage": 9,
+        "damage": 10.8,
         "interval_seconds": 1.3,
         "range": 90,
         "chain_count": 3,
@@ -417,7 +417,7 @@
         "stun_seconds": 0.3
       },
       {
-        "damage": 10,
+        "damage": 12.0,
         "interval_seconds": 1.25,
         "range": 95,
         "chain_count": 4,
@@ -425,7 +425,7 @@
         "stun_seconds": 0.3
       },
       {
-        "damage": 12,
+        "damage": 14.4,
         "interval_seconds": 1.2,
         "range": 100,
         "chain_count": 5,
@@ -433,7 +433,7 @@
         "stun_seconds": 0.4
       },
       {
-        "damage": 13,
+        "damage": 15.6,
         "interval_seconds": 1.1,
         "range": 105,
         "chain_count": 6,
@@ -441,7 +441,7 @@
         "stun_seconds": 0.4
       },
       {
-        "damage": 15,
+        "damage": 18.0,
         "interval_seconds": 1.0,
         "range": 110,
         "chain_count": 7,
@@ -483,7 +483,7 @@
         "throw_count": 1,
         "radius": 18,
         "zone_seconds": 3,
-        "damage_per_second": 6,
+        "damage_per_second": 7.2,
         "impact_damage": 0,
         "slow_ratio": 0.55,
         "stun_seconds": 0
@@ -494,7 +494,7 @@
         "throw_count": 1,
         "radius": 20,
         "zone_seconds": 3.5,
-        "damage_per_second": 7,
+        "damage_per_second": 8.4,
         "impact_damage": 0,
         "slow_ratio": 0.5,
         "stun_seconds": 0
@@ -505,7 +505,7 @@
         "throw_count": 2,
         "radius": 22,
         "zone_seconds": 3.5,
-        "damage_per_second": 8,
+        "damage_per_second": 9.6,
         "impact_damage": 0,
         "slow_ratio": 0.5,
         "stun_seconds": 0
@@ -516,7 +516,7 @@
         "throw_count": 2,
         "radius": 24,
         "zone_seconds": 4,
-        "damage_per_second": 9,
+        "damage_per_second": 10.8,
         "impact_damage": 0,
         "slow_ratio": 0.45,
         "stun_seconds": 0
@@ -527,7 +527,7 @@
         "throw_count": 2,
         "radius": 26,
         "zone_seconds": 4.5,
-        "damage_per_second": 11,
+        "damage_per_second": 13.2,
         "impact_damage": 0,
         "slow_ratio": 0.4,
         "stun_seconds": 0
@@ -564,35 +564,35 @@
       {
         "interval_seconds": 2.2,
         "radius": 40,
-        "damage": 8,
+        "damage": 9.6,
         "knockback": 14,
         "stun_seconds": 0.4
       },
       {
         "interval_seconds": 2.1,
         "radius": 44,
-        "damage": 9,
+        "damage": 10.8,
         "knockback": 15,
         "stun_seconds": 0.4
       },
       {
         "interval_seconds": 2.0,
         "radius": 48,
-        "damage": 11,
+        "damage": 13.2,
         "knockback": 16,
         "stun_seconds": 0.5
       },
       {
         "interval_seconds": 1.9,
         "radius": 52,
-        "damage": 12,
+        "damage": 14.4,
         "knockback": 18,
         "stun_seconds": 0.5
       },
       {
         "interval_seconds": 1.7,
         "radius": 56,
-        "damage": 14,
+        "damage": 16.8,
         "knockback": 20,
         "stun_seconds": 0.6
       }
@@ -855,7 +855,7 @@
     "description": "맞으면 다음 좀비로 튕긴다",
     "levels": [
       {
-        "damage": 14,
+        "damage": 15.1,
         "interval_seconds": 1.1,
         "range": 100,
         "projectile_count": 1,
@@ -867,7 +867,7 @@
         "bounce_range": 50
       },
       {
-        "damage": 16,
+        "damage": 17.3,
         "interval_seconds": 1.05,
         "range": 100,
         "projectile_count": 1,
@@ -879,7 +879,7 @@
         "bounce_range": 50
       },
       {
-        "damage": 18,
+        "damage": 19.4,
         "interval_seconds": 1.0,
         "range": 100,
         "projectile_count": 1,
@@ -891,7 +891,7 @@
         "bounce_range": 50
       },
       {
-        "damage": 20,
+        "damage": 21.6,
         "interval_seconds": 0.95,
         "range": 100,
         "projectile_count": 2,
@@ -903,7 +903,7 @@
         "bounce_range": 50
       },
       {
-        "damage": 23,
+        "damage": 24.8,
         "interval_seconds": 0.9,
         "range": 100,
         "projectile_count": 2,
@@ -1042,7 +1042,7 @@
         "radius": 16,
         "zone_seconds": 0,
         "damage_per_second": 0,
-        "impact_damage": 16,
+        "impact_damage": 17.3,
         "slow_ratio": 1.0,
         "stun_seconds": 0,
         "drone_count": 1
@@ -1054,7 +1054,7 @@
         "radius": 17,
         "zone_seconds": 0,
         "damage_per_second": 0,
-        "impact_damage": 18,
+        "impact_damage": 19.4,
         "slow_ratio": 1.0,
         "stun_seconds": 0,
         "drone_count": 1
@@ -1066,7 +1066,7 @@
         "radius": 18,
         "zone_seconds": 0,
         "damage_per_second": 0,
-        "impact_damage": 21,
+        "impact_damage": 22.7,
         "slow_ratio": 1.0,
         "stun_seconds": 0,
         "drone_count": 1
@@ -1078,7 +1078,7 @@
         "radius": 20,
         "zone_seconds": 0,
         "damage_per_second": 0,
-        "impact_damage": 24,
+        "impact_damage": 25.9,
         "slow_ratio": 1.0,
         "stun_seconds": 0,
         "drone_count": 1
@@ -1090,7 +1090,7 @@
         "radius": 22,
         "zone_seconds": 0,
         "damage_per_second": 0,
-        "impact_damage": 28,
+        "impact_damage": 30.2,
         "slow_ratio": 1.0,
         "stun_seconds": 0,
         "drone_count": 1
@@ -1134,7 +1134,7 @@
         "spread_degrees": 4
       },
       {
-        "damage": 6,
+        "damage": 6.5,
         "interval_seconds": 0.26,
         "range": 95,
         "projectile_count": 1,
@@ -1143,7 +1143,7 @@
         "spread_degrees": 4
       },
       {
-        "damage": 6.5,
+        "damage": 7,
         "interval_seconds": 0.25,
         "range": 100,
         "projectile_count": 2,
@@ -1152,7 +1152,7 @@
         "spread_degrees": 8
       },
       {
-        "damage": 7,
+        "damage": 7.5,
         "interval_seconds": 0.23,
         "range": 100,
         "projectile_count": 2,
@@ -1161,7 +1161,7 @@
         "spread_degrees": 8
       },
       {
-        "damage": 8,
+        "damage": 8.5,
         "interval_seconds": 0.2,
         "range": 105,
         "projectile_count": 3,
@@ -1492,42 +1492,42 @@
     "description": "넓게 휘둘러 멀리 날려 버린다",
     "levels": [
       {
-        "damage": 10.5,
+        "damage": 9.5,
         "interval_seconds": 1.3,
         "radius": 22,
+        "knockback": 16,
+        "both_sides": false,
+        "stun_seconds": 0
+      },
+      {
+        "damage": 11,
+        "interval_seconds": 1.25,
+        "radius": 23,
+        "knockback": 19,
+        "both_sides": false,
+        "stun_seconds": 0
+      },
+      {
+        "damage": 13,
+        "interval_seconds": 1.2,
+        "radius": 24,
         "knockback": 22,
         "both_sides": false,
         "stun_seconds": 0
       },
       {
-        "damage": 12.0,
-        "interval_seconds": 1.25,
-        "radius": 23,
+        "damage": 14.5,
+        "interval_seconds": 1.12,
+        "radius": 26,
         "knockback": 25,
         "both_sides": false,
         "stun_seconds": 0
       },
       {
-        "damage": 14.0,
-        "interval_seconds": 1.2,
-        "radius": 24,
-        "knockback": 28,
-        "both_sides": false,
-        "stun_seconds": 0
-      },
-      {
-        "damage": 15.5,
-        "interval_seconds": 1.12,
-        "radius": 26,
-        "knockback": 31,
-        "both_sides": false,
-        "stun_seconds": 0
-      },
-      {
-        "damage": 18.5,
+        "damage": 17.5,
         "interval_seconds": 1.05,
         "radius": 28,
-        "knockback": 34,
+        "knockback": 28,
         "both_sides": true,
         "stun_seconds": 0
       }
@@ -1810,54 +1810,59 @@
     "description": "느리지만 일직선으로 여러 마리를 꿰뚫는다",
     "levels": [
       {
-        "damage": 18,
+        "damage": 19,
         "interval_seconds": 0.95,
         "range": 150,
         "projectile_count": 1,
-        "projectile_speed": 260,
-        "pierce": 6,
+        "projectile_speed": 320,
+        "pierce": 8,
         "spread_degrees": 6,
-        "knockback": 4
+        "knockback": 4,
+        "extra_crit_chance": 0.15
       },
       {
-        "damage": 21,
+        "damage": 23,
         "interval_seconds": 0.92,
         "range": 155,
         "projectile_count": 1,
-        "projectile_speed": 270,
-        "pierce": 7,
+        "projectile_speed": 330,
+        "pierce": 9,
         "spread_degrees": 6,
-        "knockback": 4
-      },
-      {
-        "damage": 24,
-        "interval_seconds": 0.86,
-        "range": 160,
-        "projectile_count": 1,
-        "projectile_speed": 280,
-        "pierce": 8,
-        "spread_degrees": 6,
-        "knockback": 4
+        "knockback": 4,
+        "extra_crit_chance": 0.15
       },
       {
         "damage": 27,
+        "interval_seconds": 0.86,
+        "range": 160,
+        "projectile_count": 1,
+        "projectile_speed": 340,
+        "pierce": 10,
+        "spread_degrees": 6,
+        "knockback": 4,
+        "extra_crit_chance": 0.15
+      },
+      {
+        "damage": 31,
         "interval_seconds": 0.82,
         "range": 165,
         "projectile_count": 2,
-        "projectile_speed": 290,
-        "pierce": 9,
+        "projectile_speed": 350,
+        "pierce": 11,
         "spread_degrees": 6,
-        "knockback": 4
+        "knockback": 4,
+        "extra_crit_chance": 0.15
       },
       {
-        "damage": 30,
+        "damage": 35,
         "interval_seconds": 0.76,
         "range": 170,
         "projectile_count": 2,
-        "projectile_speed": 300,
-        "pierce": 10,
+        "projectile_speed": 360,
+        "pierce": 12,
         "spread_degrees": 6,
-        "knockback": 4
+        "knockback": 4,
+        "extra_crit_chance": 0.15
       }
     ],
     "evolution": {
@@ -1896,7 +1901,7 @@
         "radius": 7,
         "zone_seconds": 10,
         "damage_per_second": 0,
-        "impact_damage": 40,
+        "impact_damage": 48.0,
         "slow_ratio": 1.0,
         "stun_seconds": 1.5,
         "trap_blast_radius": 0
@@ -1908,7 +1913,7 @@
         "radius": 7,
         "zone_seconds": 10,
         "damage_per_second": 0,
-        "impact_damage": 46,
+        "impact_damage": 55.2,
         "slow_ratio": 1.0,
         "stun_seconds": 1.7,
         "trap_blast_radius": 0
@@ -1920,7 +1925,7 @@
         "radius": 8,
         "zone_seconds": 10,
         "damage_per_second": 0,
-        "impact_damage": 52,
+        "impact_damage": 62.4,
         "slow_ratio": 1.0,
         "stun_seconds": 2.0,
         "trap_blast_radius": 0
@@ -1932,7 +1937,7 @@
         "radius": 8,
         "zone_seconds": 10,
         "damage_per_second": 0,
-        "impact_damage": 60,
+        "impact_damage": 72.0,
         "slow_ratio": 1.0,
         "stun_seconds": 2.2,
         "trap_blast_radius": 0
@@ -1944,7 +1949,7 @@
         "radius": 9,
         "zone_seconds": 10,
         "damage_per_second": 0,
-        "impact_damage": 70,
+        "impact_damage": 84.0,
         "slow_ratio": 1.0,
         "stun_seconds": 2.5,
         "trap_blast_radius": 0
@@ -1981,40 +1986,40 @@
     "description": "곁을 돌며 무는 개",
     "levels": [
       {
-        "damage": 9,
-        "drone_count": 1,
+        "damage": 12,
+        "drone_count": 2,
         "radius": 20,
         "hit_interval_seconds": 0.5,
         "spin_speed": 2.6,
         "knockback": 3
       },
       {
-        "damage": 10,
-        "drone_count": 1,
+        "damage": 14,
+        "drone_count": 2,
         "radius": 22,
         "hit_interval_seconds": 0.45,
         "spin_speed": 2.7,
         "knockback": 3
       },
       {
-        "damage": 12,
-        "drone_count": 2,
+        "damage": 16,
+        "drone_count": 3,
         "radius": 23,
         "hit_interval_seconds": 0.45,
         "spin_speed": 2.8,
         "knockback": 3
       },
       {
-        "damage": 14,
-        "drone_count": 2,
+        "damage": 18,
+        "drone_count": 3,
         "radius": 24,
         "hit_interval_seconds": 0.4,
         "spin_speed": 2.9,
         "knockback": 3
       },
       {
-        "damage": 16,
-        "drone_count": 3,
+        "damage": 21,
+        "drone_count": 4,
         "radius": 26,
         "hit_interval_seconds": 0.35,
         "spin_speed": 3.0,
@@ -2048,7 +2053,7 @@
     "description": "칼 여러 자루를 부채꼴로",
     "levels": [
       {
-        "damage": 9,
+        "damage": 11.2,
         "interval_seconds": 0.9,
         "range": 90,
         "projectile_count": 3,
@@ -2058,7 +2063,7 @@
         "knockback": 2
       },
       {
-        "damage": 10,
+        "damage": 12.5,
         "interval_seconds": 0.85,
         "range": 92,
         "projectile_count": 4,
@@ -2068,7 +2073,7 @@
         "knockback": 2
       },
       {
-        "damage": 11,
+        "damage": 13.8,
         "interval_seconds": 0.8,
         "range": 95,
         "projectile_count": 4,
@@ -2078,7 +2083,7 @@
         "knockback": 2
       },
       {
-        "damage": 12,
+        "damage": 15.0,
         "interval_seconds": 0.75,
         "range": 98,
         "projectile_count": 5,
@@ -2088,7 +2093,7 @@
         "knockback": 2
       },
       {
-        "damage": 14,
+        "damage": 17.5,
         "interval_seconds": 0.7,
         "range": 100,
         "projectile_count": 6,
@@ -2121,5 +2126,5 @@
   "_묶음2_근거": "무기·카드 담당(2026-11-07): 문서 14 §2-2·§2-4 대로 새 무기 13개·진화 19개. 처음 값은 지금 무기(권총 1단계 초당 20 피해)와 비슷한 세기로 잡음 — 난이도 테스터가 맞춘다.",
   "_새_생존자_근거": "무기·카드 담당(2026-11-07): 문서 14 §3-1 야구선수·사냥꾼 전용 무기 8개·진화 8개. 처음 값은 지금 무기와 비슷한 세기. 던지는 칼 진화 짝은 문서엔 '배팅 장갑'인데 야구선수 전용 장비라 사냥꾼은 얻을 수 없어 사냥꾼 전용 '위장 망토'로 바꿈 (09 결정).",
   "_직장인_근거": "생존자 담당(2026-11-07 저녁, 문서 15 부록 B): 간호사 무기 4개를 빼고 직장인 무기 4개 — 스테이플러(투사체, 1단계 초당 17.9)·서류 폭풍(도는 것)·결재 도장(원형 파동 + 기절)·노트북 던지기(떨어진 곳 폭발). 공격 방식은 기존 것을 다시 씀. 내 무기 색은 흰색·하늘색·노랑(문서 15 §7-1).",
-  "_생존자_고르기_근거": "생존자 담당(2026-11-07 저녁, 문서 15 §8·부록 B): 시작 무기 1단계 한 마리 초당 피해를 15~20 으로 맞추고(권총 20·네일건 20·석궁 18.9·스테이플러 19.6), 근접(도끼 9.4·배트 8.1)은 여러 마리를 쳐서 낮게. 보통 봇 첫째 밤 생존률 차이를 줄이려 약한 쪽(권총 꿰뚫기·석궁 빠르게·도끼 피해)을 올리고 가장 센 배트만 조금 내림. docs/balance_log.md"
+  "_생존자_고르기_근거": "생존자 담당(2026-11-07 저녁, 문서 15 §8·부록 B·문서 16): 시작 무기 1단계 한 마리 초당 피해를 15~20 으로(권총 20·네일건 20·석궁 20·스테이플러 19.6), 근접은 여러 마리를 쳐서 낮게(도끼 9.2·배트 7.3). 약한 쪽(권총·네일건·스테이플러 2단계부터, 석궁 빠르게·꿰뚫기·치명타, 사냥개 2마리·던지는 칼, 도끼 한 방 +40%)을 올리고 가장 센 배트만 조금 내림. 권총 진화는 발 9→6·관통 6→4. 표는 docs/balance_log.md"
 }

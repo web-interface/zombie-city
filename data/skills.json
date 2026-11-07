@@ -134,7 +134,7 @@
   "trap_net": {
     "name": "그물",
     "icon": "icon_trap_net",
-    "cooldown_seconds": 16,
+    "cooldown_seconds": 13,
     "effects": [
       { "type": "radial_stun", "radius": 70, "seconds": 2.5, "damage": 10 }
     ]
