@@ -16,13 +16,13 @@ const CROWD_FADE_PER_ZONE := 0.04
 const CROWD_MIN_FADE := 0.6
 ## 무기 연출(번개·물줄기) 불투명도 = 바닥값 ~ 1 사이를 설정으로 (25%여도 번개가 사라지지는 않게)
 const MIN_VISUAL_OPACITY := 0.4
-const EMBERS_PER_SECOND := 10.0        # 장판 하나가 내는 불씨·연기 알갱이 수
+const EMBERS_PER_SECOND := 3.0         # 장판 하나가 내는 불씨·연기 알갱이 수 (10 이면 좀비 위로 흰 점이 덮여 앞이 안 보였음 — 사용자 "화염병 장판 시야 확보 안 됨")
 const FLARE_LIGHT_RADIUS_RATIO := 1.5  # 조명탄 빛은 장판보다 넓게
 const PUFF_COUNT := 5
 const FLAME_ALPHA := 1.0               # 그룹이 통째로 옅어지므로 안에서는 진하게
-const FLAMES_PER_RADIUS := 0.9
+const FLAMES_PER_RADIUS := 0.35
 const LIGHT_SPARKLE_RATIO := 0.3
-const FIRE_FILL_ALPHA := 0.75          # 그룹 안 채움 — 겹쳐도 그룹이 한 번만 투명하게 함
+const FIRE_FILL_ALPHA := 0.45          # 그룹 안 채움 — 겹쳐도 그룹이 한 번만 투명하게 함. 밝은 바탕이 좀비를 묻어서 옅게
 const CLOUD_FILL_ALPHA := 0.7
 const CLOUD_PUFF_ALPHA := 0.7
 ## 장판 피해는 소리·숫자 없이 (불과 같은 조용한 피해 — 매번 새 묶음을 만들지 않게 상수로)
@@ -140,7 +140,7 @@ func _spawn_embers(zone: Dictionary, delta: float) -> void:
 	if zone["kind"] == "gas":
 		_visuals.puff(point, flames.pick_random(), 1, 2.0)
 	else:
-		_visuals.add_particle(point, Vector2(randf_range(-4.0, 4.0), -18.0), randf_range(0.4, 0.8), flames.pick_random(), WeaponVisuals.RISE_GRAVITY)
+		_visuals.add_particle(point, Vector2(randf_range(-4.0, 4.0), -18.0), randf_range(0.4, 0.8), flames[2], WeaponVisuals.RISE_GRAVITY)   # 흰 불씨는 좀비 위에서 눈에 띄어 하늘색만
 
 
 func _read_settings() -> void:
@@ -165,8 +165,7 @@ func _draw_fire(zone: Dictionary, fade: float) -> void:
 	var radius := float(zone["radius"])
 	var flames: Array = look["flames"]
 	var flicker := 0.85 + 0.15 * sin(_time * 14.0 + center.x)
-	_zone_canvas.draw_circle(center, radius, Color(look["ground"], FIRE_FILL_ALPHA * fade))
-	_zone_canvas.draw_circle(center, radius * 0.62, Color(flames[1], FIRE_FILL_ALPHA * fade * flicker))   # 가운데가 더 밝게 타오름
+	_zone_canvas.draw_circle(center, radius, Color(look["ground"], FIRE_FILL_ALPHA * fade * flicker))
 	var flame_ratio := LIGHT_SPARKLE_RATIO if zone["kind"] == "light" else 1.0   # 빛 장판은 반짝임만 조금 (하얀 점이 너무 많으면 좀비가 묻힘)
 	for index: int in range(int(radius * FLAMES_PER_RADIUS * flame_ratio)):
 		var point := center + Vector2.from_angle(randf() * TAU) * sqrt(randf()) * radius
