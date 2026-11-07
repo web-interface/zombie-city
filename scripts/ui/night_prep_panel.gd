@@ -8,7 +8,7 @@ extends Control
 ## 다 골랐다 {"weapon_id", "weapon_level", "medal_id"}
 signal chosen(choice: Dictionary)
 
-const CARD_SIZE := Vector2(164, 30)
+const CARD_SIZE := Vector2(164, 38)   # 이름 + 설명 두 줄 (위험 훈장은 나쁜 점·좋은 점이 다 보여야 함)
 const RISKY_COLOR := Color("ff9a5a")   # 위험 훈장 (나쁜 점이 있음 — 경고 빨강과 구분되는 주황)
 
 var _guard := TapGuard.new()
@@ -120,7 +120,7 @@ func _add_card(option: Dictionary, name_text: String, detail_text: String, accen
 	texts.add_theme_constant_override("separation", 0)
 	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texts.add_child(PixelUi.label(name_text, accent, false, true))
-	texts.add_child(PixelUi.small_lines(detail_text, PixelUi.INK, CARD_SIZE.x - 32.0, 1))
+	texts.add_child(PixelUi.small_lines(detail_text, PixelUi.INK, CARD_SIZE.x - 32.0, 2))
 	row.add_child(texts)
 	card.add_child(row)
 	_guard.watch(card)
