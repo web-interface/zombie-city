@@ -75,6 +75,13 @@ func danger_zones() -> Array[Dictionary]:
 	return zones
 
 
+## 고수 봇이 옆으로 비킬 것: 날아오는 침·식칼·철근 [{"position", "velocity", …}]
+func incoming_shots() -> Array[Dictionary]:
+	var shots: Array[Dictionary] = _spits.duplicate()
+	shots.append_array(_thrown)
+	return shots
+
+
 func is_warning_active() -> bool:
 	return not _warnings.is_empty() or not _line_warnings.is_empty()
 
