@@ -21,7 +21,7 @@
     "radius": 4,
     "max_health": 10,
     "move_speed": 19,
-    "contact_damage_per_second": 30,
+    "contact_damage_per_second": 33,
     "shard_value": 1,
     "sprite": "zombie_walker",
     "frame_size": 16

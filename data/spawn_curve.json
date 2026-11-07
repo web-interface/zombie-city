@@ -70,27 +70,29 @@
       "beat": "landing",
       "from_second": 150,
       "to_second": 170,
-      "minimum_start": 140,
-      "minimum_end": 140,
-      "trickle_per_second": 10.0,
+      "minimum_start": 250,
+      "minimum_end": 250,
+      "trickle_per_second": 25.0,
       "no_idle_pressure": true
     },
     {
       "beat": "final_rush",
+      "only_basic_kinds": true,
       "from_second": 170,
       "to_second": 180,
-      "minimum_start": 140,
-      "minimum_end": 140,
-      "trickle_per_second": 10.0,
+      "minimum_start": 250,
+      "minimum_end": 250,
+      "trickle_per_second": 25.0,
       "no_idle_pressure": true
     },
     {
       "beat": "helicopter",
+      "only_basic_kinds": true,
       "from_second": 180,
       "to_second": 9999,
-      "minimum_start": 140,
-      "minimum_end": 140,
-      "trickle_per_second": 10.0,
+      "minimum_start": 250,
+      "minimum_end": 250,
+      "trickle_per_second": 25.0,
       "no_idle_pressure": true
     }
   ],
@@ -273,7 +275,7 @@
     "banner": "[새벽시청] 좀비 떼가 둘러싸고 있습니다. 틈으로 빠져나가세요"
   },
   "stampede": {
-    "count": 25,
+    "count": 40,
     "kind": "runner",
     "warning_seconds": 1.5,
     "distance": 190,
