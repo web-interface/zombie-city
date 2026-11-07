@@ -1,5 +1,5 @@
 ## [파일] scripts/systems/horde_events.gd
-## [하는 일] 큰 일 중 '무리'를 실제로 일으킨다: 몰아치기 = '떼 돌진'(빨간 화살표 1.5초 예고 뒤 한쪽에서 달리는 좀비가 줄지어 몰려옴) 또는 '포위'(생존자 둘레 원, 한 군데 틈), '들개 무리'(한쪽에서 4~6마리). 언제 일으킬지는 밤 감독이 정한다. 정예 출현 같은 알림도 대신 띄운다.
+## [하는 일] 큰 일 중 '무리'를 실제로 일으킨다: 몰아치기·2:50 마지막 몰아치기 = '떼 돌진'(빨간 화살표 1.5초 예고 뒤 한쪽에서 달리는 좀비가 줄지어 몰려옴) 또는 '포위'(생존자 둘레 원, 한 군데 틈), '들개 무리'(한쪽에서 4~6마리). 언제 일으킬지는 밤 감독이 정한다. 정예 출현 같은 알림도 대신 띄운다.
 ## [쓰는 곳] scenes/run.tscn 의 Systems/HordeEvents. 밤 감독(night_director.gd)이 start_rush()·send_hound_pack()·announce() 를 부르고, run.gd 가 update() 를 부르며 event_started 로 재난문자 알림을 띄운다. 좀비는 ZombieSpawner.spawn_zombie() 로 만든다.
 ## [근거 문서] 15 §3-1 몰아치기, 13 조사 반영(몰아치기와 숨 돌리기의 파도), 12 §6 공정함(예고)
 class_name HordeEvents
@@ -31,7 +31,7 @@ func update(delta: float) -> void:
 		return
 	_pending_stampede["time_left"] = float(_pending_stampede["time_left"]) - delta
 	if float(_pending_stampede["time_left"]) <= 0.0:
-		_release_stampede(_pending_stampede["direction"])
+		_release_stampede(_pending_stampede["direction"], int(_pending_stampede["count"]))
 		_pending_stampede = {}
 
 
@@ -41,7 +41,7 @@ func start_rush(kind: String) -> void:
 		"encircle":
 			_encircle()
 		"stampede":
-			_warn_stampede()
+			start_stampede_from(Vector2.from_angle(randf() * TAU), 1.0)
 
 
 func announce(banner_text: String) -> void:
@@ -62,25 +62,23 @@ func _encircle() -> void:
 	event_started.emit(String(rules["banner"]))
 
 
-## 떼 돌진 예고: 몰려올 쪽에서 생존자 쪽으로 빨간 화살표가 깜빡인다
-func _warn_stampede() -> void:
+## 떼 돌진: direction 쪽에서 몰려온다(먼저 빨간 화살표가 깜빡이는 예고). size_ratio 로 마릿수를 줄인다 — 2:50 마지막 몰아치기는 착륙 지점 반대쪽, 보스가 살아 있으면 절반 (16 §4)
+func start_stampede_from(direction: Vector2, size_ratio: float) -> void:
 	var rules: Dictionary = _curve["stampede"]
-	var direction := Vector2.from_angle(randf() * TAU)
 	var seconds := float(rules["warning_seconds"])
 	var center := _context.survivor.position
 	for offset: float in [-16.0, 0.0, 16.0]:
 		var side := direction.orthogonal() * offset
 		_context.effects.line(center + direction * 120.0 + side, center + direction * 40.0 + side, WARNING_COLOR, 2.0, seconds, true)
-	_pending_stampede = {"direction": direction, "time_left": seconds}
+	_pending_stampede = {"direction": direction, "time_left": seconds, "count": roundi(float(rules["count"]) * size_ratio)}
 	_context.play_sound("stampede_rumble")
 	event_started.emit(String(rules["banner"]))
 
 
-func _release_stampede(direction: Vector2) -> void:
+func _release_stampede(direction: Vector2, count: int) -> void:
 	var rules: Dictionary = _curve["stampede"]
 	var start := _context.survivor.position + direction * float(rules["distance"])
 	var spacing := float(rules["row_spacing"])
-	var count := int(rules["count"])
 	for index: int in range(count):
 		var row := floori(index / 5.0)   # 다섯 마리씩 한 줄
 		var column := index % 5 - 2

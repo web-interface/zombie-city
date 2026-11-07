@@ -46,7 +46,7 @@ func _ready() -> void:
 	_spawner.setup(context, _night_director)
 	_events.setup(context, _spawner)
 	_boss_director.setup(context, _spawner)
-	_night_director.setup(context, _spawner, _events, _boss_director)
+	_night_director.setup(context, _spawner, _events, _boss_director, _extraction)
 	_recorder.setup(context)
 	_extraction.setup(context)
 	_hud.setup(context, _rack, _level_up, _promotion, _skill_runner, _extraction)

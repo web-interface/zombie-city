@@ -15,13 +15,13 @@
   },
   "nights": {
     "night_seconds": 180,
-    "zombie_health_growth_per_night": 0.38,
-    "minimum_growth_per_night": 0.02,
-    "max_minimum_multiplier": 1.5,
-    "contact_damage_growth_per_night": 0.06,
+    "zombie_health_growth_per_night": 0.3,
+    "minimum_growth_per_night": 0.03,
+    "max_minimum_multiplier": 1.9,
+    "contact_damage_growth_per_night": 0.03,
     "speed_growth_per_night": 0.05,
     "max_speed_multiplier": 1.3,
-    "boss_health_growth_per_night": 0.38,
+    "boss_health_growth_per_night": 0.5,
     "elite_chance_first_night": 0.003,
     "elite_chance_growth_per_night": 0.002,
     "heal_ratio_between_nights": 0.5,
@@ -38,7 +38,7 @@
       "열째"
     ]
   },
-  "_밤_근거": "15 §4 밤 사이 곡선(직선 — 숫자가 읽히게, 브로테이토식): 일반 좀비 체력 밤마다 +0.38배(10밤 4배·30밤 12배), 보스 체력도 같은 비율, 필드 최소 좀비 밤마다 +2%(최대 ×1.5, 화면 상한 300), 닿으면 피해 밤마다 +6%. 빠르기 +5%(최대 1.3배)는 그대로. elite_chance 는 드문 무작위 정예용(정예 자리는 spawn_curve.json night_score).",
+  "_밤_근거": "16 §2 (15 §4 를 고침, 사용자 승인): 일반 좀비 체력 밤마다 +0.30배(직선 — 밤이 갈수록 처치 시간이 천천히 짧아져 쓸어버리는 맛이 자람), 보스 체력은 따로 +0.5배, 필드 최소 좀비 밤마다 +3%(최대 ×1.9, 화면 상한 300), 닿으면 피해 밤마다 +3%. 빠르기 +5%(최대 1.3배)는 그대로. elite_chance 는 드문 무작위 정예용(정예 자리는 spawn_curve.json night_score).",
   "combo": {
     "reset_after_seconds": 2.5,
     "milestones": [
@@ -87,7 +87,7 @@
   "_보상_근거": "중독 설계 (14 §2-6·§4): 정예·보스는 보물 상자(슬롯이 돌다 멈춤 — 강화 1개 70%·3개 25%·5개 5%), 좀비는 아주 가끔 자석·폭탄·냉각 스프레이. 손에 넣는 보상이 화면에서 반짝여야 '한 판 더'.",
   "_연속처치_근거": "중독 설계 (14 §4): 2.5초 안에 다음 처치가 이어지면 연속 숫자가 커지고, 50·100·200… 마다 소리·빛·조각 보너스. 첫 시험에서 처치가 끊기지 않아 연속 = 전체 처치(619)였다 → '맞으면 끊김': 받은 피해가 12 쌓이면 끊기고, 쌓인 피해는 초당 4씩 잊는다(살짝 스친 건 봐줌). 잘 피할수록 커지는 실력 보상.",
   "experience": {
-    "shards_needed_base": 1.5,
+    "shards_needed_base": 0.5,
     "shards_needed_per_level": 1.5,
     "shards_needed_per_level_squared": 0.55,
     "shard_magnet_speed": 130

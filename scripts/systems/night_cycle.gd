@@ -38,6 +38,9 @@ func night_name(night_number: int = -1) -> String:
 ## 일반 좀비 체력 배율: 한 밤 안에서는 최대 +30% 만, 밤 사이는 직선 (15 §3-2·§4 — 어려움은 단단함이 아니라 마릿수·박자로)
 func zombie_health_multiplier(elapsed_seconds: float) -> float:
 	var in_night := 1.0 + _in_night_health_growth * minf(elapsed_seconds / night_seconds(), 1.0)
+	var opening: Dictionary = GameData.table("spawn_curve")["first_night_opening"]
+	if night == 1 and elapsed_seconds < float(opening["until_second"]):
+		in_night *= float(opening["health_multiplier"])   # 첫 밤 첫 30초는 무른 좀비로 '녹는 맛'부터 (16 §2)
 	var between_nights := 1.0 + float(_rules["zombie_health_growth_per_night"]) * (night - 1)
 	return in_night * between_nights * _modifier("zombie_health", 1.0)
 
