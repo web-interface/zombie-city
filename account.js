@@ -1,5 +1,5 @@
 // [파일] web/account.js
-// [하는 일] 온라인 순위표용 로그인(야구 매니저와 같은 계정): 저장된 토큰으로 자동 로그인, 로그인·가입·복구 코드로 비밀번호 다시 정하기 창(HTML — 폰 한글 자판 때문에 Godot 글자 입력 대신), 판 결과 올리기, 순위 받아오기. 야구 게임(web/src/api.ts · app/auth.tsx)과 같은 저장 키(bb9.session · bb.user)·같은 PBKDF2(소금 'baseball9:'+아이디 소문자, 21만 번)라서 같은 주소(web-interface.github.io)의 야구에 로그인해 두면 여기서도 바로 로그인돼요. 비밀번호는 보내지 않고 브라우저에서 만든 키만 보낸다.
+// [하는 일] 게임 로그인(웹판은 로그인해야 시작 — 순위표에 기록이 올라감): 저장된 토큰으로 자동 로그인, 로그인·가입·복구 코드로 비밀번호 다시 정하기 창(HTML — 폰 한글 자판 때문에 Godot 글자 입력 대신), 판 결과 올리기, 순위 받아오기. 야구 게임(web/src/api.ts · app/auth.tsx)과 같은 저장 키(bb9.session · bb.user)·같은 PBKDF2(소금 'baseball9:'+아이디 소문자, 21만 번)라서 같은 주소(web-interface.github.io)의 야구에 로그인해 두면 여기서도 바로 로그인돼요. 비밀번호는 보내지 않고 브라우저에서 만든 키만 보낸다.
 // [쓰는 곳] export_presets.cfg head_include 가 불러오고, scripts/meta/online.gd 가 JavaScriptBridge 로 window.ZombieCityAccount 를 부른다. 모양은 web/account.css. 서버는 야구 Worker(baseball/worker/src/zc.ts 의 /zc/ 경로).
 // [근거 문서] 07 온라인 순위표, 05 순위 화면
 (function () {
@@ -132,14 +132,19 @@
     return node;
   }
 
-  function open() {
+  // required = 로그인해야 게임을 시작할 수 있을 때 (닫기·바깥 누르기로 못 닫음)
+  var required = false;
+  function isIn() { return state.state === "in" || state.state === "offline"; }
+
+  function open(isRequired) {
     close();
+    required = !!isRequired;
     panel = element("div", "zc-acc");
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-modal", "true");
     var sheet = element("div", "zc-acc__sheet");
     panel.appendChild(sheet);
-    panel.addEventListener("click", function (event) { if (event.target === panel) close(); });
+    panel.addEventListener("click", function (event) { if (event.target === panel && (!required || isIn())) close(); });
     document.body.appendChild(panel);
     if (state.state === "in" || state.state === "offline") showAccount(sheet); else showForm(sheet, "login");
   }
@@ -156,7 +161,7 @@
     sheet.textContent = "";
     var top = element("div", "zc-acc__top");
     top.appendChild(element("p", "zc-acc__kicker", "새벽시 생존자 명부"));
-    button(top, "zc-acc__close", "닫기", close);
+    if (!required || isIn()) button(top, "zc-acc__close", "닫기", close);
     sheet.appendChild(top);
     sheet.appendChild(element("h2", "zc-acc__title", title));
   }
@@ -173,7 +178,7 @@
 
   function showForm(sheet, mode) {
     header(sheet, TITLES[mode]);
-    sheet.appendChild(element("p", "zc-acc__lead", state.notice || "순위표에 이름을 올리려면 로그인해요. 야구 매니저와 같은 아이디예요."));
+    sheet.appendChild(element("p", "zc-acc__lead", state.notice || (required ? "게임을 하려면 로그인해요. 판이 끝나면 기록이 순위표에 올라가요." : "로그인하면 판이 끝날 때 기록이 순위표에 올라가요.")));
     if (mode !== "reset") {
       var tabs = element("div", "zc-acc__tabs");
       button(tabs, mode === "login" ? "zc-acc__tab is-on" : "zc-acc__tab", "로그인", function () { showForm(sheet, "login"); });
