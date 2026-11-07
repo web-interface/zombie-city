@@ -250,7 +250,8 @@ func _on_survivor_died() -> void:
 	_end_run("died")
 
 
-func _on_landing_zone_revealed(_zone_position: Vector2) -> void:
+func _on_landing_zone_revealed(zone_position: Vector2) -> void:
+	context.hazards.keep_clear(zone_position, float(GameData.rules("extraction")["landing_zone_radius"]))
 	_recorder.note_event()
 	_hud.show_banner("[새벽시청] 구조 헬기 접근 중. 착륙 지점으로 이동하세요", "alert")
 

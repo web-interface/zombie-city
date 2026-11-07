@@ -77,7 +77,6 @@
     },
     {
       "beat": "final_rush",
-      "only_basic_kinds": true,
       "from_second": 170,
       "to_second": 180,
       "minimum_start": 250,
@@ -87,7 +86,6 @@
     },
     {
       "beat": "helicopter",
-      "only_basic_kinds": true,
       "from_second": 180,
       "to_second": 9999,
       "minimum_start": 250,
@@ -193,7 +191,7 @@
       "kind": "spitter",
       "from_night": 1,
       "from_second": 45,
-      "weight": 0.15
+      "weight": 0.25
     },
     {
       "kind": "crawler",

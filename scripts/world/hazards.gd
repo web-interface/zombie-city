@@ -28,6 +28,8 @@ var _thrown: Array[Dictionary] = []          # 보스가 던진 식칼·철근
 var _line_warnings: Array[Dictionary] = []   # 땅 갈라짐·토하기 예고 선
 var _context: RunContext
 var _overlay: HazardOverlay
+var _clear_center: Vector2 = Vector2.ZERO   # 웅덩이가 안 생기는 원 (헬기 착륙 지점) — 반지름 0 이면 없음
+var _clear_radius: float = 0.0
 
 
 func setup(context: RunContext) -> void:
@@ -46,6 +48,7 @@ func spit(from_position: Vector2, target: Vector2, speed: float, puddle: Diction
 
 
 func add_puddle(center: Vector2, radius: float, seconds: float, damage_per_second: float, source: String) -> void:
+	center = _outside_clear_zone(center, radius)
 	if _puddles.size() >= MAX_PUDDLES:
 		_puddles.pop_front()
 	_puddles.append({"center": center, "radius": radius, "time_left": seconds, "damage_per_second": damage_per_second, "source": source, "has_survivor": false})
@@ -94,7 +97,23 @@ func is_warning_active() -> bool:
 	return not _warnings.is_empty() or not _line_warnings.is_empty()
 
 
+## 헬기 착륙 원: 이 안에는 웅덩이가 생기지 않게 원 바깥 가장자리로 밀어낸다. 원 안에 있어야만 탈출하는데
+## 웅덩이 하나(반지름 12)가 원(반지름 24)의 1/4 을 덮어 피할 곳이 없었다 (난이도 테스터 2026-11-07: 쓰러진 판 대부분이 2:34~3:05 원 안 웅덩이)
+func keep_clear(center: Vector2, radius: float) -> void:
+	_clear_center = center
+	_clear_radius = radius
+
+
+func _outside_clear_zone(center: Vector2, radius: float) -> Vector2:
+	var offset := center - _clear_center
+	if _clear_radius <= 0.0 or offset.length() >= _clear_radius + radius:
+		return center
+	var direction := offset.normalized() if offset.length() > 0.1 else Vector2.RIGHT
+	return _clear_center + direction * (_clear_radius + radius)
+
+
 func clear() -> void:
+	_clear_radius = 0.0
 	_spits.clear()
 	_puddles.clear()
 	_warnings.clear()
