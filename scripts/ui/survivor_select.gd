@@ -10,7 +10,7 @@ const INFECTION_TOP := 201.0
 const WALK_FRAME_SECONDS := 0.12
 const INFO_WIDTH := 112.0   # 오른쪽 소개 글 너비 (넘으면 낱말 단위로 줄바꿈)
 const RECORD_WIDTH := 58.0  # 왼쪽 미리보기 아래 기록 글 너비
-const PORTRAIT_SIZE := Vector2(26, 34)
+const PORTRAIT_SIZE := Vector2(22, 34)   # 7명(처음 5 + 해금 2)이 180 폭에 다 들어가게 (7×22 + 사이 2×6 = 166)
 const SILHOUETTE := Color(0.0, 0.0, 0.0, 0.9)
 
 var _survivor_ids: Array[String] = []

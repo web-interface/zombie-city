@@ -1,7 +1,7 @@
 ## [파일] scripts/skills/trait_effects.gd
-## [하는 일] 시간에 따라 도는 생존자 효과: 야근 수당(이 밤 지난 시간만큼 피해가 오름 — 밤이 바뀌면 0부터), 잠깐 능력치 바꾸기(카페인 충전·칼퇴근 — 끝나면 뒤 효과), 팀장 전직의 인턴(따라다니며 서류를 던짐, 빛 층에 그림).
-## [쓰는 곳] scripts/skills/skill_runner.gd 가 만들고 매 프레임 update() 를, 효과 조각 stat_boost 면 start_boost() 를 부른다. 히든 칼퇴근(hidden_skill_effects.gd)도 start_boost() 를 쓴다. 숫자는 data/survivors.json interns·skills.json·run_rules.json survivor_base_stats(overtime_*·intern_count).
-## [근거 문서] 15 부록 B 직장인(야근 수당·카페인 충전·팀장 인턴)
+## [하는 일] 시간에 따라 도는 생존자 효과: 야근 수당(이 밤 지난 시간만큼 피해가 오름 — 밤이 바뀌면 0부터), 잠깐 능력치 바꾸기(카페인 충전·칼퇴근 — 끝나면 뒤 효과), 팀장 전직의 인턴(따라다니며 서류를 던짐, 빛 층에 그림), 간호사 '넘친 회복은 주변 피해'(체력이 가득일 때 회복한 양을 모았다가 둘레 좀비에게).
+## [쓰는 곳] scripts/skills/skill_runner.gd 가 만들고 매 프레임 update() 를, 효과 조각 stat_boost 면 start_boost() 를 부른다. 히든 칼퇴근(hidden_skill_effects.gd)도 start_boost() 를 쓴다. 숫자는 data/survivors.json interns·skills.json·run_rules.json survivor_base_stats(overtime_*·intern_count·overheal_*)·status_effects overheal_pulse_seconds.
+## [근거 문서] 15 부록 B 직장인(야근 수당·카페인 충전·팀장 인턴)·간호사(넘친 회복)
 class_name TraitEffects
 extends RefCounted
 
@@ -13,6 +13,8 @@ const INTERN_STEPS_PER_SECOND := 8.0
 const INTERN_SPREAD_RADIANS := 1.1     # 인턴끼리 벌어지는 각도 (생존자 뒤쪽 부채꼴)
 const HAND_HEIGHT := Vector2(0, -4)
 const SHADOW_COLOR := Color(0.0, 0.0, 0.0, 0.35)
+const OVERHEAL_COLOR := Color("e8f8ff")
+const OVERHEAL_RING_MIN_DAMAGE := 3.0   # 초당 회복처럼 아주 작은 넘침은 고리 없이 (화면이 시끄럽지 않게)
 
 var _context: RunContext
 var _overtime_bonus: float = 0.0
@@ -23,6 +25,9 @@ var _interns: Array[Dictionary] = []
 var _intern_rules: Dictionary = {}
 var _intern_texture: Texture2D = null
 var _is_drawing_registered: bool = false
+## 넘친 회복량을 모아 둔 것 (overheal_pulse_seconds 마다 터짐)
+var _overheal_pool: float = 0.0
+var _overheal_timer: float = 0.0
 
 
 func _init(context: RunContext) -> void:
@@ -30,12 +35,14 @@ func _init(context: RunContext) -> void:
 	_intern_rules = GameData.entry("survivors", context.survivor.survivor_id).get("interns", {})
 	if not _intern_rules.is_empty():
 		_intern_texture = load("res://art/sprites/survivor_%s.png" % _intern_rules["outfit"])
+	context.survivor.overhealed.connect(_on_overhealed)
 
 
 func update(delta: float) -> void:
 	_update_overtime()
 	_update_boosts(delta)
 	_update_interns(delta)
+	_update_overheal(delta)
 
 
 ## seconds 동안 능력치를 multiply 로 바꾸고, 끝나면 after_seconds 동안 after_multiply (카페인 충전 뒤 2초 느려짐)
@@ -84,6 +91,27 @@ func _update_boosts(delta: float) -> void:
 		_sparkle_timer = BOOST_SPARKLE_SECONDS
 		var offset := Vector2(randf_range(-4.0, 4.0), -9.0)
 		_context.weapon_rack.visuals.add_particle(_context.survivor.position + offset, Vector2(0, -14), 0.5, BOOST_COLOR, 0.0)
+
+
+func _on_overhealed(amount: float) -> void:
+	_overheal_pool += amount
+
+
+## ── 간호사 특성: 넘친 회복 × overheal_damage_ratio 를 둘레 overheal_radius 안 좀비에게 ──
+func _update_overheal(delta: float) -> void:
+	_overheal_timer -= delta
+	if _overheal_pool <= 0.0 or _overheal_timer > 0.0:
+		return
+	_overheal_timer = float(_context.status_rules["overheal_pulse_seconds"])
+	var stats := _context.survivor.stats
+	var damage := _overheal_pool * stats.value("overheal_damage_ratio")
+	_overheal_pool = 0.0
+	var center := _context.survivor.position
+	var radius := stats.value("overheal_radius")
+	for zombie: Zombie in _context.horde.in_radius(center, radius):
+		_context.horde.hit(zombie, damage, {"source": "overheal", "show_number": damage >= OVERHEAL_RING_MIN_DAMAGE})
+	if damage >= OVERHEAL_RING_MIN_DAMAGE:
+		_context.effects.ring(center, radius, OVERHEAL_COLOR, 0.35)
 
 
 ## ── 팀장 인턴: intern_count 만큼 생존자 뒤를 따라다니며 가까운 좀비에게 서류를 던진다 ──

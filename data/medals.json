@@ -38,6 +38,8 @@
     "courier_big_bag": {"name": "큰 가방", "kind": "safe", "survivor": "courier", "icon": "icon_backpack", "description": "줍는 거리 +40%", "stats": {"multiply": {"pickup_radius": 1.4}}},
     "office_overtime_body": {"name": "야근 체질", "kind": "safe", "survivor": "office_worker", "icon": "icon_coffee", "description": "야근 수당 최대 +50%", "stats": {"add": {"overtime_max_bonus": 0.14}}},
     "office_iced_americano": {"name": "아아 한 잔", "kind": "safe", "survivor": "office_worker", "icon": "icon_energy_drink", "description": "카페인 충전 대기 −30%", "stats": {"multiply": {"skill_cooldown_multiplier": 0.7}}},
+    "nurse_night_shift": {"name": "밤샘 근무", "kind": "safe", "survivor": "nurse", "icon": "icon_stethoscope", "description": "초당 회복 +1", "stats": {"add": {"regen_per_second": 1.0}}},
+    "nurse_high_dose": {"name": "고용량", "kind": "safe", "survivor": "nurse", "icon": "icon_syringe_gun", "description": "독 피해 +25%", "stats": {"multiply": {"poison_damage_multiplier": 1.25}}},
     "batter_home_run_hitter": {"name": "홈런 타자", "kind": "safe", "survivor": "batter", "icon": "icon_shelter_damage", "description": "홈런 대기 −25%", "stats": {"multiply": {"skill_cooldown_multiplier": 0.75}}},
     "batter_power_swing": {"name": "강타", "kind": "safe", "survivor": "batter", "icon": "icon_knee_pads", "description": "밀어내기 +30% · 피해 +8%", "stats": {"multiply": {"knockback_multiplier": 1.3, "damage_multiplier": 1.08}}},
     "hunter_instinct": {"name": "사냥 본능", "kind": "safe", "survivor": "hunter", "icon": "icon_ammo", "description": "치명 피해 +25%", "stats": {"multiply": {"crit_damage_multiplier": 1.25}}},

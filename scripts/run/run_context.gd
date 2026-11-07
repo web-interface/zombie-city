@@ -53,7 +53,7 @@ func spread_poison_from(dead_zombie: Zombie) -> void:
 		return first.position.distance_to(dead_zombie.position) < second.position.distance_to(dead_zombie.position))
 	var poison_power := float(status_rules["poison_spread_damage_per_second"]) * survivor.stats.value("poison_damage_multiplier")
 	for neighbor: Zombie in neighbors.slice(0, int(status_rules["poison_spread_targets"])):
-		neighbor.apply_poison(poison_power, float(status_rules["poison_spread_seconds"]))
+		neighbor.apply_poison(poison_power, float(status_rules["poison_spread_seconds"]), poison_max_stacks())
 		effects.burst(neighbor.position, Color("9fb4ff"), 3)
 
 
@@ -65,3 +65,8 @@ func play_sound(sound_name: String, pitch_offset: float = 0.0) -> void:
 ## 충격 크기는 data/run_rules.json juice 의 "trauma_<이름>" (코드에 숫자를 두지 않으려고)
 func shake(event_name: String) -> void:
 	camera.add_trauma(float(juice_rules.get("trauma_" + event_name, 0.0)))
+
+
+## 독이 몇 번까지 겹치나 (보통 3 — 간호사 특성은 5. data/run_rules.json survivor_base_stats poison_max_stacks + 생존자 특성)
+func poison_max_stacks() -> int:
+	return int(survivor.stats.value("poison_max_stacks"))

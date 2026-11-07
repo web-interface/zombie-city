@@ -56,7 +56,7 @@ func _pulse_hit(zombie: Zombie, stats: Dictionary, center: Vector2) -> void:
 	var poison_power := float(stats.get("poison_damage_per_second", 0.0)) * context.survivor.stats.value("poison_damage_multiplier")
 	if poison_power > 0.0:
 		for layer: int in range(int(stats.get("poison_applications", 1))):
-			zombie.apply_poison(poison_power, float(stats["poison_seconds"]))
+			zombie.apply_poison(poison_power, float(stats["poison_seconds"]), context.poison_max_stacks())
 
 
 func _show_pulse(center: Vector2, radius: float, stats: Dictionary) -> void:

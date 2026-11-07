@@ -1,6 +1,6 @@
 """
 [파일] tools/sound_table_weapons.py
-[하는 일] 효과음 정의 표 ③ 새 무기 13종: 경찰(테이저건·최루탄·확성기), 소방관(소방 호스·구조용 절단기·조명탄), 택배기사(상자·테이프 건·소포 폭탄), 직장인(스테이플러·서류 폭풍·결재 도장·노트북·카페인 충전·칼퇴근 종소리), 메스 소리는 던지는 칼이 씀, 공용 화염병.
+[하는 일] 효과음 정의 표 ③ 새 무기 13종: 경찰(테이저건·최루탄·확성기), 소방관(소방 호스·구조용 절단기·조명탄), 택배기사(상자·테이프 건·소포 폭탄), 직장인(스테이플러·서류 폭풍·결재 도장·노트북·카페인 충전·칼퇴근 종소리), 간호사(소독약·제세동기·메스 — 메스 소리는 던지는 칼도 씀), 공용 화염병.
 [쓰는 곳] tools/build_sounds.py 가 sound_table_core 의 layer·notes 로 적은 이 표를 audio/<이름>_<번호>.wav 로 만든다. data/weapons.json 의 "sound" 가 이 이름을 부른다.
 [근거 문서] 14 §2-2 생존자 전용 무기·§2-7 눈에 띄는 연출, 06 사운드·"AI 티 안 나게"
 """
@@ -83,6 +83,18 @@ WEAPON_EFFECTS: dict[str, dict] = {
         notes("triangle", "E5:3 C5:3 D5:3 G4:6", 0.09, env=(0.002, 0.05, 1.2), volume=0.55),
         notes("sine", "E6:3 C6:3 D6:3 G5:6", 0.09, env=(0.002, 0.03, 1.6), volume=0.18),
         layer("sine", 392, 1.2, start=0.9, env=(0.002, 0.05, 2.0), volume=0.3)]},
+    # ───────── 간호사 (2026-11-07 밤 되살림) ─────────
+    "disinfectant_hiss": {"about": "소독약 분무 '칙-칙' — 분무기 펌프 두 번 + 고운 안개 '쉬이' (계속 나는 무기라 아주 작게)", "variants": 3, "spread": 2.0, "peak_db": -14.0, "layers": [
+        layer("noise", 22050, 0.16, env=(0.01, 0.04, 1.8), highpass=3500, lowpass=10000, volume=0.8),
+        layer("noise", 22050, 0.2, start=0.2, env=(0.01, 0.05, 1.8), highpass=3500, lowpass=10000, volume=0.7),
+        layer("square", [900, 700], 0.03, duty=0.25, lowpass=3000, volume=0.15),
+        layer("noise", 22050, 0.4, start=0.05, env=(0.15, 0.05, 1.6), highpass=5000, lowpass=9000, volume=0.15)]},
+    "defib_shock": {"about": "제세동기 '삐이잉-팡' — 충전되며 올라가는 소리 + 전기 '팡' + 짧은 지직", "variants": 3, "spread": 2.0, "peak_db": -10.0, "drive": 1.5, "layers": [
+        layer("sine", [700, 3200], 0.28, curve=0.7, env=(0.15, 0.12, 0.5), volume=0.35),
+        layer("square", [350, 1600], 0.28, curve=0.7, duty=0.125, env=(0.2, 0.08, 0.5), lowpass=4500, volume=0.12),
+        layer("noise", 22050, 0.015, start=0.28, env=(0, 0, 1.0), volume=0.9),
+        layer("sine", [160, 50], 0.18, start=0.28, curve=2.0, volume=0.8),
+        layer("saw", [140, 110], 0.2, start=0.28, tremolo=(57, 0.9, 4), env=(0.001, 0.04, 1.6), lowpass=5000, volume=0.45)]},
     "scalpel_slice": {"about": "메스 '슥-칭' — 아주 짧게 베는 바람 + 가는 쇠 울림 (자주 나서 아주 작게)", "variants": 3, "spread": 3.0, "peak_db": -14.0, "layers": [
         layer("noise", 22050, 0.07, env=(0.025, 0, 1.8), highpass=3000, lowpass=[4000, 10000], volume=0.8),
         layer("sine", 4200, 0.1, start=0.03, env=(0.001, 0, 2.2), volume=0.3),

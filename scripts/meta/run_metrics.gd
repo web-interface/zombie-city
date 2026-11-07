@@ -46,7 +46,7 @@ static func totals_from_save() -> Dictionary:
 	var records := SaveData.section("records")
 	var survivors_with_night := 0
 	for survivor_id: String in records.keys():
-		# 옛 저장의 빠진 생존자(간호사) 기록은 세지 않음
+		# 표에 없는 생존자(옛 저장에 남은 기록)는 세지 않음 — 간호사는 2026-11-07 밤 되살려서 다시 셈
 		if GameData.table("survivors").has(survivor_id) and int((records[survivor_id] as Dictionary).get("best_night", 0)) >= 1:
 			survivors_with_night += 1
 	var best_night := 0

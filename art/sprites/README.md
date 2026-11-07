@@ -43,7 +43,11 @@
 | `icons/icon_crossbow.png` | 아이콘 'crossbow' (10×10) |
 | `icons/icon_crossbow_evolved.png` | 진화 아이콘 'crossbow' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icons/icon_daily.png` | 아이콘 'daily' (10×10) |
+| `icons/icon_defibrillator.png` | 아이콘 'defibrillator' (10×10) |
+| `icons/icon_defibrillator_evolved.png` | 진화 아이콘 'defibrillator' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icons/icon_delivery_bag.png` | 아이콘 'delivery_bag' (10×10) |
+| `icons/icon_disinfectant.png` | 아이콘 'disinfectant' (10×10) |
+| `icons/icon_disinfectant_evolved.png` | 진화 아이콘 'disinfectant' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icons/icon_duct_tape.png` | 아이콘 'duct_tape' (10×10) |
 | `icons/icon_employee_badge.png` | 아이콘 'employee_badge' (10×10) |
 | `icons/icon_energy_drink.png` | 아이콘 'energy_drink' (10×10) |
@@ -63,6 +67,7 @@
 | `icons/icon_hidden_clock_out.png` | 아이콘 'hidden_clock_out' (10×10) |
 | `icons/icon_hidden_express.png` | 아이콘 'hidden_express' (10×10) |
 | `icons/icon_hidden_grand_slam.png` | 아이콘 'hidden_grand_slam' (10×10) |
+| `icons/icon_hidden_miracle.png` | 아이콘 'hidden_miracle' (10×10) |
 | `icons/icon_hidden_pack_hunt.png` | 아이콘 'hidden_pack_hunt' (10×10) |
 | `icons/icon_homerun.png` | 아이콘 'homerun' (10×10) |
 | `icons/icon_hunting_dog.png` | 아이콘 'hunting_dog' (10×10) |
@@ -93,6 +98,8 @@
 | `icons/icon_research_notes.png` | 아이콘 'research_notes' (10×10) |
 | `icons/icon_saw_drone.png` | 아이콘 'saw_drone' (10×10) |
 | `icons/icon_saw_drone_evolved.png` | 진화 아이콘 'saw_drone' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_scalpel.png` | 아이콘 'scalpel' (10×10) |
+| `icons/icon_scalpel_evolved.png` | 진화 아이콘 'scalpel' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icons/icon_scrap.png` | 아이콘 'scrap' (10×10) |
 | `icons/icon_settings.png` | 아이콘 'settings' (10×10) |
 | `icons/icon_shelter_banish.png` | 아이콘 'shelter_banish' (10×10) |
@@ -115,6 +122,9 @@
 | `icons/icon_stadium_light_evolved.png` | 진화 아이콘 'stadium_light' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icons/icon_stapler.png` | 아이콘 'stapler' (10×10) |
 | `icons/icon_stapler_evolved.png` | 진화 아이콘 'stapler' — 금색 색바꿈 + 금빛 테두리 (자동) |
+| `icons/icon_stethoscope.png` | 아이콘 'stethoscope' (10×10) |
+| `icons/icon_syringe_gun.png` | 아이콘 'syringe_gun' (10×10) |
+| `icons/icon_syringe_gun_evolved.png` | 진화 아이콘 'syringe_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icons/icon_tape_gun.png` | 아이콘 'tape_gun' (10×10) |
 | `icons/icon_tape_gun_evolved.png` | 진화 아이콘 'tape_gun' — 금색 색바꿈 + 금빛 테두리 (자동) |
 | `icons/icon_taser.png` | 아이콘 'taser' (10×10) |
@@ -165,6 +175,14 @@
 | `survivor_hunter_marksman_flash.png` | survivor_hunter_marksman 의 하얀 실루엣 (맞았을 때 잠깐) |
 | `survivor_hunter_trapper.png` | 생존자 옷 'hunter_trapper' 동작 묶음 (16×16, 줄: idle_down, idle_up, idle_side, walk_down, walk_up, walk_side, death) |
 | `survivor_hunter_trapper_flash.png` | survivor_hunter_trapper 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `survivor_nurse.png` | 생존자 옷 'nurse' 동작 묶음 (16×16, 줄: idle_down, idle_up, idle_side, walk_down, walk_up, walk_side, death) |
+| `survivor_nurse_emergency.png` | 생존자 옷 'nurse_emergency' 동작 묶음 (16×16, 줄: idle_down, idle_up, idle_side, walk_down, walk_up, walk_side, death) |
+| `survivor_nurse_emergency_flash.png` | survivor_nurse_emergency 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `survivor_nurse_epidemiology.png` | 생존자 옷 'nurse_epidemiology' 동작 묶음 (16×16, 줄: idle_down, idle_up, idle_side, walk_down, walk_up, walk_side, death) |
+| `survivor_nurse_epidemiology_flash.png` | survivor_nurse_epidemiology 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `survivor_nurse_flash.png` | survivor_nurse 의 하얀 실루엣 (맞았을 때 잠깐) |
+| `survivor_nurse_surgeon.png` | 생존자 옷 'nurse_surgeon' 동작 묶음 (16×16, 줄: idle_down, idle_up, idle_side, walk_down, walk_up, walk_side, death) |
+| `survivor_nurse_surgeon_flash.png` | survivor_nurse_surgeon 의 하얀 실루엣 (맞았을 때 잠깐) |
 | `survivor_office_intern.png` | 생존자 옷 'office_intern' 동작 묶음 (16×16, 줄: idle_down, idle_up, idle_side, walk_down, walk_up, walk_side, death) |
 | `survivor_office_intern_flash.png` | survivor_office_intern 의 하얀 실루엣 (맞았을 때 잠깐) |
 | `survivor_office_overtime.png` | 생존자 옷 'office_overtime' 동작 묶음 (16×16, 줄: idle_down, idle_up, idle_side, walk_down, walk_up, walk_side, death) |

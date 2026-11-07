@@ -37,7 +37,7 @@
   "total_kills_10000": {"name": "누적 1만", "text": "좀비 모두 합쳐 10,000마리", "group": "누적", "scrap": 100, "conditions": [{"key": "total_kills", "at_least": 10000}]},
   "total_kills_50000": {"name": "누적 5만", "text": "좀비 모두 합쳐 50,000마리", "group": "누적", "scrap": 300, "conditions": [{"key": "total_kills", "at_least": 50000}]},
   "total_runs_10": {"name": "열 번째 출동", "text": "열 판 하기", "group": "누적", "scrap": 30, "conditions": [{"key": "total_runs", "at_least": 10}]},
-  "all_survivors": {"name": "모두 집에", "text": "생존자 6명 모두 밤 넘기기", "group": "누적", "scrap": 300, "conditions": [{"key": "survivors_with_night", "at_least": 6}]},
+  "all_survivors": {"name": "모두 집에", "text": "생존자 7명 모두 밤 넘기기", "group": "누적", "scrap": 300, "conditions": [{"key": "survivors_with_night", "at_least": 7}]},
   "codex_50": {"name": "도감 반", "text": "도감 50% 채우기", "group": "모으기", "scrap": 80, "conditions": [{"key": "codex_percent", "at_least": 50}]},
   "codex_100": {"name": "도감 완성", "text": "도감 100% 채우기", "group": "모으기", "scrap": 400, "conditions": [{"key": "codex_percent", "at_least": 100}]},
   "shelter_10": {"name": "은신처 손봄", "text": "은신처 강화 모두 합쳐 10단계", "group": "모으기", "scrap": 60, "conditions": [{"key": "shelter_levels", "at_least": 10}]},

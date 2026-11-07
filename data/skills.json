@@ -22,6 +22,7 @@
     "express": "히든: 무적 돌진 dashes 번(dash_seconds·gap_seconds·speed_multiplier, 부딪힘 contact_damage·knockback), 지나간 길에 blast_gap_seconds 마다 폭발(blast_radius·blast_damage)",
     "stat_boost": "seconds 동안 능력치 바꾸기(multiply), 끝나면 after_seconds 동안 after_multiply (카페인 충전 — scripts/skills/trait_effects.gd)",
     "clock_out": "히든: seconds 동안 화면 좀비가 멈춤(보스는 boss_seconds) + 내 피해 damage_multiplier 배 (칼퇴근)",
+    "miracle": "히든: 체력 heal_ratio 회복 + invulnerable_seconds 무적 + 주변 독(poison_radius·poison_damage_per_second·poison_seconds) — 기적의 처방",
     "grand_slam": "히든: 거대한 공 balls 개가 몸에서 사방으로 화면을 가로지름 (speed·distance·radius, 닿으면 damage·knockback)",
     "pack_hunt": "사냥개 dogs 마리가 seconds 동안 가까운 좀비를 쫓아다니며 문다 (speed·bite_radius·damage·bite_interval_seconds) — 히든 '사냥개 무리', 조련사 전직은 작게"
   },
@@ -121,6 +122,25 @@
     "cooldown_seconds": 35,
     "effects": [
       { "type": "clock_out", "seconds": 6, "boss_seconds": 1.5, "damage_multiplier": 2.0, "shake_trauma": 0.25 }
+    ]
+  },
+  "first_aid": {
+    "name": "응급 처치",
+    "icon": "icon_first_aid",
+    "cooldown_seconds": 25,
+    "effects": [
+      { "type": "heal", "ratio": 0.4 },
+      { "type": "radial_push", "radius": 40, "push_distance": 20, "damage": 0 }
+    ]
+  },
+  "hidden_miracle": {
+    "name": "기적의 처방",
+    "icon": "icon_hidden_miracle",
+    "is_hidden": true,
+    "description": "체력 전부 회복 + 10초 무적 + 주변 좀비 독",
+    "cooldown_seconds": 60,
+    "effects": [
+      { "type": "miracle", "heal_ratio": 1.0, "invulnerable_seconds": 10, "poison_radius": 70, "poison_damage_per_second": 12, "poison_seconds": 6 }
     ]
   },
   "homerun": {

@@ -53,7 +53,7 @@ func _damage_zombies_in(zone: Dictionary) -> void:
 	var tick_damage := float(zone["damage_per_second"]) * DAMAGE_TICK_SECONDS
 	for zombie: Zombie in _context.horde.in_radius(zone["center"], float(zone["radius"])):
 		if zone["kind"] == "poison":
-			zombie.apply_poison(float(zone["damage_per_second"]) * _context.survivor.stats.value("poison_damage_multiplier"), float(_context.status_rules["poison_cloud_apply_seconds"]))
+			zombie.apply_poison(float(zone["damage_per_second"]) * _context.survivor.stats.value("poison_damage_multiplier"), float(_context.status_rules["poison_cloud_apply_seconds"]), _context.poison_max_stacks())
 		else:
 			_context.horde.hit(zombie, tick_damage, {"source": "fire", "show_number": false})
 
