@@ -4,4 +4,4 @@
 | 파일 | 무엇 | 쓰는 곳 |
 |---|---|---|
 | `pixel_theme.tres` | 기본 UI 모양: 기본 글꼴 Galmuri11, 글자 크기 12 | project.godot 의 gui/theme/custom — 모든 화면 기본값 |
-| `title.tscn` · `survivor_select.tscn` · `run.tscn` · `result.tscn` | 화면 장면 (각 파일 editor_description 참고) | SceneRouter (문서 11 §3) |
+| `title.tscn` · `survivor_select.tscn` · `run.tscn` · `result.tscn` · `shelter.tscn` · `codex.tscn` · `achievements.tscn` | 화면 장면 (각 파일 editor_description 참고) | SceneRouter (문서 11 §3) |

@@ -14,6 +14,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 [autoload]
 
 GameData="*res://scripts/autoload/game_data.gd"
+SaveData="*res://scripts/autoload/save_data.gd"
 SceneRouter="*res://scripts/autoload/scene_router.gd"
 SoundPlayer="*res://scripts/autoload/sound_player.gd"
 

@@ -1,0 +1,89 @@
+{
+  "_설명": {
+    "파일": "data/shelter.json",
+    "하는 일": "은신처 강화 10종: 단계마다 값(values)과 가격(costs, 고철). stat 이 있으면 판 시작 때 생존자 능력치에 더하기(add)·곱하기(multiply)로 얹고, stat 이 없는 것(다시 뽑기·빼 버리기·부활·시작 레벨·고철 +%)은 RunModifiers 가 값만 꺼내 준다.",
+    "쓰는 곳": "scripts/meta/shelter.gd 가 읽고, scripts/ui/shelter_screen.gd 가 화면을 만든다. scripts/meta/run_modifiers.gd 가 판에 붙인다.",
+    "근거 문서": "14 §3 은신처 강화 10종, 03 §11 보상과 은신처"
+  },
+  "_values_설명": "values[0] = 1단계 값. 단계 0 은 강화 안 함. display: plus_number(+12) · plus_percent_from_multiplier(1.08 → +8%) · plus_percent(0.08 → +8%) · count(+1번)",
+  "health": {
+    "name": "의무실 침대",
+    "effect_name": "최대 체력",
+    "flavor": "누우면 살 것 같다",
+    "stat": "max_health", "mode": "add", "display": "plus_number",
+    "values": [7, 14, 22, 31, 41],
+    "costs": [45, 115, 240, 430, 710]
+  },
+  "damage": {
+    "name": "공구함",
+    "effect_name": "모든 피해",
+    "flavor": "날 세운 공구 한가득",
+    "stat": "damage_multiplier", "mode": "multiply", "display": "plus_percent_from_multiplier",
+    "values": [1.04, 1.08, 1.13, 1.18, 1.24],
+    "costs": [65, 160, 310, 530, 860]
+  },
+  "speed": {
+    "name": "운동화 상자",
+    "effect_name": "이동 속도",
+    "flavor": "짝짝이도 신으면 뛴다",
+    "stat": "move_speed", "mode": "multiply", "display": "plus_percent_from_multiplier",
+    "values": [1.03, 1.06, 1.09, 1.12, 1.16],
+    "costs": [55, 135, 260, 440, 720]
+  },
+  "pickup": {
+    "name": "자석 낚싯대",
+    "effect_name": "줍는 범위",
+    "flavor": "고철상 아저씨 물건",
+    "stat": "pickup_radius", "mode": "multiply", "display": "plus_percent_from_multiplier",
+    "values": [1.1, 1.21, 1.32, 1.44, 1.57],
+    "costs": [40, 95, 190, 340, 570]
+  },
+  "experience": {
+    "name": "연구 메모",
+    "effect_name": "백신 조각",
+    "flavor": "간호사의 밤샘 메모",
+    "stat": "shard_bonus_ratio", "mode": "add", "display": "plus_percent",
+    "values": [0.04, 0.08, 0.12, 0.17, 0.22],
+    "costs": [60, 145, 280, 470, 770]
+  },
+  "reroll": {
+    "name": "카드 다시 섞기",
+    "effect_name": "다시 뽑기",
+    "flavor": "카드가 별로면 한 번 더",
+    "display": "count", "count_word": "번",
+    "values": [1, 2, 3],
+    "costs": [90, 270, 620]
+  },
+  "banish": {
+    "name": "쓰레기통",
+    "effect_name": "빼 버리기",
+    "flavor": "싫은 카드는 여기로",
+    "display": "count", "count_word": "번",
+    "values": [1, 2],
+    "costs": [150, 490]
+  },
+  "revive": {
+    "name": "예비 구급 가방",
+    "effect_name": "부활",
+    "flavor": "한 번은 다시 일어난다",
+    "display": "count", "count_word": "번",
+    "values": [1],
+    "costs": [930]
+  },
+  "start_level": {
+    "name": "출동 전 몸풀기",
+    "effect_name": "시작 레벨",
+    "flavor": "몸 풀고 나가면 다르다",
+    "display": "count", "count_word": "",
+    "values": [1, 2, 3],
+    "costs": [210, 560, 1150]
+  },
+  "scrap_bonus": {
+    "name": "고철 수레",
+    "effect_name": "받는 고철",
+    "flavor": "실을수록 남는다",
+    "display": "plus_percent",
+    "values": [0.05, 0.1, 0.15, 0.2, 0.26],
+    "costs": [80, 210, 390, 650, 1020]
+  }
+}

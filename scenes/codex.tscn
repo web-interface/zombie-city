@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/codex_screen.gd" id="1"]
+
+[node name="Codex" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+editor_description = "[파일] scenes/codex.tscn
+[하는 일] 도감 화면: 좀비·무기·진화·히든 스킬 칸, 만난 것은 그림, 못 만난 것은 실루엣
+[쓰는 곳] 타이틀에서 SceneRouter.go_to_codex() 로 연다 / scripts/ui/codex_screen.gd 가 화면을 만든다
+[근거 문서] 04 §8 도감, 14 §3, 05 화면 목록(도감·업적)"
+script = ExtResource("1")

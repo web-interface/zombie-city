@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/pause_menu.gd
-## [하는 일] 일시정지: 오른쪽 위 작은 '멈춤' 버튼과, 누르면(또는 앱을 나갔다 오면) 뜨는 창 — 지금 생존자·전직·무기/장비 목록, 계속하기(3초 세고 다시 시작), 포기하기.
+## [하는 일] 일시정지: 오른쪽 위 작은 '멈춤' 버튼과, 누르면(또는 앱을 나갔다 오면) 뜨는 창 — 지금 생존자·전직·무기/장비 목록, 계속하기(3초 세고 다시 시작), 설정(소리·진동·흔들림 창), 포기하기.
 ## [쓰는 곳] scripts/ui/hud.gd 가 만든다. run.gd 가 앱을 나갈 때 Hud.show_pause_menu() 로 연다.
 ## [근거 문서] 05 화면 목록(일시정지), 13 (앱 전환·전화에도 판이 안 날아가게, 돌아오면 3초 카운트)
 class_name PauseMenu
@@ -75,6 +75,9 @@ func _build_window() -> PanelContainer:
 	var resume_button := PixelUi.button("계속하기", PixelUi.GOOD)
 	resume_button.pressed.connect(_start_countdown)
 	column.add_child(resume_button)
+	var settings_button := PixelUi.button("설정", PixelUi.INK)
+	PixelUi.on_press(settings_button, _open_settings)
+	column.add_child(settings_button)
 	var give_up_button := PixelUi.button("포기하기", PixelUi.ALERT)
 	give_up_button.pressed.connect(func() -> void:
 		_window.visible = false
@@ -92,6 +95,14 @@ func _build_info_text() -> String:
 	for gear_id: String in _rack.gear_levels.keys():
 		lines.append("· %s %d단계" % [GameData.entry("gear", gear_id)["name"], _rack.gear_levels[gear_id]])
 	return "\n".join(lines)
+
+
+## 설정 창을 멈춤 창 자리에 띄우고, 닫으면 멈춤 창으로 돌아온다 (판은 계속 멈춰 있음)
+func _open_settings() -> void:
+	_window.visible = false
+	var settings := SettingsPanel.new()
+	settings.closed.connect(func() -> void: _window.visible = true)
+	add_child(settings)
 
 
 func _start_countdown() -> void:

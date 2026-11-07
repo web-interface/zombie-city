@@ -72,6 +72,31 @@ static func button(text: String, accent: Color = INK) -> Button:
 	return new_button
 
 
+## 버튼을 누르면: 소리 + 살짝 눌렸다 돌아오는 움직임 + 할 일. 모든 메뉴 버튼이 같은 손맛을 갖게 (문서 05 원칙)
+static func on_press(target: Button, action: Callable, sound_name: String = "ui_click") -> void:
+	target.pressed.connect(func() -> void:
+		SoundPlayer.play(sound_name)
+		target.pivot_offset = target.size * 0.5
+		var bounce := target.create_tween()
+		bounce.tween_property(target, "scale", Vector2(0.93, 0.93), 0.04)
+		bounce.tween_property(target, "scale", Vector2.ONE, 0.08)
+		action.call())
+
+
+## 세로로 끌어 올리는 목록 칸: 가로 막대 없음, 얇은 각진 막대 (기본 회색 둥근 막대 = AI 티)
+static func scroll_area() -> ScrollContainer:
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.scroll_deadzone = 4   # 손가락으로 버튼을 누르다 조금 흔들려도 목록이 움직이지 않게
+	var bar := scroll.get_v_scroll_bar()
+	bar.custom_minimum_size = Vector2(3, 0)
+	bar.add_theme_stylebox_override("scroll", panel_style(Color("10131a"), Color("10131a"), 0))
+	bar.add_theme_stylebox_override("grabber", panel_style(PANEL_EDGE, PANEL_EDGE, 0))
+	bar.add_theme_stylebox_override("grabber_highlight", panel_style(MUTED, MUTED, 0))
+	bar.add_theme_stylebox_override("grabber_pressed", panel_style(INK, INK, 0))
+	return scroll
+
+
 ## 10×10 아이콘을 2배로 (art/sprites/icons/<이름>.png)
 static func icon(icon_name: String, scale: int = 2) -> TextureRect:
 	var rect := TextureRect.new()
