@@ -43,6 +43,11 @@ func set_hidden_skill(new_skill_id: String) -> void:
 	cooldown_left = 0.0
 
 
+## 다음 밤으로 넘어갈 때 히든 스킬의 남은 효과를 거둔다 (scripts/run/night_flow.gd)
+func clear_lingering_effects() -> void:
+	_hidden_effects.clear_scheduled()
+
+
 func is_ready() -> bool:
 	return cooldown_left <= 0.0 and not _context.survivor.is_dead
 

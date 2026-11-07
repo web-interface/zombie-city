@@ -7,6 +7,7 @@ extends Control
 
 const SHOW_SECONDS := 2.4
 const SLIDE_SECONDS := 0.18
+const MAX_LINES := 3
 const STYLES := {
 	"alert": {"edge": Color("ff5c5c"), "text": Color("ffe9e9"), "tag": "긴급재난문자"},
 	"good": {"edge": Color("8ff59a"), "text": Color("e9ffe9"), "tag": ""},
@@ -22,8 +23,8 @@ var _time: float = 0.0
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	offset_top = 52.0
-	offset_bottom = 92.0
+	offset_top = 70.0      # 무기 칸(34~46)·보스 체력 줄(50~64)·멈춤 버튼(50~66) 아래 — 겹치지 않게 (검수 지적)
+	offset_bottom = 130.0
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
@@ -50,13 +51,15 @@ func _draw() -> void:
 	var slide := clampf(_time / SLIDE_SECONDS, 0.0, 1.0)
 	var fade := clampf((SHOW_SECONDS - _time) / 0.3, 0.0, 1.0)
 	var top := -8.0 * (1.0 - slide)
-	var line_count := 2 if PixelUi.FONT_REGULAR.get_string_size(String(_current["text"]), HORIZONTAL_ALIGNMENT_LEFT, -1, PixelUi.SIZE_REGULAR).x > size.x - 16 else 1
-	var box := Rect2(6, top, size.x - 12, 14 + 13 * line_count + (0 if String(style["tag"]).is_empty() else 6))
+	var lines := PixelUi.wrap_words(String(_current["text"]), PixelUi.FONT_REGULAR, PixelUi.SIZE_REGULAR, size.x - 20.0, MAX_LINES).split("
+")
+	var box := Rect2(6, top, size.x - 12, 14 + 13 * lines.size() + (0 if String(style["tag"]).is_empty() else 8))
 	draw_rect(box, Color(0.06, 0.06, 0.09, 0.9 * fade))
 	draw_rect(Rect2(box.position, Vector2(box.size.x, 2)), Color(style["edge"], fade))
 	var text_top := box.position.y + 15.0
 	if not String(style["tag"]).is_empty():
-		draw_string(PixelUi.FONT_SMALL, Vector2(box.position.x + 4, box.position.y + 11), String(style["tag"]), HORIZONTAL_ALIGNMENT_LEFT, -1, PixelUi.SIZE_SMALL, Color(style["edge"], fade))
-		text_top += 6.0
-	# 좁은 세로 화면이라 길면 두 줄로 (글자가 화면 밖으로 잘리지 않게)
-	draw_multiline_string(PixelUi.FONT_REGULAR, Vector2(box.position.x + 2, text_top), String(_current["text"]), HORIZONTAL_ALIGNMENT_CENTER, box.size.x - 4, PixelUi.SIZE_REGULAR, 2, Color(style["text"], fade))
+		draw_string(PixelUi.FONT_SMALL, Vector2(box.position.x + 4, box.position.y + 13), String(style["tag"]), HORIZONTAL_ALIGNMENT_LEFT, -1, PixelUi.SIZE_SMALL, Color(style["edge"], fade))
+		text_top += 8.0
+	# 좁은 세로 화면이라 길면 낱말 단위로 여러 줄 (글자가 화면 밖으로 잘리지 않게, 줄마다 따로 그려 줄 간격이 고르게)
+	for index: int in range(lines.size()):
+		draw_string(PixelUi.FONT_REGULAR, Vector2(box.position.x + 2, text_top + 13.0 * index), lines[index], HORIZONTAL_ALIGNMENT_CENTER, box.size.x - 4, PixelUi.SIZE_REGULAR, Color(style["text"], fade))

@@ -36,6 +36,8 @@ var _textures: Dictionary = {}       # 그림 이름 → [보통, 하얀 실루�
 var _context: RunContext
 var _abilities := ZombieAbilities.new()
 var _time: float = 0.0
+var _had_elites: bool = false
+var _elite_count: int = 0   # 정예가 없으면 금빛 고리를 다시 그리지 않음 (검수 — 성능)
 
 
 func setup(context: RunContext) -> void:
@@ -69,7 +71,9 @@ func update(delta: float) -> void:
 	_remove_dead_and_animate(delta)
 	_rebuild_grid()   # 무기·스킬이 이번 프레임에 찾을 때 움직인 뒤의 위치로 찾게
 	_time += delta
-	queue_redraw()   # 정예 금빛 고리
+	if _elite_count > 0 or _had_elites:
+		queue_redraw()   # 정예 금빛 고리 (사라진 프레임에도 한 번 지우게)
+	_had_elites = _elite_count > 0
 
 
 ## 다음 밤으로 넘어갈 때 무리를 비운다 (그림은 다시 쓰려고 모아 둠)
@@ -197,6 +201,7 @@ func _kill(zombie: Zombie, source: String) -> void:
 
 func _remove_dead_and_animate(delta: float) -> void:
 	_keep_only(zombies, func(zombie: Zombie) -> bool: return not zombie.is_dead)
+	_elite_count = 0
 	for zombie: Zombie in zombies:
 		_animate(zombie, delta)
 	for zombie: Zombie in _dying:
@@ -242,6 +247,7 @@ func _animate(zombie: Zombie, delta: float) -> void:
 		var rage_pulse := 0.75 + 0.25 * sin(_time * 10.0)   # 분노한 보스는 붉게 고동침
 		sprite.modulate = Color(1.0, rage_pulse * 0.6, rage_pulse * 0.5, sprite.modulate.a)
 	if zombie.is_elite:
+		_elite_count += 1
 		var pulse := 0.85 + 0.15 * sin(_time * 6.0)
 		sprite.modulate = Color(ELITE_GLOW.r * pulse, ELITE_GLOW.g * pulse, ELITE_GLOW.b, sprite.modulate.a)
 		sprite.scale = Vector2.ONE * (zombie.radius / float(zombie.info["radius"]))

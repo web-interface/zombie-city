@@ -5,6 +5,8 @@
 class_name ZombieSpawner
 extends Node
 
+const EVENT_EXTRA_ZOMBIES := 40   # 포위·떼 돌진·부하 부르기는 상한보다 이만큼 더 허용 (이벤트가 통째로 빠지지 않게)
+
 var _context: RunContext
 var _curve: Dictionary = {}
 var _spawn_budget: float = 0.0
@@ -57,6 +59,8 @@ func update(delta: float) -> void:
 
 ## 좀비 하나를 이번 밤의 세기로 만든다 (체력·피해·빠르기 배율, 정예 확률). 이벤트·보스 새끼도 이걸 쓴다.
 func spawn_zombie(kind_id: String, at_position: Vector2, can_be_elite: bool) -> Zombie:
+	if _context.horde.alive_count() >= int(_curve["max_zombies_on_field"]) + EVENT_EXTRA_ZOMBIES:
+		return null   # 이벤트·보스 부하도 상한을 지킨다 (웹·폰 성능 — 검수에서 377마리까지 감)
 	var nights := _context.night_cycle
 	var zombie := _context.horde.spawn(kind_id, at_position, nights.zombie_health_multiplier(_context.elapsed_seconds))
 	zombie.contact_damage_per_second *= nights.contact_damage_multiplier()

@@ -38,6 +38,11 @@ func watch_build(skill_runner: SkillRunner, time_effects: TimeEffects) -> void:
 	skill_runner.hidden_skill_used.connect(_on_hidden_skill_used)
 
 
+## 밤을 넘길 때 바닥에 두고 온 상자를 쌓아 둔다 (다음 밤에 열림)
+func add_pending_chests(count: int) -> void:
+	_pending_chests += count
+
+
 ## 쌓인 상자가 있으면 슬롯 창을 연다 (run.gd 가 창을 띄워도 될 때만 부름). 열었으면 true.
 func open_pending_chest() -> bool:
 	if _pending_chests <= 0:

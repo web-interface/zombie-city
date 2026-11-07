@@ -72,6 +72,7 @@ func _spawn_boss(plan: Dictionary) -> void:
 	var spot := _context.survivor.position + Vector2.from_angle(randf() * TAU) * float(GameData.table("spawn_curve")["boss_spawn_distance"])
 	var boss := _context.horde.spawn(String(plan["kind"]), spot, float(plan["health_multiplier"]) * nights.boss_health_multiplier())
 	boss.contact_damage_per_second *= nights.contact_damage_multiplier()
+	boss.move_speed *= nights.speed_multiplier()   # 밤 분위기·감염도 빠르기도 보스에
 	boss.boss_state = _attacks.init_state(boss)
 	_bosses.append(boss)
 	boss_appeared.emit(String(plan["banner"]))

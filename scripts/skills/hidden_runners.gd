@@ -142,3 +142,9 @@ func draw_glow_on(canvas: CanvasItem) -> void:
 		canvas.draw_arc(center, radius + 1.0, 0.0, TAU, 24, Color(WeaponVisuals.GOLD, 0.8), 1.0)
 	for dog: Dictionary in _dogs:
 		OrbitWeapon.draw_dog(canvas, dog["position"], dog["velocity"], float(dog["step"]), Color.WHITE)
+
+
+## 다음 밤으로 넘어갈 때 달리던 공·개를 거둔다
+func clear() -> void:
+	_balls.clear()
+	_dogs.clear()

@@ -51,11 +51,11 @@ func _ready() -> void:
 	_hud.watch_bosses(_boss_director)
 	_rewards.setup(context, _hud, _level_up, _combo)
 	_rewards.watch_build(_skill_runner, _time_effects)
-	_meta_hooks.setup(context, _hud, _level_up, _boss_director)
 	add_child(_night_flow)
-	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo,
+	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo, "rewards": _rewards, "skill_runner": _skill_runner,
 		"night_systems": [_spawner, _events, _boss_director, _extraction]})
 	_connect_signals()
+	_meta_hooks.setup(context, _hud, _level_up, _boss_director)   # 신호를 이은 뒤에 (시작 레벨 업도 기록·전직에 잡히게 — 검수 지적)
 	SoundPlayer.start_run_music()
 	_hud.start_first_run_hints(_skill_runner)
 	var autoplay: Node = null

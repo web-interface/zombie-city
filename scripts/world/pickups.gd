@@ -54,6 +54,15 @@ func positions() -> Array[Vector2]:
 	return result
 
 
+## 다음 밤으로 넘어갈 때: 바닥에 남은 보물 상자를 거둬 그 수를 돌려준다 (사라지지 않고 다음 밤에 열리게)
+func take_chests() -> int:
+	var count := 0
+	for item: Dictionary in _items:
+		if item["kind"] == "chest":
+			count += 1
+	return count
+
+
 func clear() -> void:
 	_items.clear()
 	queue_redraw()

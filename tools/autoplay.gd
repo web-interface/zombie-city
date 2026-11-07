@@ -53,7 +53,7 @@ func move_direction() -> Vector2:
 		wanted += _melee_approach() * (1.0 if _context.survivor.health_ratio() > MELEE_BRAVE_HEALTH_RATIO else 0.6)
 	elif skill_level != "초보" and not _is_heading_to_zone():
 		wanted += _boss_engage() * 0.7
-	if skill_level == "고수":
+	if skill_level == "고수" and not _is_heading_to_zone():   # 헬기 탈 땐 보스 피하기보다 원 안이 먼저 (검수: 원에 못 들어가 헬기를 놓침)
 		wanted += _boss_dodge() * 2.5 + _light_pull() * 0.5
 	_wander_angle += randf_range(-0.3, 0.3)
 	match skill_level:
@@ -95,8 +95,9 @@ func _react_late(wanted: Vector2, interval_seconds: float, idle_chance: float) -
 
 
 func wants_skill() -> bool:
-	if not _skill_runner.is_ready():
-		return false
+	if not _skill_runner.is_ready(): return false
+	if _is_heading_to_zone() and _skill_runner.skill.get("effects", []).any(func(effect: Dictionary) -> bool: return effect.get("type", "") in ["dash", "express"]):
+		return false   # 헬기 원 안에서 돌진하면 원 밖으로 튕겨 나감 (검수: 택배기사 봇이 헬기를 놓침)
 	var crowd := _context.horde.in_radius(_context.survivor.position, 28.0).size()
 	match skill_level:
 		"초보":

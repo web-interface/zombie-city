@@ -10,10 +10,12 @@ var _hud: Hud
 var _recorder: RunRecorder
 var _level_up: LevelUp
 var _combo: KillCombo
+var _rewards: RunRewards
+var _skill_runner: SkillRunner
 var _night_systems: Array = []   # reset_for_new_night() 를 가진 규칙 담당들 (나오기·이벤트·보스·탈출)
 
 
-## parts = {"hud", "recorder", "level_up", "combo", "night_systems": [ZombieSpawner, HordeEvents, BossDirector, Extraction]}
+## parts = {"hud", "recorder", "level_up", "combo", "rewards", "skill_runner", "night_systems": [ZombieSpawner, HordeEvents, BossDirector, Extraction]}
 func setup(context: RunContext, parts: Dictionary) -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_context = context
@@ -21,6 +23,8 @@ func setup(context: RunContext, parts: Dictionary) -> void:
 	_recorder = parts["recorder"]
 	_level_up = parts["level_up"]
 	_combo = parts["combo"]
+	_rewards = parts["rewards"]
+	_skill_runner = parts["skill_runner"]
 	_night_systems = parts["night_systems"]
 
 
@@ -48,7 +52,9 @@ func start_next_night() -> void:
 		system.call("reset_for_new_night")
 	_context.horde.clear_all()
 	_context.health_packs.clear()
+	_rewards.add_pending_chests(_context.pickups.take_chests())   # 바닥 상자는 사라지지 않고 쌓아 둠
 	_context.pickups.clear()
+	_skill_runner.clear_lingering_effects()
 	_context.projectiles.clear()
 	_context.weapon_rack.zones.clear()   # 무기가 깔아 둔 연기·불 장판
 	for weapon: Weapon in _context.weapon_rack.weapons:

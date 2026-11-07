@@ -48,6 +48,12 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	var root := PixelUi.full_rect(Control.new())
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root)
+	_build_play_parts(root, context, rack, level_up, skill_runner, extraction)
+	_build_windows(root, rack, level_up, promotion)
+
+
+## 판 중 늘 보이는 것: 조이스틱·위 표시줄·보스 체력 줄·착륙 화살표·알림 띠·스킬 버튼·컷인
+func _build_play_parts(root: Control, context: RunContext, rack: WeaponRack, level_up: LevelUp, skill_runner: SkillRunner, extraction: Extraction) -> void:
 	_joystick = FloatingJoystick.new()
 	root.add_child(_joystick)
 	_top_bar = HudTopBar.new()
@@ -70,6 +76,10 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	_skill_button.offset_right = -SKILL_BUTTON_MARGIN.x
 	_skill_button.offset_bottom = -SKILL_BUTTON_MARGIN.y
 	root.add_child(SkillCutin.create(skill_runner, context))   # 히든 스킬 컷인 (문서 14 §2-5)
+
+
+## 멈추고 뜨는 창: 멈춤 메뉴·레벨 업 카드·전직·밤 생존·보물 상자
+func _build_windows(root: Control, rack: WeaponRack, level_up: LevelUp, promotion: Promotion) -> void:
 	_pause_menu = PauseMenu.new()
 	root.add_child(_pause_menu)
 	_pause_menu.setup(promotion, rack)

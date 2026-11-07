@@ -45,8 +45,9 @@ func open(summary: Dictionary) -> void:
 	_title.text = "%s 생존!" % summary["night_name"]
 	for child: Node in _stats_box.get_children():
 		child.queue_free()
-	_add_line("처치 %d · 레벨 %d · 최대 연속 %d" % [summary["kills"], summary["level"], summary["best_combo"]], PixelUi.INK)
-	_add_line("보상: 체력 %d%% 회복 + 카드 한 장 더" % summary["heal_percent"], PixelUi.GOOD)
+	_add_line("처치 %s · 레벨 %d" % [RunMetrics.format_count(int(summary["kills"])), summary["level"]], PixelUi.INK)   # 줄마다 짧게 (한 글자만 넘어가지 않게 — 검수 지적)
+	_add_line("최대 연속 %s" % RunMetrics.format_count(int(summary["best_combo"])), PixelUi.INK)
+	_add_line("체력 %d%% 회복 + 카드 한 장" % summary["heal_percent"], PixelUi.GOOD)
 	_add_line("%s은 좀비가 더 세고 많아요" % summary["next_night_name"], PixelUi.ALERT)
 	_next_button.text = "%s으로" % summary["next_night_name"]
 	_opened_at_msec = Time.get_ticks_msec()

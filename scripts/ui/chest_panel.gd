@@ -20,6 +20,7 @@ var _claim_button: Button
 var _slots: Array[TextureRect] = []
 var _final_icons: Array[String] = []
 var _spin_pool: Array[String] = []
+var _spin_textures: Array[Texture2D] = []   # 도는 동안 매 프레임 불러오지 않게 열 때 미리 (검수 — 성능)
 var _stopped_count: int = 0
 var _spin_time: float = 0.0
 var _rules: Dictionary = {}
@@ -63,6 +64,9 @@ func open(cards: Array, count: int) -> void:
 		_final_icons.append(String(cards[index].get("icon", "icon_pistol")) if index < cards.size() else "icon_backpack")
 	_spin_pool = _final_icons.duplicate()
 	_spin_pool.append_array(FALLBACK_ICONS)
+	_spin_textures.clear()
+	for icon_name: String in _spin_pool:
+		_spin_textures.append(_load_icon(icon_name))
 	_build_slots(count)
 	_fill_names(cards, count)
 	_title.text = "대박! 보물 상자" if count >= 5 else "보물 상자!"
@@ -94,7 +98,7 @@ func _process(delta: float) -> void:
 		_stop_slot(_stopped_count)
 	for index: int in range(_stopped_count, _slots.size()):   # 아직 도는 칸
 		var tick := int(_spin_time / REEL_SPIN_INTERVAL) + index * 3
-		_slots[index].texture = _load_icon(_spin_pool[tick % _spin_pool.size()])
+		_slots[index].texture = _spin_textures[tick % _spin_textures.size()]
 
 
 func _stop_slot(index: int) -> void:

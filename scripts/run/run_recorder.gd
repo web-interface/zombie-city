@@ -158,8 +158,20 @@ func _balance_metrics() -> Dictionary:
 		"weapons_final": _final_weapon_ids(),
 		"evolutions": evolutions,
 		"hidden_skill": hidden_skill,
+		"near_miss_texts": _evolution_near_misses(),
 		"bot": String(SceneRouter.test_options.get("autoplay", "")),
 	}
+
+
+## 아까운 표시용: 최고 단계까지 키웠는데 짝 장비가 없어서 진화를 못 한 무기 (결과 화면 맨 앞에 — 문서 14 §4)
+func _evolution_near_misses() -> Array[String]:
+	var texts: Array[String] = []
+	var rack := _context.weapon_rack
+	for weapon: Weapon in rack.weapons:
+		if weapon.can_evolve() and not rack.has_gear(weapon.evolution_gear_id()):
+			var gear_name := String(GameData.entry("gear", weapon.evolution_gear_id()).get("name", ""))
+			texts.append("%s 진화까지 %s 하나 부족했어요" % [weapon.display_name(), gear_name])
+	return texts
 
 
 ## 판 끝에 가진 무기 (진화했으면 진화 id — 어떤 빌드로 끝났나, 문서 14 §2)

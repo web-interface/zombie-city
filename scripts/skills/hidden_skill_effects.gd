@@ -178,3 +178,10 @@ func _update_miracle(delta: float) -> void:
 
 func _visuals() -> WeaponVisuals:
 	return _context.weapon_rack.visuals
+
+
+## 다음 밤으로 넘어갈 때: 아직 안 터진 폭격·화염 고리·돌진을 거둔다 (새 밤 0:00 에 이어지지 않게 — 검수 지적). 무적 같은 생존자 효과는 둔다.
+func clear_scheduled() -> void:
+	_events.clear()
+	_express = {}
+	_runners.clear()

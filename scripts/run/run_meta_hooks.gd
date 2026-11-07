@@ -5,11 +5,6 @@
 class_name RunMetaHooks
 extends RefCounted
 
-const REVIVE_HEALTH_RATIO := 0.5
-const REVIVE_GUARD_SECONDS := 2.0
-const REVIVE_PUSH_RADIUS := 70.0
-const REVIVE_STUN_SECONDS := 2.0
-
 var _context: RunContext
 var _hud: Hud
 var _revives_left: int = 0
@@ -33,11 +28,12 @@ func try_revive() -> bool:
 		return false
 	_revives_left -= 1
 	var survivor := _context.survivor
-	survivor.revive(REVIVE_HEALTH_RATIO, REVIVE_GUARD_SECONDS)
-	for zombie: Zombie in _context.horde.in_radius(survivor.position, REVIVE_PUSH_RADIUS):
-		zombie.push(zombie.position - survivor.position, 30.0)
-		zombie.stun(REVIVE_STUN_SECONDS)
-	_context.effects.ring(survivor.position, REVIVE_PUSH_RADIUS, PixelUi.GOOD, 0.6)
+	var rules: Dictionary = GameData.table("meta_rules")["revive"]
+	survivor.revive(float(rules["health_ratio"]), float(rules["guard_seconds"]))
+	for zombie: Zombie in _context.horde.in_radius(survivor.position, float(rules["push_radius"])):
+		zombie.push(zombie.position - survivor.position, float(rules["push_distance"]))
+		zombie.stun(float(rules["stun_seconds"]))
+	_context.effects.ring(survivor.position, float(rules["push_radius"]), PixelUi.GOOD, 0.6)
 	_context.shake("boss_kill")
 	_context.play_sound("miracle_chime")
 	_hud.show_banner("다시 일어났어요! (부활 남음 %d)" % _revives_left, "good")
@@ -48,7 +44,5 @@ func _announce_start() -> void:
 	if SceneRouter.is_daily_challenge and not SceneRouter.daily_rule.is_empty():
 		_hud.show_banner("오늘의 도전: %s" % SceneRouter.daily_rule.get("name", ""), "alert")
 	elif not SceneRouter.current_run_goals.is_empty():
-		var goal_texts: Array[String] = []
-		for goal: Dictionary in SceneRouter.current_run_goals:
-			goal_texts.append(String(goal.get("text", "")))
-		_hud.show_banner("이번 판 목표: %s" % " · ".join(goal_texts), "good")
+		for goal: Dictionary in SceneRouter.current_run_goals:   # 목표마다 띠 하나 (한 띠에 다 넣으면 잘림 — 검수 지적)
+			_hud.show_banner("목표: %s" % goal.get("text", ""), "good")

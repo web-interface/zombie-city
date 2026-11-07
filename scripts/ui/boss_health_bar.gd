@@ -5,8 +5,8 @@
 class_name BossHealthBar
 extends Control
 
-const TOP := 60.0                 # 무기 칸(아래 끝 46) 밑
-const RIGHT_MARGIN := 40.0        # 오른쪽 '멈춤' 버튼을 피함
+const TOP := 57.0                 # 이름 글자 바닥선 — 무기 칸(아래 끝 46) 밑, 알림 띠(70~) 위
+const RIGHT_MARGIN := 40.0        # 오른쪽 '멈춤' 버튼(146~176)을 피함
 const BAR_HEIGHT := 4.0
 const SIDE_MARGIN := 8.0
 const TRAIL_FOLLOW_SPEED := 0.6   # 흰 줄이 따라 내려오는 빠르기 (초당 체력 비율)
