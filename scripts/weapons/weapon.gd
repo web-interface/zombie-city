@@ -1,7 +1,7 @@
 ## [파일] scripts/weapons/weapon.gd
-## [하는 일] 무기 공통 틀: 단계(1~5)와 진화, 지금 숫자 꺼내기(진화하면 진화 숫자 전부), 다시 공격까지 남은 시간(공격 속도 능력치 반영), "공격할 때가 됐나". 이름·아이콘·금색 여부, 치명타 더하기·기절·범위 같은 무기끼리 같이 쓰는 계산도 둔다. 무기마다 이 틀을 이어받아 attack()(언제 어떻게 때리나)만 따로 쓴다.
+## [하는 일] 무기 공통 틀: 단계(1~5, 늦은 밤엔 그 밤 최대 레벨까지 — 6레벨부터 피해 +8%씩)와 진화, 지금 숫자 꺼내기(진화하면 진화 숫자 전부), 다시 공격까지 남은 시간(공격 속도 능력치 반영), "공격할 때가 됐나". 이름·아이콘·금색 여부, 치명타 더하기·기절·범위 같은 무기끼리 같이 쓰는 계산도 둔다. 무기마다 이 틀을 이어받아 attack()(언제 어떻게 때리나)만 따로 쓴다.
 ## [쓰는 곳] scripts/weapons/weapon_rack.gd 가 만들고 매 프레임 update() 를 부른다. 이어받는 곳: projectile·spread·melee_arc·orbit·chain·lob_area·pulse·line _weapon.gd
-## [근거 문서] 03 §2 무기·§4 진화, 14 §2-2·§2-4, 11 §9 무기 구조
+## [근거 문서] 03 §2 무기·§4 진화, 14 §2-2·§2-4, 16 §6·15 §5-2 무기 레벨 5 넘게, 11 §9 무기 구조, data/run_rules.json build.weapon_growth
 class_name Weapon
 extends RefCounted
 
@@ -19,6 +19,8 @@ var context: RunContext
 var look: String = ""
 var _cooldown_left: float = 0.0
 var _attack_count: int = 0
+var _over_level_cache: Dictionary = {}
+var _over_level_cache_key: int = -1
 
 
 func _init(new_weapon_id: String, run_context: RunContext) -> void:
@@ -28,17 +30,27 @@ func _init(new_weapon_id: String, run_context: RunContext) -> void:
 	look = String(info.get("look", ""))
 
 
-## 지금 단계의 숫자 묶음 (data/weapons.json levels). 진화했으면 evolution.numbers 전부.
+## 지금 단계의 숫자 묶음 (data/weapons.json levels). 진화했으면 evolution.numbers 전부. 6레벨부터는 그 위에 넘은 레벨 보너스.
 func numbers() -> Dictionary:
-	if is_evolved:
-		return info["evolution"]["numbers"]
-	var levels: Array = info["levels"]
-	return levels[level - 1]
+	var base_numbers: Dictionary = info["evolution"]["numbers"] if is_evolved else info["levels"][mini(level, base_level_count()) - 1]
+	if level <= base_level_count():
+		return base_numbers
+	var cache_key := level * 2 + (1 if is_evolved else 0)
+	if cache_key != _over_level_cache_key:
+		_over_level_cache = WeaponGrowth.over_level_numbers(base_numbers, level - base_level_count())
+		_over_level_cache_key = cache_key
+	return _over_level_cache
 
 
-func max_level() -> int:
+## data 에 적힌 단계 수 (5) — 진화 조건·보너스가 붙기 시작하는 기준
+func base_level_count() -> int:
 	var levels: Array = info["levels"]
 	return levels.size()
+
+
+## 그 밤 최대 레벨 (5 + 2 × (밤 − 1) — 문서 15 §5-2)
+func max_level() -> int:
+	return maxi(base_level_count(), WeaponGrowth.night_max_level(context.night_cycle.night))
 
 
 func level_up() -> void:
@@ -47,7 +59,7 @@ func level_up() -> void:
 
 ## 최고 단계이고 아직 진화 안 했으면 짝 장비만 있으면 진화할 수 있다 (문서 14 §2-4)
 func can_evolve() -> bool:
-	return info.has("evolution") and not is_evolved and level >= max_level()
+	return info.has("evolution") and not is_evolved and level >= base_level_count()
 
 
 func evolution_gear_id() -> String:

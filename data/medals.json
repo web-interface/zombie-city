@@ -1,0 +1,46 @@
+{
+  "_설명": {
+    "파일": "data/medals.json",
+    "하는 일": "훈장 (문서 15 §5-2·부록 A): 밤 생존 뒤 3장 중 1장(안전 safe_count + 위험 risky_count), 같은 훈장은 max_stacks 번까지 쌓임. 생존자 전용(survivor 칸)은 안전 쪽에 섞이고 survivor_weight 배 더 자주. stats = 생존자 능력치 바꾸기(add 더하기 / multiply 곱하기 — 쌓이면 그만큼 반복), night = 밤 배율(scripts/systems/night_cycle.gd _modifier 키: zombie_count·elite_chance 곱하기, helicopter_hold_seconds_add 더하기).",
+    "쓰는 곳": "scripts/systems/medals.gd 가 읽어 뽑고 적용한다 (scripts/run/night_carry.gd 가 들고 있음). 밤 준비 창(scripts/ui/night_prep_panel.gd)이 보여 준다.",
+    "근거 문서": "15 §2·§5-2·부록 A"
+  },
+  "_새기능_대신": "경찰 지원 사격·야구선수 강타·사냥꾼 덫 장인은 새 기능 대신 능력치로: 지원 사격 = 발 수 +1, 강타 = 밀어내기 +30%·피해 +8%, 덫 장인 = 범위 +15%·치명 +4%.",
+  "offer": {
+    "safe_count": 2,
+    "risky_count": 1,
+    "max_stacks": 3,
+    "survivor_weight": 2.0
+  },
+  "medals": {
+    "trained_arms": {"name": "단련된 팔", "kind": "safe", "icon": "icon_shelter_damage", "description": "피해 +10%", "stats": {"multiply": {"damage_multiplier": 1.10}}},
+    "quick_hands": {"name": "빠른 손", "kind": "safe", "icon": "icon_shelter_speed", "description": "공격 속도 +8%", "stats": {"multiply": {"attack_speed_multiplier": 1.08}}},
+    "sturdy_body": {"name": "튼튼한 몸", "kind": "safe", "icon": "icon_shelter_health", "description": "최대 체력 +15", "stats": {"add": {"max_health": 15}}},
+    "light_feet": {"name": "가벼운 발", "kind": "safe", "icon": "icon_sneakers", "description": "이동 +8%", "stats": {"multiply": {"move_speed": 1.08}}},
+    "wide_reach": {"name": "넓은 품", "kind": "safe", "icon": "icon_battery", "description": "범위 +12%", "stats": {"multiply": {"area_multiplier": 1.12}}},
+    "bookworm": {"name": "공부벌레", "kind": "safe", "icon": "icon_research_notes", "description": "경험치 +15%", "stats": {"multiply": {"experience_multiplier": 1.15}}},
+    "composure": {"name": "침착함", "kind": "safe", "icon": "icon_coffee", "description": "스킬 대기 −12%", "stats": {"multiply": {"skill_cooldown_multiplier": 0.88}}},
+    "weak_spot": {"name": "급소", "kind": "safe", "icon": "icon_ammo", "description": "치명 +5%", "stats": {"add": {"crit_chance": 0.05}}},
+    "resilience": {"name": "회복력", "kind": "safe", "icon": "icon_vitamins", "description": "초당 체력 +0.5", "stats": {"add": {"regen_per_second": 0.5}}},
+    "lucky_box": {"name": "행운 상자", "kind": "safe", "icon": "icon_lucky_charm", "description": "상자 3·5개 확률 ↑", "stats": {"add": {"chest_luck": 0.6}}},
+
+    "blood_pact": {"name": "피의 계약", "kind": "risky", "icon": "icon_shelter_damage", "description": "좀비 +30% / 피해 +25%", "stats": {"multiply": {"damage_multiplier": 1.25}}, "night": {"multiply": {"zombie_count": 1.3}}},
+    "glass_cannon": {"name": "유리 대포", "kind": "risky", "icon": "icon_energy_drink", "description": "최대 체력 −20 / 공격 속도 +20%", "stats": {"add": {"max_health": -20}, "multiply": {"attack_speed_multiplier": 1.2}}},
+    "into_the_dark": {"name": "어둠 속으로", "kind": "risky", "icon": "icon_battery", "description": "손전등 −25% / 고철 +50%", "stats": {"multiply": {"light_radius_multiplier": 0.75}, "add": {"run_scrap_bonus_ratio": 0.5}}},
+    "elite_hunter": {"name": "정예 사냥꾼", "kind": "risky", "icon": "icon_lucky_charm", "description": "정예 2배 / 상자 한 단계 크게", "stats": {"add": {"chest_size_bonus": 1}}, "night": {"multiply": {"elite_chance": 2.0}}},
+    "hurry_up": {"name": "서두르기", "kind": "risky", "icon": "icon_sneakers", "description": "헬기 버티기 +3초 / 경험치 +30%", "stats": {"multiply": {"experience_multiplier": 1.3}}, "night": {"add": {"helicopter_hold_seconds_add": 3}}},
+
+    "police_support_fire": {"name": "지원 사격", "kind": "safe", "survivor": "police", "icon": "icon_ammo", "description": "총알 발 수 +1", "stats": {"add": {"extra_projectiles": 1}}},
+    "police_radio": {"name": "무전", "kind": "safe", "survivor": "police", "icon": "icon_radio", "description": "스킬 대기 −20%", "stats": {"multiply": {"skill_cooldown_multiplier": 0.8}}},
+    "firefighter_into_fire": {"name": "불 속으로", "kind": "safe", "survivor": "firefighter", "icon": "icon_shelter_health", "description": "받는 피해 −8%", "stats": {"multiply": {"damage_taken_multiplier": 0.92}}},
+    "firefighter_fire_suit": {"name": "방화복", "kind": "safe", "survivor": "firefighter", "icon": "icon_vest", "description": "최대 체력 +25", "stats": {"add": {"max_health": 25}}},
+    "courier_fast_delivery": {"name": "빠른 배송", "kind": "safe", "survivor": "courier", "icon": "icon_sneakers", "description": "이동 +12%", "stats": {"multiply": {"move_speed": 1.12}}},
+    "courier_big_bag": {"name": "큰 가방", "kind": "safe", "survivor": "courier", "icon": "icon_backpack", "description": "줍는 거리 +40%", "stats": {"multiply": {"pickup_radius": 1.4}}},
+    "office_overtime_body": {"name": "야근 체질", "kind": "safe", "survivor": "office_worker", "icon": "icon_coffee", "description": "야근 수당 최대 +50%", "stats": {"add": {"overtime_max_bonus": 0.14}}},
+    "office_iced_americano": {"name": "아아 한 잔", "kind": "safe", "survivor": "office_worker", "icon": "icon_energy_drink", "description": "카페인 충전 대기 −30%", "stats": {"multiply": {"skill_cooldown_multiplier": 0.7}}},
+    "batter_home_run_hitter": {"name": "홈런 타자", "kind": "safe", "survivor": "batter", "icon": "icon_shelter_damage", "description": "홈런 대기 −25%", "stats": {"multiply": {"skill_cooldown_multiplier": 0.75}}},
+    "batter_power_swing": {"name": "강타", "kind": "safe", "survivor": "batter", "icon": "icon_knee_pads", "description": "밀어내기 +30% · 피해 +8%", "stats": {"multiply": {"knockback_multiplier": 1.3, "damage_multiplier": 1.08}}},
+    "hunter_instinct": {"name": "사냥 본능", "kind": "safe", "survivor": "hunter", "icon": "icon_ammo", "description": "치명 피해 +25%", "stats": {"multiply": {"crit_damage_multiplier": 1.25}}},
+    "hunter_trap_master": {"name": "덫 장인", "kind": "safe", "survivor": "hunter", "icon": "icon_duct_tape", "description": "범위 +15% · 치명 +4%", "stats": {"multiply": {"area_multiplier": 1.15}, "add": {"crit_chance": 0.04}}}
+  }
+}

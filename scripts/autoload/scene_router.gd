@@ -28,6 +28,8 @@ var last_run_result: Dictionary = {}
 var last_settlement: Dictionary = {}
 ## 명령줄 '-- --autoplay=보통 --survivor=police --runs=20 --speed=8 ...' 에서 읽은 시험 옵션
 var test_options: Dictionary = {}
+## 이어하기·다시 하기로 열 판 상태 (RunSave 와 같은 모양 — NightCarry 가 판을 열 때 한 번 가져감)
+var resume_state: Dictionary = {}
 ## 자동 플레이로 지금까지 끝낸 판 수
 var finished_test_runs: int = 0
 ## 첫 판 안내("끌어서 움직여요")를 이미 봤나 — 저장에 남겨 다음에 켤 때도 다시 안 나오게
@@ -97,6 +99,30 @@ func start_run(survivor_id: String) -> void:
 func start_daily_challenge() -> void:
 	_load_daily_challenge()
 	_change_scene(RUN_SCENE)
+
+
+## 타이틀 [이어하기]: 저장된 밤 처음부터 (문서 15 §2)
+func continue_run() -> void:
+	var state := RunSave.read()
+	if not state.is_empty():
+		resume_night(state)
+
+
+## 저장된 밤(state)을 처음부터 연다 — 이어하기·'이 밤 다시 하기'
+func resume_night(state: Dictionary) -> void:
+	selected_survivor_id = String(state.get("survivor_id", selected_survivor_id))
+	selected_infection_level = int(state.get("infection_level", 0))
+	daily_rule = state.get("daily_rule", {})
+	is_daily_challenge = not daily_rule.is_empty()
+	current_run_goals.assign(state.get("run_goals", []))
+	resume_state = state
+	_change_scene(RUN_SCENE)
+
+
+func take_resume_state() -> Dictionary:
+	var state := resume_state
+	resume_state = {}
+	return state
 
 
 ## 결과 화면 [바로 다시]: 방금 판과 같은 조건으로 (오늘의 도전이었으면 오늘의 도전 다시)

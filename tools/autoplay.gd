@@ -111,8 +111,8 @@ func wants_skill() -> bool:
 
 func _process(delta: float) -> void:
 	_capture_if_due()
-	if _hud.night_clear_panel.is_open():
-		_capture_once("night_clear_panel")
+	if _hud.night_clear_panel.is_open() or _hud.night_prep_panel.is_open() or _hud.retry_panel.is_open():   # 밤 생존 → 밤 준비 → (다시 하기)
+		_capture_once("night_panel_" + _hud.night_prep_panel.step() + ("retry" if _hud.retry_panel.is_open() else ""))
 		_hud.continue_night()
 		return
 	if _hud.chest_panel.is_open():

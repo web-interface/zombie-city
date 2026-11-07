@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/title_screen.gd
-## [하는 일] 타이틀 화면: 새벽시 밤 도시 실루엣 앞 밤거리에 좀비 몇 마리가 비틀거리며 지나가고 가로등이 깜빡인다. 게임 이름 아래 버튼 — 큰 [출동!](생존자 고르기), [은신처]·[오늘의 도전], [순위]·[도감]·[업적]·[설정] — 과 가진 고철·최고 기록, 웹판이면 맨 아래 작은 로그인 상태(누르면 로그인 창). 강화할 고철이 있거나 오늘의 도전을 아직 안 했으면 그 버튼이 깜빡인다. 자동 플레이면 바로 판으로 넘어간다.
+## [하는 일] 타이틀 화면: 새벽시 밤 도시 실루엣 앞 밤거리에 좀비 몇 마리가 비틀거리며 지나가고 가로등이 깜빡인다. 게임 이름 아래 버튼 — 저장된 판이 있으면 [이어하기](그 밤 처음부터), 큰 [출동!](생존자 고르기), [은신처]·[오늘의 도전], [순위]·[도감]·[업적]·[설정] — 과 가진 고철·최고 기록, 웹판이면 맨 아래 작은 로그인 상태(누르면 로그인 창). 강화할 고철이 있거나 오늘의 도전을 아직 안 했으면 그 버튼이 깜빡인다. 자동 플레이면 바로 판으로 넘어간다.
 ## [쓰는 곳] scenes/title.tscn (게임을 켜면 처음 여는 장면). 설정 창(settings_panel.gd)·오늘의 도전 창(daily_challenge_panel.gd)을 겹쳐 띄운다.
 ## [근거 문서] 05 화면 목록(타이틀), 04 §1 설정, 06 밤 분위기, 14 §3·§4
 extends Control
@@ -9,6 +9,7 @@ const WALKING_ZOMBIES := 5
 const STREET_TOP := 122.0       # 좀비가 걷는 줄 (제목 아래, 버튼 위)
 const GROUND_LINE := 164.0
 const BUTTON_TOP := 176.0
+const RESUME_ROW_SHIFT := 28.0  # [이어하기] 줄(22 + 사이 6)이 생기면 버튼 묶음을 그만큼 위로
 const MENU_WIDTH := 152.0
 const SKYLINE: Texture2D = preload("res://art/sprites/title_skyline.png")   # 새벽시 밤 도시 실루엣 (180×90, 하늘 투명)
 const SKYLINE_ALPHA := 0.55     # 제목 글자가 묻히지 않게 흐리게
@@ -24,7 +25,10 @@ func _ready() -> void:
 	SoundPlayer.play_single_music("music_title")
 	if SceneRouter.is_autoplay():
 		# 장면이 막 붙는 중(_ready)에는 장면을 바꿀 수 없어서 한 박자 뒤에 (엔진 오류 'Parent node is busy')
-		SceneRouter.start_run.call_deferred(SceneRouter.selected_survivor_id)
+		if SceneRouter.test_options.has("continue") and RunSave.exists():   # 이어하기 시험 (--continue --run-save=경로)
+			SceneRouter.continue_run.call_deferred()
+		else:
+			SceneRouter.start_run.call_deferred(SceneRouter.selected_survivor_id)
 		return
 	_build_street()
 	_build_title()
@@ -66,6 +70,12 @@ func _build_buttons() -> void:
 	menu.offset_right = MENU_WIDTH * 0.5
 	menu.offset_top = BUTTON_TOP
 	add_child(menu)
+	var saved_night := int(RunSave.read().get("night", 0))
+	if saved_night > 0:   # 이어하기 — 저장이 있을 때만, 한 줄 만큼 위로 올려 아래 고철·로그인 줄과 안 겹치게 (문서 15 §2)
+		menu.offset_top -= RESUME_ROW_SHIFT
+		var resume := _row_button(_button_row(menu), "이어하기 · %d밤" % saved_night, PixelUi.GOLD,
+			func() -> void: if Online.require_login(): SceneRouter.continue_run())
+		_blinking.append(resume)
 	var start := PixelUi.button("출동!", PixelUi.GOOD)
 	start.add_theme_font_override("font", PixelUi.FONT_BOLD)
 	start.custom_minimum_size = Vector2(0, 30)

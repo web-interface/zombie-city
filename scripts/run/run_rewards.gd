@@ -126,15 +126,19 @@ func _on_chest_claimed() -> void:
 	_context.effects.ring(_context.survivor.position, 26.0, PixelUi.GOLD, 0.5)
 
 
-## 1개 70% · 3개 25% · 5개 5% (data/run_rules.json chest)
+## 1개 70% · 3개 25% · 5개 5% (data/run_rules.json chest). 훈장: 행운 상자(chest_luck — 3·5개 무게 ↑), 정예 사냥꾼(chest_size_bonus — 한 단계 크게)
 func _roll_chest_size() -> int:
-	var weights: Array = _chest_rules["count_weights"]
-	var roll := randf() * float(weights.reduce(func(total: float, weight: Variant) -> float: return total + float(weight), 0.0))
-	for index: int in range(weights.size()):
-		roll -= float(weights[index])
-		if roll <= 0.0:
-			return int(_chest_rules["upgrade_counts"][index])
-	return int(_chest_rules["upgrade_counts"][0])
+	var stats := _context.survivor.stats
+	var weights: Array = _chest_rules["count_weights"].map(func(weight: Variant) -> float: return float(weight))
+	for index: int in range(1, weights.size()):
+		weights[index] = float(weights[index]) * (1.0 + stats.value("chest_luck"))
+	var roll := randf() * float(weights.reduce(func(total: float, weight: float) -> float: return total + weight, 0.0))
+	var picked := 0
+	while picked < weights.size() - 1 and roll > float(weights[picked]):
+		roll -= float(weights[picked])
+		picked += 1
+	picked = mini(picked + int(stats.value("chest_size_bonus")), weights.size() - 1)
+	return int(_chest_rules["upgrade_counts"][picked])
 
 
 ## 받을 강화 카드 (진화할 수 있으면 진화 먼저 — LevelUp.roll_upgrade_cards, 무기·카드 담당)

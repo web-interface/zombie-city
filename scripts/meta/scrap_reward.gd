@@ -23,6 +23,8 @@ static func lines(metrics: Dictionary, goal_bonus: int, achievement_bonus: int) 
 	_add_line(result, "감염도 %d (+%d%%)" % [infection_level, roundi(infection_ratio * 100.0)], roundi(base * infection_ratio))
 	var bonus_ratio := RunModifiers.scrap_bonus_ratio()
 	_add_line(result, "은신처·도전 (+%d%%)" % roundi(bonus_ratio * 100.0), roundi(base * bonus_ratio))
+	var medal_ratio := float(metrics.get("medal_scrap_bonus_ratio", 0.0))
+	_add_line(result, "훈장 (+%d%%)" % roundi(medal_ratio * 100.0), roundi(base * medal_ratio))
 	_add_line(result, "판 목표", goal_bonus)
 	_add_line(result, "업적", achievement_bonus)
 	return result

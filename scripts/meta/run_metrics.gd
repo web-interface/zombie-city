@@ -37,6 +37,7 @@ static func from_result(result: Dictionary) -> Dictionary:
 		"died": 1 if end_reason == "died" else 0,
 		"gave_up": 1 if end_reason == "gave_up" else 0,
 		"helicopter_left": 1 if end_reason == "helicopter_left" else 0,
+		"medal_scrap_bonus_ratio": float(result.get("medal_scrap_bonus_ratio", 0.0)),   # 위험 훈장 '어둠 속으로' (문서 15 부록 A)
 	}
 
 
