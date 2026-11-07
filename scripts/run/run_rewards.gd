@@ -95,7 +95,7 @@ func _blow_up_screen(center: Vector2) -> void:
 		var amount := zombie.max_health * float(_pickup_rules["bomb_boss_damage_ratio"]) if zombie.is_boss else zombie.health + 1.0
 		_context.horde.hit(zombie, amount, {"source": "explosion", "show_number": zombie.is_boss})
 	_context.effects.ring(center, radius * 0.5, Color("ffd25a"), 0.5)
-	_context.effects.burst(center, Color("ff9a3c"), 30, 120.0)
+	_context.effects.burst(center, Color("fff2b0"), 30, 120.0)
 	_context.shake("boss_kill")
 	_context.play_sound("bomb_blast")
 

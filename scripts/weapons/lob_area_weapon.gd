@@ -17,9 +17,9 @@ const IMPACT_KNOCKBACK := 4.0            # 폭발에 살짝 밀려나는 거리
 ## 날아가는 물건 모양: 몸통 색 · 크기 · 위에 붙은 점 색 (불꽃·심지)
 const THROWN_LOOKS := {
 	"gas": {"body": Color("8d949e"), "size": Vector2(2, 3), "tip": Color("c9d6c3")},
-	"fire": {"body": Color("5f8f4e"), "size": Vector2(2, 3), "tip": Color("ff9a3c")},
-	"flare": {"body": Color("e8434f"), "size": Vector2(1, 4), "tip": Color("fff2b0")},
-	"parcel": {"body": Color("b07a43"), "size": Vector2(3, 3), "tip": Color("e8d9a8")},
+	"fire": {"body": Color("5f8f4e"), "size": Vector2(2, 3), "tip": Color("8fd3ff")},
+	"flare": {"body": Color("c9d6ff"), "size": Vector2(1, 4), "tip": Color("fff2b0")},
+	"parcel": {"body": Color("c8aa78"), "size": Vector2(3, 3), "tip": Color("e8d9a8")},
 	"stadium": {"body": Color("9aa3b5"), "size": Vector2(1, 5), "tip": Color("fffbe0")},
 	"trap": {"body": Color("5b5f6b"), "size": Vector2(3, 2), "tip": Color("c9ced8")},
 }

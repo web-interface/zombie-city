@@ -134,9 +134,14 @@
     "music_volume": 0.7,
     "is_vibration_on": true,
     "is_screen_shake_on": true,
+    "my_effects_opacity": 0.6,
+    "is_flash_reduced": false,
+    "is_damage_numbers_on": true,
+    "is_double_tap_pick_on": false,
     "last_infection_level": 0
   },
   "volume_step": 0.1,
+  "effects_opacity_steps": [0.25, 0.4, 0.6, 0.8, 1.0],
   "near_miss": {
     "max_lines": 3,
     "achievement_progress_ratio": 0.7,

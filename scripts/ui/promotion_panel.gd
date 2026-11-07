@@ -1,22 +1,21 @@
 ## [파일] scripts/ui/promotion_panel.gd
-## [하는 일] 전직 창(레벨 10): 그 생존자의 갈래 카드 3장 — 바뀐 옷차림이 걷는 미리보기, 갈래 이름, 한 줄 요약, 1차 효과, 2차(레벨 20) 효과 맛보기. 탭 한 번으로 고른다.
+## [하는 일] 전직 창(레벨 10): 그 생존자의 갈래 카드 3장 — 바뀐 옷차림이 걷는 미리보기, 갈래 이름, 한 줄 요약, 1차 효과, 2차(레벨 20) 효과 맛보기. 탭으로 고른다. 카드는 조이스틱 엄지 자리(아래 35%) 밖 위쪽에, 뜬 뒤 0.6초는 흐리게 막아 둔다(TapGuard).
 ## [쓰는 곳] scripts/ui/hud.gd 가 만들고, Promotion.branches_ready 신호를 받아 열린다. 고르면 Promotion.choose_branch() 를 부르고 닫힌다.
-## [근거 문서] 02 §5 전직, 05 화면 목록(전직 창), 04 §2 전직 옷차림
+## [근거 문서] 15 §8 잘못 눌림, 02 §5 전직, 05 화면 목록(전직 창), 04 §2 전직 옷차림
 class_name PromotionPanel
 extends Control
 
 signal closed
 
-const CARD_SIZE := Vector2(164, 74)
+const CARD_SIZE := Vector2(164, 54)   # 세 장이 엄지 자리 위에 들어가게
 const PREVIEW_FRAME_SECONDS := 0.12
-const INPUT_GUARD_MILLISECONDS := 280.0 # 뜬 직후엔 눌러도 안 고름 (잘못 골리지 않게)
 
 var _promotion: Promotion
 var _card_box: VBoxContainer
 var _branch_ids: Array[String] = []
 var _previews: Array[Sprite2D] = []
 var _preview_time: float = 0.0
-var _opened_at_msec: int = 0
+var _guard := TapGuard.new()
 
 
 func setup(promotion: Promotion) -> void:
@@ -30,7 +29,7 @@ func setup(promotion: Promotion) -> void:
 	add_child(PixelUi.full_rect(dim))
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 4)
-	add_child(PixelUi.centered(column))
+	TapGuard.place_above_thumb_zone(self, column)
 	var title := PixelUi.label("전직! 갈래를 골라요", PixelUi.GOLD, false, true)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(title)
@@ -42,8 +41,9 @@ func setup(promotion: Promotion) -> void:
 	column.add_child(_card_box)
 
 
+## 자동 플레이 봇용 (손가락이 없으니 막는 시간만 본다)
 func choose(index: int) -> void:
-	if visible and index >= 0 and index < _branch_ids.size():
+	if visible and _guard.is_ready() and index >= 0 and index < _branch_ids.size():
 		_pick(_branch_ids[index])
 
 
@@ -62,7 +62,7 @@ func _show_branches(shown_branch_ids: Array[String]) -> void:
 		child.queue_free()
 	for branch_id: String in shown_branch_ids:
 		_card_box.add_child(_build_card(branch_id))
-	_opened_at_msec = Time.get_ticks_msec()
+	_guard.open()
 	visible = true
 
 
@@ -75,7 +75,7 @@ func _build_card(branch_id: String) -> Button:
 	preview.hframes = SpriteSheetLayout.COLUMNS
 	preview.vframes = SpriteSheetLayout.HUMAN_ROW_COUNT
 	preview.scale = Vector2.ONE * 2.0
-	preview.position = Vector2(20, 36)
+	preview.position = Vector2(20, 27)
 	card_button.add_child(preview)
 	_previews.append(preview)
 	var texts := VBoxContainer.new()
@@ -88,13 +88,14 @@ func _build_card(branch_id: String) -> Button:
 	texts.add_child(PixelUi.small_lines(String(branch["stage_1"]["text"]), PixelUi.INK, text_width, 2))
 	texts.add_child(PixelUi.small_lines("각성: " + String(branch["stage_2"]["text"]), PixelUi.MUTED, text_width, 1))
 	card_button.add_child(texts)
-	card_button.pressed.connect(_pick.bind(branch_id))
+	_guard.watch(card_button)
+	card_button.pressed.connect(func() -> void:
+		if _guard.accepts_pick(card_button):
+			_pick(branch_id))
 	return card_button
 
 
 func _pick(branch_id: String) -> void:
-	if Time.get_ticks_msec() - _opened_at_msec < INPUT_GUARD_MILLISECONDS:
-		return
 	visible = false
 	_promotion.choose_branch(branch_id)
 	closed.emit()
@@ -104,6 +105,7 @@ func _process(delta: float) -> void:
 	if not visible:
 		return
 	_preview_time += delta
+	_card_box.modulate = _guard.current_modulate()
 	var frame_number := int(_preview_time / PREVIEW_FRAME_SECONDS)
 	for preview: Sprite2D in _previews:
 		preview.frame = SpriteSheetLayout.frame_index(SpriteSheetLayout.HUMAN_ROWS, "walk_down", frame_number)

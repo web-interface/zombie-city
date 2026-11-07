@@ -1,7 +1,7 @@
 ## [파일] scripts/ui/settings_panel.gd
-## [하는 일] 설정 창(화면 위에 겹쳐 뜸): 효과음·음악 크기(− 칸 막대 +), 진동 켜기/끄기, 화면 흔들림 켜기/끄기, 닫기. 바꾸면 바로 저장·반영된다. 게임이 멈춘 동안(멈춤 메뉴)에도 움직인다.
+## [하는 일] 설정 창(화면 위에 겹쳐 뜸): 효과음·음악 크기(− 칸 막대 +), 내 효과 투명도(25~100%), 진동·화면 흔들림·번쩍임 줄이기·피해 숫자·두 번 눌러 고르기 켜기/끄기, 닫기. 바꾸면 바로 저장·반영된다. 게임이 멈춘 동안(멈춤 메뉴)에도 움직인다.
 ## [쓰는 곳] scripts/ui/title_screen.gd (타이틀 [설정]), scripts/ui/pause_menu.gd (멈춤 창 [설정]) 가 add_child 로 띄운다. SaveData.set_setting() 으로 저장, 소리 크기는 SoundPlayer 에 바로 반영된다.
-## [근거 문서] 14 §3 설정, 05 화면 목록(설정)
+## [근거 문서] 15 §7-4·§8 설정, 14 §3 설정, 05 화면 목록(설정)
 class_name SettingsPanel
 extends Control
 
@@ -41,6 +41,10 @@ func _build_window() -> PanelContainer:
 	column.add_child(_build_volume_row("음악", "music_volume"))
 	column.add_child(_build_toggle_row("진동", "is_vibration_on"))
 	column.add_child(_build_toggle_row("화면 흔들림", "is_screen_shake_on"))
+	column.add_child(_build_volume_row("내 효과", "my_effects_opacity"))
+	column.add_child(_build_toggle_row("번쩍임 줄이기", "is_flash_reduced"))
+	column.add_child(_build_toggle_row("피해 숫자", "is_damage_numbers_on"))
+	column.add_child(_build_toggle_row("두 번 눌러 고르기", "is_double_tap_pick_on"))
 	column.add_child(PixelUi.small_lines("진동은 안드로이드 폰에서만 떨려요", PixelUi.MUTED, WINDOW_WIDTH - 8.0))
 	var close := PixelUi.button("닫기", PixelUi.GOOD)
 	close.custom_minimum_size = Vector2(0, 22)
@@ -93,9 +97,24 @@ func _small_button(text: String, action: Callable) -> Button:
 
 
 func _change_volume(setting_name: String, step_direction: int) -> void:
+	if setting_name == "my_effects_opacity":
+		_change_opacity(step_direction)
+		return
 	var step := float(GameData.table("meta_rules")["volume_step"])
 	var value := clampf(snappedf(float(SaveData.setting(setting_name)) + step * step_direction, step), 0.0, 1.0)
 	SaveData.set_setting(setting_name, value)
+	_refresh()
+
+
+## 내 효과 투명도는 정해 둔 단계(25·40·60·80·100%)로만 (data/meta_rules.json effects_opacity_steps)
+func _change_opacity(step_direction: int) -> void:
+	var steps: Array = GameData.table("meta_rules")["effects_opacity_steps"]
+	var now := SaveData.my_effects_opacity()
+	var nearest := 0
+	for index: int in range(steps.size()):
+		if absf(float(steps[index]) - now) < absf(float(steps[nearest]) - now):
+			nearest = index
+	SaveData.set_setting("my_effects_opacity", float(steps[clampi(nearest + step_direction, 0, steps.size() - 1)]))
 	_refresh()
 
 

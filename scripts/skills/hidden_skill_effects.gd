@@ -9,7 +9,7 @@ const AIRSTRIKE_MISS_RADIUS := 0.7     # 노릴 좀비가 없으면 생존자 �
 const MIRACLE_SPARKLE_SECONDS := 0.1   # 무적 동안 금빛 알갱이를 뿌리는 간격
 const BLAST_KNOCKBACK_RATIO := 0.5     # 폭격·돌진 폭발에 반경의 절반만큼 밀려남
 const GOLD := Color("ffd166")
-const POISON_COLOR := Color("b388ff")
+const POISON_COLOR := Color("9fb4ff")
 
 ## 정해진 시각에 터질 일들: {"at": 초, "kind": "airstrike_warn"·"airstrike_boom"·"backdraft_ring"·"backdraft_fire", …}
 var _events: Array[Dictionary] = []
@@ -81,7 +81,7 @@ func _warn_airstrike(effect: Dictionary) -> void:
 	var candidates := _context.horde.in_radius(survivor_position, search_radius)
 	if not candidates.is_empty():
 		target = candidates[randi() % candidates.size()].position
-	_visuals().warning_circle(target, float(effect["radius"]), float(effect["warning_seconds"]))
+	_visuals().target_circle(target, float(effect["radius"]), float(effect["warning_seconds"]))
 	_events.append({"at": _time + float(effect["warning_seconds"]), "kind": "airstrike_boom", "effect": effect, "position": target})
 
 

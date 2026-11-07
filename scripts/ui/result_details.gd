@@ -1,11 +1,14 @@
 ## [파일] scripts/ui/result_details.gd
-## [하는 일] 결과 화면 아래 목록에 들어가는 부품 만들기: 새 기록·업적·해금·감염도·도감 '띠', 아까운 표시, 판 목표 3개(○·×), 얻은 고철 항목별 줄. 판 정산(RunSettlement) 묶음을 읽어 글을 정한다.
+## [하는 일] 결과 화면 아래 목록에 들어가는 부품 만들기: '무엇에 당했나'(마지막 5번 맞은 것 + 마지막 5초 피해 막대), 새 기록·업적·해금·감염도·도감 '띠', 아까운 표시, 판 목표 3개(○·×), 얻은 고철 항목별 줄. 판 정산(RunSettlement) 묶음을 읽어 글을 정한다.
 ## [쓰는 곳] scripts/ui/result_screen.gd 가 부른다 (화면 배치·차례로 나타나는 연출은 그쪽).
-## [근거 문서] 14 §4 아까운 표시·판 목표·쌓이는 성장, 05 화면 목록(결과)
+## [근거 문서] 15 §7-3 무엇에 당했나, 14 §4 아까운 표시·판 목표·쌓이는 성장, 05 화면 목록(결과)
 class_name ResultDetails
 extends RefCounted
 
 const SINGLE_ACHIEVEMENT_BANNERS := 2
+## 마지막 5초 피해 막대 색 (출처 차례대로 — 적의 것이라 빨강 쪽)
+const HIT_BAR_COLORS: Array[Color] = [Color("ff4a4a"), Color("ff8a3c"), Color("ff2fa0"), Color("ffd166"), Color("c9a0ff")]
+const HIT_BAR_HEIGHT := 4.0
 
 ## 띠 종류별 색: 바탕, 테두리, 글자
 const BANNER_STYLES := {
@@ -109,6 +112,41 @@ static func build_scrap(reward_lines: Array, total: int, width: float) -> VBoxCo
 	owned.custom_minimum_size = Vector2(width, 0)
 	column.add_child(owned)
 	return column
+
+
+## 무엇에 당했나: "마지막 5번: 산성 웅덩이 3번 · 도살자 식칼 2번" + 마지막 5초 동안 출처별 피해 막대(긴 막대 = 많이 깎임)
+static func build_hit_recap(recap: Dictionary, width: float) -> VBoxContainer:
+	var column := _section("무엇에 당했나")
+	var counts: Dictionary = {}
+	for hit: Dictionary in recap.get("last_hits", []):
+		counts[hit["source"]] = int(counts.get(hit["source"], 0)) + 1
+	var parts: PackedStringArray = []
+	for source: String in counts.keys():
+		parts.append("%s %d번" % [source, counts[source]])
+	column.add_child(PixelUi.small_lines("마지막 %d번: %s" % [recap.get("last_hits", []).size(), " · ".join(parts)], PixelUi.INK, width, 3))
+	var bars: Array = recap.get("last_seconds", [])
+	var total := 0.0
+	for bar: Dictionary in bars:
+		total += float(bar["amount"])
+	column.add_child(PixelUi.label("마지막 %d초 받은 피해 %d" % [int(recap.get("window_seconds", 5)), roundi(total)], PixelUi.MUTED, true))
+	for index: int in range(bars.size()):
+		column.add_child(_hit_bar_row(bars[index], total, HIT_BAR_COLORS[index % HIT_BAR_COLORS.size()], width))
+	return column
+
+
+static func _hit_bar_row(bar: Dictionary, total: float, color: Color, width: float) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 3)
+	var name_label := PixelUi.label("%s %d" % [bar["source"], roundi(float(bar["amount"]))], PixelUi.INK, true)
+	name_label.custom_minimum_size = Vector2(width * 0.5, 0)
+	name_label.clip_text = true
+	row.add_child(name_label)
+	var fill := ColorRect.new()
+	fill.color = color
+	fill.custom_minimum_size = Vector2(maxf(1.0, (width * 0.5 - 3.0) * float(bar["amount"]) / maxf(total, 0.01)), HIT_BAR_HEIGHT)
+	fill.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(fill)
+	return row
 
 
 static func _section(title: String) -> VBoxContainer:

@@ -1,5 +1,5 @@
 ## [파일] scripts/world/survivor_animator.gd
-## [하는 일] 생존자 그림 담당: 옷(전직하면 바뀜)에 맞는 동작 묶음을 끼우고, 움직임에 따라 서 있기·걷기 4장 × 3방향을 고르고, 맞으면 하얀 실루엣으로 잠깐 바꾼다.
+## [하는 일] 생존자 그림 담당: 옷(전직하면 바뀜)에 맞는 동작 묶음을 끼우고, 움직임에 따라 서 있기·걷기 4장 × 3방향을 고르고, 맞으면 하얀 실루엣으로 잠깐 바꾸고, 피해를 안 받는 동안(부활·무적 돌진)은 깜빡인다.
 ## [쓰는 곳] scripts/world/survivor.gd 의 자식 노드. survivor.gd 가 매 프레임 animate() 를 부른다.
 ## [근거 문서] 06 그림 규칙·동작, 11 §4
 class_name SurvivorAnimator
@@ -9,6 +9,8 @@ extends Sprite2D
 const WALK_FRAME_SECONDS: Array[float] = [0.13, 0.085, 0.13, 0.085]
 const IDLE_FRAMES_PER_SECOND := 2.0
 const DEATH_FRAMES_PER_SECOND := 6.0
+const BLINK_PER_SECOND := 12.0
+const BLINK_DIM_ALPHA := 0.35
 
 var _normal_texture: Texture2D
 var _flash_texture: Texture2D
@@ -17,6 +19,7 @@ var _animation_time: float = 0.0
 var _last_direction_name: String = "down"
 var _is_facing_left: bool = false
 var _is_dead: bool = false
+var _is_blinking: bool = false
 
 
 func _ready() -> void:
@@ -35,6 +38,10 @@ func flash(seconds: float) -> void:
 	_flash_time_left = seconds
 
 
+func set_blinking(is_blinking: bool) -> void:
+	_is_blinking = is_blinking
+
+
 func play_death() -> void:
 	_is_dead = true
 	_animation_time = 0.0
@@ -50,6 +57,7 @@ func play_revive() -> void:
 func animate(delta: float, moving_direction: Vector2, facing: Vector2) -> void:
 	_animation_time += delta
 	_update_flash(delta)
+	modulate.a = BLINK_DIM_ALPHA if _is_blinking and int(_animation_time * BLINK_PER_SECOND) % 2 == 1 else 1.0
 	if _is_dead:
 		var dead_frame := mini(int(_animation_time * DEATH_FRAMES_PER_SECOND), 2)
 		frame = SpriteSheetLayout.frame_index(SpriteSheetLayout.HUMAN_ROWS, "death", dead_frame)

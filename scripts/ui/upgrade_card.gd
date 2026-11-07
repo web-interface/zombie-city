@@ -5,7 +5,7 @@
 class_name UpgradeCard
 extends Button
 
-const CARD_SIZE := Vector2(164, 64)
+const CARD_SIZE := Vector2(164, 52)   # 세 장 + 버튼 줄이 조이스틱 엄지 자리(아래 35%) 위에 들어가게 (문서 15 §8)
 const TEXT_WIDTH := 124.0
 const EVOLUTION_EDGE := Color("ffb347")
 const HIDDEN_FILL := Color("3d2c06")
@@ -16,7 +16,7 @@ const HIDDEN_SHINE_SECONDS := 1.3        # 빛줄기가 카드를 한 번 지나
 const EVOLUTION_SHINE_SECONDS := 2.2
 const SHINE_WIDTH := 7.0
 ## 히든 카드 별 자리 (카드 안 점 위치) — 차례로 반짝인다
-const SPARKLE_POINTS: Array[Vector2] = [Vector2(150, 8), Vector2(12, 54), Vector2(122, 52), Vector2(144, 32), Vector2(34, 5), Vector2(96, 9), Vector2(70, 56)]
+const SPARKLE_POINTS: Array[Vector2] = [Vector2(150, 7), Vector2(12, 44), Vector2(122, 43), Vector2(144, 27), Vector2(34, 4), Vector2(96, 8), Vector2(70, 46)]
 
 var card: Dictionary = {}
 var _kind: String = ""
@@ -67,7 +67,7 @@ func _is_special() -> bool:
 func _build_row() -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 6)
-	row.position = Vector2(5, 5)
+	row.position = Vector2(5, 3)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(PixelUi.icon(String(card["icon"]), 2))
 	var texts := VBoxContainer.new()

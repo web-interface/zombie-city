@@ -119,6 +119,9 @@ func _build_list() -> void:
 	_list.mouse_filter = Control.MOUSE_FILTER_PASS
 	scroll.add_child(_list)
 	var delay := FIRST_BANNER_DELAY
+	var recap: Dictionary = _result.get("hit_recap", {})
+	if not recap.get("last_hits", []).is_empty():   # 무엇에 당했나 — 맨 앞 (문서 15 §7-3)
+		_add_delayed(ResultDetails.build_hit_recap(recap, LIST_WIDTH), delay, "")
 	var banners := ResultDetails.banner_items(_settlement)
 	var gap := minf(BANNER_GAP_SECONDS, LONG_LIST_SECONDS / maxf(1.0, banners.size()))
 	for item: Dictionary in banners:

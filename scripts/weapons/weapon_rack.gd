@@ -28,7 +28,7 @@ var zones: WeaponZones
 var _context: RunContext
 
 
-## 무기 연출·장판은 밤 어둠(CanvasModulate)을 받지 않는 따로 층에 그린다 — 어둠에 묻히면 번개·물줄기가
+## 무기 연출은 밤 어둠(CanvasModulate)을 받지 않는 따로 층에 그린다 — 어둠에 묻히면 번개·물줄기가
 ## 칙칙한 보라색이 돼서 '눈에 확 띄는 무기'(문서 14 §2-7)가 안 됐다. 카메라는 그대로 따라간다.
 func setup(context: RunContext) -> void:
 	_context = context
@@ -38,7 +38,7 @@ func setup(context: RunContext) -> void:
 	glow_layer.follow_viewport_enabled = true
 	add_child(glow_layer)
 	zones = WeaponZones.new()
-	glow_layer.add_child(zones)
+	add_child(zones)   # 장판은 좀비 발밑 세상 층 (내 장판이 적 웅덩이를 덮지 않게 — 문서 15 §7-2)
 	visuals = WeaponVisuals.new()
 	glow_layer.add_child(visuals)
 	visuals.setup(context)

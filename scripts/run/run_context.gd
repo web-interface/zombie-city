@@ -54,7 +54,7 @@ func spread_poison_from(dead_zombie: Zombie) -> void:
 	var poison_power := float(status_rules["poison_spread_damage_per_second"]) * survivor.stats.value("poison_damage_multiplier")
 	for neighbor: Zombie in neighbors.slice(0, int(status_rules["poison_spread_targets"])):
 		neighbor.apply_poison(poison_power, float(status_rules["poison_spread_seconds"]))
-		effects.burst(neighbor.position, Color("b388ff"), 3)
+		effects.burst(neighbor.position, Color("9fb4ff"), 3)
 
 
 func play_sound(sound_name: String, pitch_offset: float = 0.0) -> void:

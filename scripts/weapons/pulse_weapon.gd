@@ -7,7 +7,7 @@ extends Weapon
 
 const FOG_DOTS := 48                      # 안개 점 수 (미리 정한 자리를 천천히 돌린다 — 매 프레임 새로 만들지 않게)
 const FOG_SPIN_SPEED := 0.5
-const FOG_COLOR := Color("b9f5d0")
+const FOG_COLOR := Color("bfe3ff")
 const FLASH_COLOR := Color(1.0, 1.0, 1.0, 0.55)
 const FLASH_SECONDS := 0.12
 const MUZZLE_HEIGHT := Vector2(0, -4)
