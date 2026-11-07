@@ -1,6 +1,6 @@
 ## [파일] scripts/ui/result_screen.gd
 ## [하는 일] 결과 화면: 큰 글씨 "버틴 밤 2" + "셋째 밤 1:12 · 도살자에게 당함", 처치·레벨·최대 연속·얻은 고철이 차오르는 숫자 줄, 그 아래 끌어 올리는 목록(새 기록·업적·해금 띠가 하나씩 날아 들어옴 → 아까운 표시 → 판 목표 3개 → 고철 항목별), 맨 아래 아주 큰 [바로 다시]와 [생존자 고르기]·[은신처].
-## [쓰는 곳] scenes/result.tscn. 판이 끝나면 SceneRouter.finish_run() 이 연다. SceneRouter.last_run_result(판 결과)·last_settlement(정산)를 읽고, 목록 부품은 scripts/ui/result_details.gd 가 만든다.
+## [쓰는 곳] scenes/result.tscn. 판이 끝나면 SceneRouter.finish_run() 이 연다. SceneRouter.last_run_result(판 결과)·last_settlement(정산)를 읽고, 목록 부품은 scripts/ui/result_details.gd 가, 맨 앞 온라인 순위 띠는 online_rank_line.gd 가 만든다.
 ## [근거 문서] 05 화면 목록(결과), 02 §9 승패, 13 (무엇에 당했는지), 14 §4 아까운 표시·한 판만 더
 extends Control
 
@@ -119,6 +119,8 @@ func _build_list() -> void:
 	_list.mouse_filter = Control.MOUSE_FILTER_PASS
 	scroll.add_child(_list)
 	var delay := FIRST_BANNER_DELAY
+	if Online.can_submit(_result):   # 웹판 사람 판만 — 시험 봇·시험 옵션 판은 순위에 안 올림
+		_add_delayed(OnlineRankLine.new(_result, LIST_WIDTH), delay, "")
 	var banners := ResultDetails.banner_items(_settlement)
 	var gap := minf(BANNER_GAP_SECONDS, LONG_LIST_SECONDS / maxf(1.0, banners.size()))
 	for item: Dictionary in banners:

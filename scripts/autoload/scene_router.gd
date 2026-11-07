@@ -1,5 +1,5 @@
 ## [파일] scripts/autoload/scene_router.gd
-## [하는 일] 화면(타이틀 → 생존자 고르기 → 한 판 → 결과, 타이틀 → 은신처·도감·업적)을 넘기고, 화면 사이에 넘길 값(고른 생존자·감염도, 오늘의 도전 규칙, 이번 판 목표 3개, 판 결과와 정산)을 들고 다닌다. 판이 끝나면 정산(RunSettlement)을 부르고 저장한다. 명령줄 시험 옵션(자동 플레이·속도·캡처)도 여기서 읽는다.
+## [하는 일] 화면(타이틀 → 생존자 고르기 → 한 판 → 결과, 타이틀 → 은신처·도감·업적·순위)을 넘기고, 화면 사이에 넘길 값(고른 생존자·감염도, 오늘의 도전 규칙, 이번 판 목표 3개, 판 결과와 정산)을 들고 다닌다. 판이 끝나면 정산(RunSettlement)을 부르고 저장한다. 명령줄 시험 옵션(자동 플레이·속도·캡처)도 여기서 읽는다.
 ## [쓰는 곳] 자동 로드 'SceneRouter'. scripts/ui/ 의 화면들, scripts/run/run.gd, scripts/meta/run_modifiers.gd, tools/autoplay.gd 가 쓴다.
 ## [근거 문서] 11 §3 화면 흐름, 12 §4 돌리는 법, 14 §3·§4
 extends Node
@@ -11,6 +11,7 @@ const RESULT_SCENE := "res://scenes/result.tscn"
 const SHELTER_SCENE := "res://scenes/shelter.tscn"
 const CODEX_SCENE := "res://scenes/codex.tscn"
 const ACHIEVEMENTS_SCENE := "res://scenes/achievements.tscn"
+const LEADERBOARD_SCENE := "res://scenes/leaderboard.tscn"
 
 ## 고르기 화면에서 고른 생존자 (data/survivors.json 의 이름)
 var selected_survivor_id: String = "police"
@@ -74,6 +75,10 @@ func go_to_codex() -> void:
 
 func go_to_achievements() -> void:
 	_change_scene(ACHIEVEMENTS_SCENE)
+
+
+func go_to_leaderboard() -> void:
+	_change_scene(LEADERBOARD_SCENE)
 
 
 ## 보통 판 시작 (생존자 고르기 → 출동). 고른 감염도는 다음에 켤 때도 그대로 고르게 저장.
