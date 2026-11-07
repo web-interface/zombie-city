@@ -171,7 +171,7 @@ occcCCCo
 occCCeCo
 occCCCCo
 
-# softcap = 천 모자·후드 (간호사·수술팀·역학조사관)
+# softcap = 천 모자 (덫 사냥꾼)
 @part hat_softcap_down 8x3
 ..oooo..
 .occCco.
@@ -528,3 +528,64 @@ oGbo
 .oBo
 .oBo
 ..o.
+
+# ═════════ 직장인 (15 부록 B — 간호사 자리) ═════════
+# 더 쓰는 글자: w 와이셔츠  a 넥타이  k 사원증 카드  K 사원증 목줄  b 허리띠  d 커피 컵 띠·서류 가방  g 결재판  q 다크서클(야근왕, head_eyeblack 을 다시 씀)
+# 정장(suit): 열린 재킷(t·T) 사이로 흰 셔츠(w)와 넥타이(a)가 가운데에서 한 점 비켜 있고, 왼쪽 가슴에 목줄(K)에 매달린 사원증(k).
+@part torso_suit_down 6x4
+otwato
+oKwaTo
+oktaTo
+obbbbo
+
+@part torso_suit_up 6x4
+otwwto
+otTtto
+otTtto
+obbbbo
+
+@part torso_suit_side 6x4
+oTttwo
+otTtao
+ottkao
+obbbbo
+
+# 셔츠(shirt): 재킷 없이 셔츠(t)만, 넥타이(a)는 풀어서 비뚤어짐 (야근왕·인턴 — 인턴은 a 를 셔츠 색으로 칠해 넥타이 없음)
+@part torso_shirt_down 6x4
+otKato
+otKaTo
+otkTao
+obbbbo
+
+@part torso_shirt_up 6x4
+otTTto
+otttto
+oTttTo
+obbbbo
+
+@part torso_shirt_side 6x4
+oTttao
+otTtao
+ottkTo
+obbbbo
+
+# coffee = 손에 든 테이크아웃 커피 (흰 컵 + 갈색 띠)
+@part coffee 3x4
+owo
+odo
+owo
+ooo
+
+# briefcase = 손에 든 서류 가방 (영업왕)
+@part briefcase 4x3
+.oo.
+oddo
+oooo
+
+# folder = 손에 든 결재판 (팀장): 짙은 판(g) 위 흰 종이(w)
+@part folder 3x5
+ogo
+owo
+owo
+owo
+ooo

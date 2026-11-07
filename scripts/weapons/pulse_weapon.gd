@@ -1,5 +1,5 @@
 ## [파일] scripts/weapons/pulse_weapon.gd
-## [하는 일] 몸 주변 고리 무기: 반경 안 좀비 모두에게 한꺼번에 — 확성기(look "shockwave", 밀기·기절, 진화 = 화면 전체), 소독약 분무(look "fog", 몸 둘레에 늘 떠 있는 독 안개, 진화 = 2배·독 두 겹), 제세동기(look "electric", 전기 고리 + 고리 밖 가까운 좀비로 번개, 진화 = 화면 번쩍·큰 피해). 반경 안에 좀비가 없으면 쉬었다가 들어오면 바로.
+## [하는 일] 몸 주변 고리 무기: 반경 안 좀비 모두에게 한꺼번에 — 확성기(look "shockwave", 밀기·기절, 진화 = 화면 전체), 소독약 분무(look "fog", 몸 둘레에 늘 떠 있는 독 안개, 진화 = 2배·독 두 겹), 제세동기(look "electric", 전기 고리 + 고리 밖 가까운 좀비로 번개, 진화 = 화면 번쩍·큰 피해), 결재 도장(look "stamp", 쾅 — 고리 + 바닥에 하늘색 도장 자국, 기절). 반경 안에 좀비가 없으면 쉬었다가 들어오면 바로.
 ## [쓰는 곳] scripts/weapons/weapon_rack.gd 가 behavior 가 "pulse" 인 무기로 만들고, WeaponVisuals 가 그리기 때 draw_glow_on()(안개)을 부른다. 고리·번개 그림은 WeaponVisuals.
 ## [근거 문서] 14 §2-2 확성기·소독약 분무·제세동기, §2-4 민방위 사이렌·방역 안개·심정지, §2-7 (충격파 = 넓어지는 고리)
 class_name PulseWeapon
@@ -11,10 +11,15 @@ const FOG_COLOR := Color("b9f5d0")
 const FLASH_COLOR := Color(1.0, 1.0, 1.0, 0.55)
 const FLASH_SECONDS := 0.12
 const MUZZLE_HEIGHT := Vector2(0, -4)
+const STAMP_COLOR := Color("8fd3ff")
+const STAMP_SECONDS := 0.45   # 바닥에 찍힌 도장 자국이 남는 시간
+const STAMP_SIZE := 11.0
 
 var _fog_offsets: Array[Vector2] = []     # 단위 원 안 무작위 자리 (안개 모양)
 var _fog_time: float = 0.0
 var _outer: Array[Zombie] = []            # 고리 밖 번개 대상 (재사용)
+var _stamp_time_left: float = 0.0
+var _stamp_center: Vector2 = Vector2.ZERO
 
 
 func _init(new_weapon_id: String, run_context: RunContext) -> void:
@@ -25,6 +30,7 @@ func _init(new_weapon_id: String, run_context: RunContext) -> void:
 
 func update(delta: float) -> void:
 	_fog_time += delta
+	_stamp_time_left = maxf(_stamp_time_left - delta, 0.0)
 	super.update(delta)
 
 
@@ -58,6 +64,11 @@ func _show_pulse(center: Vector2, radius: float, stats: Dictionary) -> void:
 		"shockwave":
 			visuals().shockwave(center, radius, is_evolved)
 			shake_screen()
+		"stamp":
+			visuals().shockwave(center, radius, is_evolved)
+			_stamp_center = center
+			_stamp_time_left = STAMP_SECONDS
+			shake_screen()
 		"electric":
 			visuals().electric_ring(center, radius, is_evolved)
 			if bool(stats.get("screen_flash", false)):
@@ -81,6 +92,8 @@ func _zap_outward(center: Vector2, radius: float, stats: Dictionary) -> void:
 
 ## 소독약 안개: 몸 둘레에 늘 떠 있는 민트색 점들 (천천히 돌고 깜빡인다, 어둠 속에서도 보이게 빛 층에)
 func draw_glow_on(canvas: CanvasItem) -> void:
+	if look == "stamp":
+		_draw_stamp_mark(canvas)
 	if look != "fog":
 		return
 	var radius := area_radius(float(numbers()["radius"]))
@@ -90,3 +103,15 @@ func draw_glow_on(canvas: CanvasItem) -> void:
 		var offset := _fog_offsets[index].rotated(_fog_time * FOG_SPIN_SPEED * (1.0 if index % 2 == 0 else -1.0))
 		var alpha := 0.25 + 0.2 * sin(_fog_time * 3.0 + index)
 		canvas.draw_rect(Rect2((center + offset * radius).round(), Vector2.ONE * 2.0), Color(color, alpha))
+
+
+## 결재 도장: 생존자 발밑에 찍힌 네모 도장 자국(테두리 + 안쪽 '결' 획 두 줄)이 옅어진다 (진화하면 금색)
+func _draw_stamp_mark(canvas: CanvasItem) -> void:
+	if _stamp_time_left <= 0.0:
+		return
+	var color := Color(EVOLVED_COLOR if is_evolved else STAMP_COLOR, _stamp_time_left / STAMP_SECONDS)
+	var top_left := (_stamp_center - Vector2.ONE * STAMP_SIZE * 0.5).round()
+	canvas.draw_rect(Rect2(top_left, Vector2.ONE * STAMP_SIZE), color, false, 1.0)
+	canvas.draw_rect(Rect2(top_left + Vector2(3, 3), Vector2(5, 1)), color)
+	canvas.draw_rect(Rect2(top_left + Vector2(3, 6), Vector2(1, 3)), color)
+	canvas.draw_rect(Rect2(top_left + Vector2(6, 5), Vector2(2, 4)), color)
