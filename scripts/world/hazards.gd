@@ -13,12 +13,10 @@ const SPIT_DIRECT_DAMAGE := 8.0
 const MAX_PUDDLES := 40
 const THROWN_HIT_DISTANCE := 5.0
 const THROWN_LIFE_SECONDS := 3.0
-## 적 장판 채움: 주황빨강 바탕 + 자홍 빗금 (문서 15 §7-1 — 내 효과에는 이 색을 안 씀)
+## 적 장판 채움 주황빨강, 터질 때 자홍 (문서 15 §7-1 — 내 효과에는 이 색을 안 씀)
 const ZONE_FILL_COLOR := Color("ff4a1c")
 const ZONE_HATCH_COLOR := Color("ff2fa0")
-const ZONE_FILL_ALPHA := 0.24
-const ZONE_HATCH_ALPHA := 0.6
-const HATCH_GAP := 4
+const ZONE_FILL_ALPHA := 0.4
 const BLAST_COLOR := Color("ff5a2a")
 
 ## 생존자가 지금 적 웅덩이 안에 있나 (가장자리 빨강·발밑 고리·지글 소리)
@@ -231,11 +229,10 @@ func _damage_zombies_around(center: Vector2, radius: float, amount: float) -> vo
 		_context.horde.hit(zombie, amount, {"knockback_from": center, "knockback": 6.0, "source": "explosion"})
 
 
-## 웅덩이 채움(옅은 주황빨강) + 자홍 빗금 — 좀비 발밑. 테두리·거품은 HazardOverlay 가 맨 위에 한 번 더.
+## 웅덩이 채움(옅은 주황빨강) — 좀비 발밑. 빗금·테두리·거품은 HazardOverlay 가 맨 위에.
 func _draw() -> void:
 	for puddle: Dictionary in _puddles:
 		var center := Vector2(puddle["center"]).round()
 		var radius := float(puddle["radius"])
 		var fade := clampf(float(puddle["time_left"]) * 1.5, 0.0, 1.0)
 		draw_circle(center, radius, Color(ZONE_FILL_COLOR, ZONE_FILL_ALPHA * fade))
-		HazardOverlay.draw_hatch(self, center, radius, HATCH_GAP, Color(ZONE_HATCH_COLOR, ZONE_HATCH_ALPHA * fade))

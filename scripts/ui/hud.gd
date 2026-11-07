@@ -11,7 +11,7 @@ signal next_night_requested
 signal chest_claimed
 
 const SKILL_BUTTON_MARGIN := Vector2(8, 16)
-const LEVEL_UP_FLASH_SECONDS := 0.5
+const LEVEL_UP_FLASH_SECONDS := 0.35
 const LEVEL_UP_FLASH_SIZE := 22
 ## 첫 판 안내: (보여 줄 때, 사라질 때, 글) — 글 설명 대신 처음 몇 초에 자연스럽게 (문서 02 §12)
 const FIRST_RUN_HINTS: Array[Array] = [

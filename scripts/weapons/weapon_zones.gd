@@ -22,15 +22,15 @@ const PUFF_COUNT := 5
 const FLAME_ALPHA := 1.0               # 그룹이 통째로 옅어지므로 안에서는 진하게
 const FLAMES_PER_RADIUS := 0.9
 const LIGHT_SPARKLE_RATIO := 0.3
-const FIRE_FILL_ALPHA := 0.55          # 그룹 안 채움 — 겹쳐도 그룹이 한 번만 투명하게 함
-const CLOUD_FILL_ALPHA := 0.45
-const CLOUD_PUFF_ALPHA := 0.5
+const FIRE_FILL_ALPHA := 0.75          # 그룹 안 채움 — 겹쳐도 그룹이 한 번만 투명하게 함
+const CLOUD_FILL_ALPHA := 0.7
+const CLOUD_PUFF_ALPHA := 0.7
 ## 장판 피해는 소리·숫자 없이 (불과 같은 조용한 피해 — 매번 새 묶음을 만들지 않게 상수로)
 const QUIET_ZONE_HIT := {"source": "fire", "show_number": false}
 const LOOKS := {
-	"fire": {"ground": Color("2f6fd8"), "flames": [Color("ffffff"), Color("9fd8ff"), Color("5aa9ff")]},
+	"fire": {"ground": Color("5aa9ff"), "flames": [Color("ffffff"), Color("cfeaff"), Color("8fd3ff")]},
 	"flare": {"ground": Color("b8d4ff"), "flames": [Color("ffffff"), Color("eef4ff"), Color("b8d4ff")]},
-	"gas": {"ground": Color("8fa8cc"), "flames": [Color("dde8f7"), Color("b8cde8"), Color("8fa8cc")]},
+	"gas": {"ground": Color("b8cde8"), "flames": [Color("ffffff"), Color("dde8f7"), Color("b8cde8")]},
 	"light": {"ground": Color("fff2b0"), "flames": [Color("ffffff"), Color("fffbe0"), Color("ffe9a0")]},
 }
 ## 빛 기둥이 서는 장판 종류 → 기둥 높이 (구장 조명은 더 높게)

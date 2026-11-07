@@ -1,6 +1,6 @@
 ## [파일] scripts/world/hazard_overlay.gd
 ## [하는 일] 적의 것을 맨 위 '적 층'에 그린다: 웅덩이 테두리(안쪽 1점 밝게 + 바깥 1점 어둡게, 깜빡임)·거품, 빨간 예고 원·선, 날아오는 침·식칼·철근(밝은 몸 + 검은 테두리 1점). 밤 어둠·안개·내 효과보다 위라서 무엇에도 안 묻힌다. 생존자가 웅덩이 안이면 그 테두리가 크게 깜빡이고 발밑에 고리.
-## [쓰는 곳] scripts/world/hazards.gd 가 자식으로 만들어 목록을 넘기고 매 프레임 advance()·queue_redraw(). 빗금 그리기(draw_hatch)는 hazards.gd 도 쓴다. 적 경고 선 층 번호(ENEMY_LAYER)는 effects.gd 도 쓴다.
+## [쓰는 곳] scripts/world/hazards.gd 가 자식으로 만들어 목록을 넘기고 매 프레임 advance()·queue_redraw(). 적 경고 선 층 번호(ENEMY_LAYER)는 effects.gd 도 쓴다.
 ## [근거 문서] 15 §7-1 색 언어·§7-2 그리는 순서·§7-3 장판 안 알림, research_notes 뱀서라이크 readability.md §4 (밝은 테두리 + 어두운 바깥 테두리)
 class_name HazardOverlay
 extends CanvasLayer
@@ -11,6 +11,10 @@ const EDGE_BRIGHT := Color("ffb08a")
 const EDGE_DARK := Color("1a0408")
 const BUBBLE_COLORS: Array[Color] = [Color("ff2fa0"), Color("ff6a2a"), Color("ffc2e4")]
 const WARNING_COLOR := Color("ff3b3b")
+const HATCH_COLOR := Color("ff4fb8")
+const HATCH_ALPHA := 0.45
+const HATCH_GAP := 4
+const KEEP_CLEAR_RADIUS := 7.0
 const OUTLINE_COLOR := Color("0b0b10")
 const SPIT_COLOR := Color("ff3fb4")
 const THROWN_LOOKS := {
@@ -47,7 +51,8 @@ func queue_redraw() -> void:
 
 
 ## 원 안을 대각선 빗금으로 (색이 안 보여도 '적 장판' 모양으로 알게 — 색약 배려, 문서 15 §7-1)
-static func draw_hatch(canvas: CanvasItem, center: Vector2, radius: float, gap: int, color: Color) -> void:
+## keep_clear 둘레(생존자)는 비워 둔다 — 웅덩이가 겹쳐 쌓여도 내 캐릭터가 빗금에 묻히지 않게
+static func draw_hatch(canvas: CanvasItem, center: Vector2, radius: float, gap: int, color: Color, keep_clear: Vector2) -> void:
 	var inner := radius - 1.0
 	var along := Vector2(1, 1).normalized()
 	var reach := int(inner * 1.41)
@@ -57,7 +62,10 @@ static func draw_hatch(canvas: CanvasItem, center: Vector2, radius: float, gap: 
 			continue
 		var middle := center + Vector2(-shift * 0.5, shift * 0.5)
 		var half := sqrt(inner * inner - distance * distance)
-		canvas.draw_line((middle - along * half).round(), (middle + along * half).round(), color, 1.0)
+		for step: int in range(-int(half), int(half) + 1):   # 1점씩 찍어 픽셀 빗금 (얇은 선은 폰·웹에서 안 보일 때가 있음)
+			var dot := (middle + along * step).round()
+			if dot.distance_to(keep_clear) > KEEP_CLEAR_RADIUS:
+				canvas.draw_rect(Rect2(dot, Vector2.ONE), color)
 
 
 func _draw_enemy_things() -> void:
@@ -84,6 +92,8 @@ func _draw_puddle_edge(puddle: Dictionary) -> void:
 	var is_standing := bool(puddle.get("has_survivor", false))
 	var speed := STANDING_BLINK_SPEED if is_standing else BLINK_SPEED
 	var blink := 0.65 + 0.35 * absf(sin(_time * speed + center.x))
+	# 빗금은 여기(맨 위)에도 옅게 — 밤 어둠·내 효과에 묻혀도 '적 장판' 모양이 보이게
+	draw_hatch(_canvas, center, radius, HATCH_GAP, Color(HATCH_COLOR, HATCH_ALPHA * fade), _context.survivor.position + Vector2(0, -5))
 	_canvas.draw_arc(center, radius + 1.0, 0.0, TAU, 40, Color(EDGE_DARK, 0.9 * fade), 1.0)
 	_canvas.draw_arc(center, radius, 0.0, TAU, 40, Color(EDGE_BRIGHT, blink * fade), 2.0 if is_standing else 1.0)
 	var bubbles := maxi(3, int(radius * 0.35))

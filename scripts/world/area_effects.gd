@@ -7,7 +7,7 @@ extends Node2D
 
 const DAMAGE_TICK_SECONDS := 0.25
 const FIRE_COLORS: Array[Color] = [Color("ffffff"), Color("9fd8ff"), Color("5aa9ff")]
-const POISON_COLORS: Array[Color] = [Color("9fb4ff"), Color("7f9cff"), Color("c4d2ff")]
+const POISON_COLORS: Array[Color] = [Color("dfe6ff"), Color("c4d2ff"), Color("9fb4ff")]
 
 var _zones: Array[Dictionary] = []
 var _context: RunContext
@@ -63,7 +63,7 @@ func _draw_zones() -> void:
 		var colors := FIRE_COLORS if zone["kind"] == "fire" else POISON_COLORS
 		var radius := float(zone["radius"])
 		var fade := clampf(float(zone["time_left"]) * 2.0, 0.0, 1.0)
-		_canvas.draw_circle(Vector2(zone["center"]).round(), radius, Color(colors[2], 0.45 * fade))   # 그룹이 한 번에 옅게 하므로 안에서는 진하게
+		_canvas.draw_circle(Vector2(zone["center"]).round(), radius, Color(colors[2], 0.75 * fade))   # 그룹이 한 번에 옅게 하므로 안에서는 진하게
 		var flame_count := int(radius * 1.5)
 		for index: int in range(flame_count):
 			var angle := randf() * TAU

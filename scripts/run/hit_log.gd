@@ -53,6 +53,8 @@ func summary() -> Dictionary:
 			totals[tick["source"]] = float(totals.get(tick["source"], 0.0)) + float(tick["amount"])
 	var last_seconds: Array[Dictionary] = []
 	for source: String in totals.keys():
+		if float(totals[source]) < 0.5:
+			continue   # 막혀서 0 이 된 피해는 막대에 안 넣음
 		last_seconds.append({"source": source, "amount": snappedf(float(totals[source]), 0.1)})
 	last_seconds.sort_custom(func(first: Dictionary, second: Dictionary) -> bool: return float(first["amount"]) > float(second["amount"]))
 	return {"last_hits": last_hits, "last_seconds": last_seconds, "window_seconds": RECENT_WINDOW_SECONDS}
