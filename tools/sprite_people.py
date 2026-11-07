@@ -1,7 +1,7 @@
 """
 [파일] tools/sprite_people.py
 [하는 일] 생존자 동작 묶음(16×16: 서 있기 2장·걷기 4장 × 3방향·쓰러지기 3장)을 만든다. 옷마다 머리·몸통·다리 부품(예: 줄무늬 유니폼, 사냥 조끼, 흙 묻은 바지)과 모자를 바꾸고,
-           멘 배트·글러브·털 망토·개 목줄 같은 덧그림을 몸 뒤나 앞에 얹는다.
+           멘 배트·글러브·털 망토·개 목줄·커피 컵·서류 가방·결재판 같은 덧그림을 몸 뒤나 앞에 얹는다.
 [쓰는 곳] tools/build_sprites.py 가 부른다 → art/sprites/survivor_<옷>.png (+ _flash). 원본: art/source/parts_people.txt, 옷 표: outfits.json 의 human_outfits.
 [근거 문서] 04 §2 생존자 모습·전직 옷차림, 06 그림 규칙, 14 §3-1 새 생존자(야구선수·사냥꾼)
 """
@@ -37,6 +37,12 @@ OVERLAYS: dict[str, list[Overlay]] = {
               Overlay("side", "leash_side", "side_arm", 1, 3)],
     "scoped_crossbow": [Overlay("down", "crossbow_down_back", "body", 1, 6, behind=True), Overlay("up", "crossbow_up", "body", 3, 5),
                         Overlay("side", "crossbow_side_back", "body", 1, 4, behind=True)],
+    "coffee": [Overlay("down", "coffee", "right_arm", 0, 2), Overlay("up", "coffee", "left_arm", -1, 2),
+               Overlay("side", "coffee", "side_arm", 1, 2)],
+    "briefcase": [Overlay("down", "briefcase", "right_arm", -1, 3), Overlay("up", "briefcase", "left_arm", -1, 3),
+                  Overlay("side", "briefcase", "side_arm", -1, 3)],
+    "folder": [Overlay("down", "folder", "left_arm", -1, 1), Overlay("up", "folder", "right_arm", 0, 1),
+               Overlay("side", "folder", "side_arm", 0, 1)],
 }
 
 

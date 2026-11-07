@@ -1,5 +1,5 @@
 ## [파일] scripts/skills/skill_runner.gd
-## [하는 일] 생존자 스킬 버튼 담당: 지금 스킬(효과 조각 목록)과 다시 쓰기 시간을 들고 있다가, 누르면 조각을 차례로 실행한다(기절·밀기·부채꼴 밀기·빛·돌진·회복·보호막·저격·불 장판·독 폭발·조각 끌어오기 + 히든 스킬 조각은 HiddenSkillEffects 에 맡김). 전직이 스킬을 바꾸면 apply_changes() 로 숫자·조각·스킬 자체를 바꾼다. 히든 스킬을 고르면 버튼이 히든 스킬로 바뀌고 전직보다 우선한다.
+## [하는 일] 생존자 스킬 버튼 담당: 지금 스킬(효과 조각 목록)과 다시 쓰기 시간을 들고 있다가, 누르면 조각을 차례로 실행한다(기절·밀기·부채꼴 밀기·빛·돌진·회복·보호막·저격·불 장판·독 폭발·조각 끌어오기·잠깐 능력치 바꾸기 + 히든 스킬 조각은 HiddenSkillEffects 에 맡김). 전직이 스킬을 바꾸면 apply_changes() 로 숫자·조각·스킬 자체를 바꾼다. 히든 스킬을 고르면 버튼이 히든 스킬로 바뀌고 전직보다 우선한다.
 ## [쓰는 곳] scenes/run.tscn 의 Systems/SkillRunner. 스킬 버튼(scripts/ui/skill_button.gd)·자동 플레이가 try_use() 를, 전직(scripts/systems/promotion.gd)이 apply_changes() 를, run.gd 가 히든 카드를 고르면 set_hidden_skill() 을 부른다. 컷인(scripts/ui/skill_cutin.gd)이 hidden_skill_used 를 듣는다.
 ## [근거 문서] 03 §1 스킬, 03 §1-2 전직, 14 §2-5 히든 스킬, data/skills.json
 class_name SkillRunner
@@ -19,17 +19,21 @@ var cooldown_left: float = 0.0
 var hidden_skill_id: String = ""
 var _context: RunContext
 var _hidden_effects: HiddenSkillEffects
+## 계속 도는 생존자 효과 (야근 수당·잠깐 능력치 바꾸기·팀장 인턴)
+var _trait_effects: TraitEffects
 
 
 func setup(context: RunContext, starting_skill_id: String) -> void:
 	_context = context
-	_hidden_effects = HiddenSkillEffects.new(context)
+	_trait_effects = TraitEffects.new(context)
+	_hidden_effects = HiddenSkillEffects.new(context, _trait_effects)
 	_load_skill(starting_skill_id)
 
 
 func update(delta: float) -> void:
 	cooldown_left = maxf(cooldown_left - delta, 0.0)
 	_hidden_effects.update(delta)
+	_trait_effects.update(delta)
 
 
 func is_hidden_active() -> bool:
@@ -143,7 +147,11 @@ func _run_effect(effect: Dictionary) -> void:
 			_context.area_effects.add_poison_cloud(center, float(effect["radius"]), float(effect["seconds"]), float(effect["damage_per_second"]))
 		"collect_all_shards":
 			_context.shards.collect_all()
-		"airstrike", "backdraft", "express", "miracle", "grand_slam", "pack_hunt":
+		"stat_boost":
+			_trait_effects.start_boost(skill_id, float(effect["seconds"]), effect["multiply"], float(effect.get("after_seconds", 0.0)), effect.get("after_multiply", {}))
+			_context.effects.ring(center, 16.0, Color("bfe9ff"), 0.4)
+			_context.play_sound("skill_caffeine")
+		"airstrike", "backdraft", "express", "clock_out", "grand_slam", "pack_hunt":
 			_hidden_effects.start(effect)
 		_:
 			push_error("data/skills.json: 모르는 효과 조각 '%s'" % effect["type"])

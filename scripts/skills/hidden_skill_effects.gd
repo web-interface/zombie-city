@@ -1,30 +1,34 @@
 ## [파일] scripts/skills/hidden_skill_effects.gd
-## [하는 일] 히든 스킬의 큰 효과 조각을 시간에 맞춰 실행한다 (만루 홈런·사냥개 무리는 HiddenRunners 에 맡김): 항공 지원 요청(예고 원 → 폭격 20발을 3초에 걸쳐), 백드래프트(화염 고리 3번 + 큰 불 장판), 총알 배송(무적 돌진 3번 연속, 지나간 길 폭발), 기적의 처방(체력 전부 회복 + 10초 무적 + 주변 독, 무적 동안 금빛 반짝임). 숫자는 data/skills.json 의 효과 조각에.
-## [쓰는 곳] scripts/skills/skill_runner.gd 가 만들고, 효과 조각 종류가 airstrike·backdraft·express·miracle 이면 start() 를, 매 프레임 update() 를 부른다.
+## [하는 일] 히든 스킬의 큰 효과 조각을 시간에 맞춰 실행한다 (만루 홈런·사냥개 무리는 HiddenRunners 에 맡김): 항공 지원 요청(예고 원 → 폭격 20발을 3초에 걸쳐), 백드래프트(화염 고리 3번 + 큰 불 장판), 총알 배송(무적 돌진 3번 연속, 지나간 길 폭발), 칼퇴근(퇴근 종소리 — 6초 동안 좀비가 멈추고 내 피해 2배). 숫자는 data/skills.json 의 효과 조각에.
+## [쓰는 곳] scripts/skills/skill_runner.gd 가 만들고, 효과 조각 종류가 airstrike·backdraft·express·clock_out 이면 start() 를, 매 프레임 update() 를 부른다.
 ## [근거 문서] 14 §2-5 히든 스킬·§2-7 (히든 = 컷인 + 화면 번쩍 + 큰 흔들림), 03 §4-1
 class_name HiddenSkillEffects
 extends RefCounted
 
 const AIRSTRIKE_MISS_RADIUS := 0.7     # 노릴 좀비가 없으면 생존자 둘레 이 비율 안 아무 데나
-const MIRACLE_SPARKLE_SECONDS := 0.1   # 무적 동안 금빛 알갱이를 뿌리는 간격
 const BLAST_KNOCKBACK_RATIO := 0.5     # 폭격·돌진 폭발에 반경의 절반만큼 밀려남
 const GOLD := Color("ffd166")
 const POISON_COLOR := Color("9fb4ff")
+const CLOCK_OUT_FLASH := Color(0.85, 0.95, 1.0, 0.6)
+const CLOCK_OUT_FLASH_SECONDS := 0.25
+const CLOCK_OUT_RING_RADIUS := 120.0
 
 ## 정해진 시각에 터질 일들: {"at": 초, "kind": "airstrike_warn"·"airstrike_boom"·"backdraft_ring"·"backdraft_fire", …}
 var _events: Array[Dictionary] = []
 var _time: float = 0.0
 ## 총알 배송: 남은 돌진 수·다음 돌진까지·폭발 간격 (빈 사전이면 안 하는 중)
 var _express: Dictionary = {}
-var _miracle_time_left: float = 0.0
-var _sparkle_timer: float = 0.0
+var _clock_out_time_left: float = 0.0
 var _context: RunContext
 ## 화면을 뛰어다니는 효과 (만루 홈런 공·사냥개 무리)
 var _runners: HiddenRunners
+## 칼퇴근 피해 2배는 잠깐 능력치 바꾸기로 (TraitEffects)
+var _trait_effects: TraitEffects
 
 
-func _init(context: RunContext) -> void:
+func _init(context: RunContext, trait_effects: TraitEffects) -> void:
 	_context = context
+	_trait_effects = trait_effects
 	_runners = HiddenRunners.new(context)
 
 
@@ -39,8 +43,8 @@ func start(effect: Dictionary) -> void:
 			_express["dashes_left"] = int(effect["dashes"])
 			_express["gap_left"] = 0.0
 			_express["blast_timer"] = 0.0
-		"miracle":
-			_cast_miracle(effect)
+		"clock_out":
+			_cast_clock_out(effect)
 		"grand_slam", "pack_hunt":
 			_runners.start(effect)
 
@@ -61,7 +65,7 @@ func update(delta: float) -> void:
 		write_index += 1
 	_events.resize(write_index)
 	_update_express(delta)
-	_update_miracle(delta)
+	_update_clock_out(delta)
 	_runners.update(delta)
 
 
@@ -151,36 +155,33 @@ func _update_express(delta: float) -> void:
 	_context.play_sound("express_dash")
 
 
-## ── 기적의 처방: 전부 회복 + 무적(받는 피해 0) + 주변 독 ──
-func _cast_miracle(effect: Dictionary) -> void:
-	var survivor := _context.survivor
-	survivor.heal(float(effect["heal_ratio"]))
-	survivor.add_guard(float(effect["invulnerable_seconds"]), 0.0)
-	_context.area_effects.add_poison_cloud(survivor.position, float(effect["poison_radius"]), float(effect["poison_seconds"]), float(effect["poison_damage_per_second"]))
-	for zombie: Zombie in _context.horde.in_radius(survivor.position, float(effect["poison_radius"])):
-		zombie.apply_poison(float(effect["poison_damage_per_second"]) * survivor.stats.value("poison_damage_multiplier"), float(effect["poison_seconds"]))
-	_visuals().shockwave(survivor.position, float(effect["poison_radius"]), true)
-	_visuals().puff(survivor.position, POISON_COLOR, 12, float(effect["poison_radius"]) * 0.6)
-	_miracle_time_left = float(effect["invulnerable_seconds"])
-	_context.play_sound("miracle_chime")
+## ── 칼퇴근: 퇴근 종소리 → seconds 동안 화면 좀비가 멈춤(새로 온 좀비도 — 보스는 처음에 boss_seconds 만) + 내 피해 배수 ──
+func _cast_clock_out(effect: Dictionary) -> void:
+	_clock_out_time_left = float(effect["seconds"])
+	for zombie: Zombie in _context.horde.zombies:
+		if zombie.is_boss:
+			zombie.stun(float(effect["boss_seconds"]))
+	_trait_effects.start_boost("clock_out", _clock_out_time_left, {"damage_multiplier": float(effect["damage_multiplier"])})
+	_visuals().screen_flash(CLOCK_OUT_FLASH, CLOCK_OUT_FLASH_SECONDS)
+	_visuals().shockwave(_context.survivor.position, CLOCK_OUT_RING_RADIUS, true)
+	_context.camera.add_trauma(float(effect["shake_trauma"]))
+	_context.play_sound("clock_out_bell")
 
 
-func _update_miracle(delta: float) -> void:
-	if _miracle_time_left <= 0.0:
+func _update_clock_out(delta: float) -> void:
+	if _clock_out_time_left <= 0.0:
 		return
-	_miracle_time_left -= delta
-	_sparkle_timer -= delta
-	if _sparkle_timer <= 0.0:
-		_sparkle_timer = MIRACLE_SPARKLE_SECONDS
-		var offset := Vector2.from_angle(randf() * TAU) * randf_range(4.0, 9.0)
-		_visuals().add_particle(_context.survivor.position + offset + Vector2(0, -5), Vector2(0, -12), 0.5, GOLD, 0.0)
+	_clock_out_time_left -= delta
+	for zombie: Zombie in _context.horde.zombies:
+		if not zombie.is_boss:
+			zombie.stun(_clock_out_time_left)
 
 
 func _visuals() -> WeaponVisuals:
 	return _context.weapon_rack.visuals
 
 
-## 다음 밤으로 넘어갈 때: 아직 안 터진 폭격·화염 고리·돌진을 거둔다 (새 밤 0:00 에 이어지지 않게 — 검수 지적). 무적 같은 생존자 효과는 둔다.
+## 다음 밤으로 넘어갈 때: 아직 안 터진 폭격·화염 고리·돌진을 거둔다 (새 밤 0:00 에 이어지지 않게 — 검수 지적). 칼퇴근 멈춤·무적 같은 생존자 효과는 둔다.
 func clear_scheduled() -> void:
 	_events.clear()
 	_express = {}
