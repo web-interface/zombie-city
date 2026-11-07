@@ -1208,31 +1208,21 @@
     "levels": [
       {
         "interval_seconds": 0.6,
-        "radius": 26,
+        "radius": 28,
         "damage": 0,
         "knockback": 0,
         "stun_seconds": 0,
-        "poison_damage_per_second": 2,
+        "poison_damage_per_second": 3,
         "poison_seconds": 2,
         "poison_applications": 1
       },
       {
         "interval_seconds": 0.6,
-        "radius": 28,
-        "damage": 0,
-        "knockback": 0,
-        "stun_seconds": 0,
-        "poison_damage_per_second": 2.5,
-        "poison_seconds": 2,
-        "poison_applications": 1
-      },
-      {
-        "interval_seconds": 0.55,
         "radius": 30,
         "damage": 0,
         "knockback": 0,
         "stun_seconds": 0,
-        "poison_damage_per_second": 3,
+        "poison_damage_per_second": 3.5,
         "poison_seconds": 2,
         "poison_applications": 1
       },
@@ -1242,17 +1232,27 @@
         "damage": 0,
         "knockback": 0,
         "stun_seconds": 0,
-        "poison_damage_per_second": 3.5,
+        "poison_damage_per_second": 4,
+        "poison_seconds": 2,
+        "poison_applications": 1
+      },
+      {
+        "interval_seconds": 0.55,
+        "radius": 36,
+        "damage": 0,
+        "knockback": 0,
+        "stun_seconds": 0,
+        "poison_damage_per_second": 5,
         "poison_seconds": 2,
         "poison_applications": 1
       },
       {
         "interval_seconds": 0.5,
-        "radius": 36,
+        "radius": 40,
         "damage": 0,
         "knockback": 0,
         "stun_seconds": 0,
-        "poison_damage_per_second": 4,
+        "poison_damage_per_second": 6,
         "poison_seconds": 2,
         "poison_applications": 1
       }
@@ -1285,35 +1285,8 @@
     "description": "전기 고리 + 가까운 좀비로 번개",
     "levels": [
       {
-        "interval_seconds": 2.4,
-        "radius": 30,
-        "damage": 10,
-        "knockback": 4,
-        "stun_seconds": 0.3,
-        "chain_count": 1,
-        "chain_range": 80
-      },
-      {
-        "interval_seconds": 2.3,
-        "radius": 32,
-        "damage": 11,
-        "knockback": 4,
-        "stun_seconds": 0.3,
-        "chain_count": 1,
-        "chain_range": 80
-      },
-      {
-        "interval_seconds": 2.2,
+        "interval_seconds": 2.0,
         "radius": 34,
-        "damage": 13,
-        "knockback": 4,
-        "stun_seconds": 0.3,
-        "chain_count": 2,
-        "chain_range": 80
-      },
-      {
-        "interval_seconds": 2.1,
-        "radius": 36,
         "damage": 14,
         "knockback": 4,
         "stun_seconds": 0.3,
@@ -1321,12 +1294,39 @@
         "chain_range": 80
       },
       {
-        "interval_seconds": 2.0,
-        "radius": 38,
+        "interval_seconds": 1.9,
+        "radius": 36,
         "damage": 16,
         "knockback": 4,
         "stun_seconds": 0.3,
+        "chain_count": 2,
+        "chain_range": 80
+      },
+      {
+        "interval_seconds": 1.8,
+        "radius": 38,
+        "damage": 19,
+        "knockback": 4,
+        "stun_seconds": 0.3,
         "chain_count": 3,
+        "chain_range": 80
+      },
+      {
+        "interval_seconds": 1.7,
+        "radius": 40,
+        "damage": 22,
+        "knockback": 4,
+        "stun_seconds": 0.3,
+        "chain_count": 3,
+        "chain_range": 80
+      },
+      {
+        "interval_seconds": 1.6,
+        "radius": 44,
+        "damage": 26,
+        "knockback": 4,
+        "stun_seconds": 0.3,
+        "chain_count": 4,
         "chain_range": 80
       }
     ],
@@ -1357,41 +1357,41 @@
     "description": "몸 가까이 빠르게 도는 칼날",
     "levels": [
       {
-        "damage": 7,
+        "damage": 8,
         "drone_count": 2,
-        "radius": 16,
+        "radius": 18,
         "hit_interval_seconds": 0.35,
         "spin_speed": 5.0,
         "knockback": 1
       },
       {
-        "damage": 7,
+        "damage": 9,
         "drone_count": 3,
-        "radius": 16,
+        "radius": 18,
         "hit_interval_seconds": 0.35,
         "spin_speed": 5.2,
         "knockback": 1
       },
       {
-        "damage": 8,
+        "damage": 10,
         "drone_count": 3,
-        "radius": 17,
+        "radius": 19,
         "hit_interval_seconds": 0.3,
         "spin_speed": 5.4,
         "knockback": 1
       },
       {
-        "damage": 9,
+        "damage": 11,
         "drone_count": 4,
-        "radius": 18,
+        "radius": 20,
         "hit_interval_seconds": 0.3,
         "spin_speed": 5.6,
         "knockback": 1
       },
       {
-        "damage": 10,
+        "damage": 13,
         "drone_count": 5,
-        "radius": 19,
+        "radius": 21,
         "hit_interval_seconds": 0.25,
         "spin_speed": 6.0,
         "knockback": 1
@@ -1500,5 +1500,5 @@
   },
   "_3차_근거": "난이도 테스터 3차(2026-11-07): 네일건 2~5단계를 올림 (피해 7·7.5·7.5·8.5 → 8.5·9.5·9.5·11, 간격 조금 짧게, 4단계부터 못 2개) — 2~4단계 초당 피해가 권총의 절반(20~24 vs 40~76)이었다. 택배기사 탈출률에 효과가 있었는지는 판 수가 적어 확인 못 함 (택배기사가 약한 주된 까닭은 봇이 보스와 너무 멀리 떨어지는 것으로 보임). docs/balance_log.md",
   "_4차_근거": "총책임관 4차(2026-11-07 새벽): 도끼가 가장 가까운 좀비 쪽으로 휘두르게 바뀌어(물러서면 헛스윙만 하던 '끼임' 해결) 소방관 보통 봇 8/8 탈출 → 도끼 피해 ×0.75(10.5·12.5·14.5·14.5·17), 휘두르는 간격 ×1.3(1.43·1.43·1.37·1.3·1.23). 밀어내기 절반은 시험만 하고 되돌림(92%로 거의 그대로, 손맛만 줄어서). 결과 소방관 보통 75%(20판) — 다른 셋보다 높지만 별 2개 '튼튼한 입문 캐릭터'로 둠. docs/balance_log.md",
-  "_묶음2_근거": "무기·카드 담당(2026-11-07): 문서 14 §2-2·§2-4 대로 새 무기 13개·진화 19개. 처음 값은 지금 무기(권총 1단계 초당 20 피해)와 비슷한 세기로 잡음 — 난이도 테스터가 맞춘다."
+  "_묶음2_근거": "무기·카드 담당(2026-11-07): 문서 14 §2-2·§2-4 대로 새 무기 13개·진화 19개. 처음 값은 지금 무기(권총 1단계 초당 20 피해)와 비슷한 세기로 잡음 — 난이도 테스터가 맞춘다. 간호사 전용 3개(소독약·제세동기·메스)는 첫 시험에서 간호사 보통 봇 0/5 탈출(처치가 다른 생존자의 1/5)이라 처음 값을 조금 올림."
 }
