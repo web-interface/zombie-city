@@ -1,7 +1,7 @@
 {
   "_설명": {
     "파일": "data/flavor_texts.json",
-    "하는 일": "카드에 붙는 한 줄 이야기(동네 말투 농담, 12자 안팎 — 카드 한 줄에 들어가게). 숫자 설명만 있으면 'AI 티'가 나서 무기·장비마다 사람 냄새 나는 한 줄을 단다.",
+    "하는 일": "카드에 붙는 한 줄 이야기(동네 말투 농담, 12자 안팎 — 카드 한 줄에 들어가게). 숫자 설명만 있으면 'AI 티'가 나서 무기·장비·진화·히든 스킬마다 사람 냄새 나는 한 줄을 단다.",
     "쓰는 곳": "scripts/systems/level_up.gd 가 카드를 만들 때 읽어 scripts/ui/level_up_panel.gd 가 흐린 글씨로 보여 준다.",
     "근거 문서": "06 AI 티 안 나게(아이템 설명에 한 줄 농담), 13 국내 조사(동네 말투·뜬금 개그, 억지 국뽕·신파 금지)"
   },
@@ -11,13 +11,45 @@
     "nail_gun": "공사장에서 '잠깐' 빌림",
     "syringe_gun": "주사 놓는 손은 안 떨림",
     "shotgun": "경비실 금고에서 꺼냄",
-    "saw_drone": "반품 불가 배달 드론"
+    "saw_drone": "반품 불가 배달 드론",
+    "taser": "충전은 파출소 콘센트",
+    "tear_gas": "시위 진압하고 남은 것",
+    "megaphone": "방범대 아저씨 거",
+    "fire_hose": "소화전만 열면 됨",
+    "rescue_saw": "문짝 따던 그 소리",
+    "flare": "고속도로 갓길용",
+    "box_toss": "부재중이라 문 앞에",
+    "tape_gun": "뽁뽁이 다음은 테이프",
+    "parcel_drone": "시범 배달 지역이었음",
+    "disinfectant": "복도 소독 시간입니다",
+    "defibrillator": "물러나세요, 쇼크!",
+    "scalpel": "손이 기억하는 각도",
+    "molotov": "빈 소주병 재활용"
   },
   "gear": {
     "vest": "택배 테이프로 한 겹 더",
     "sneakers": "할인 매장 마지막 사이즈",
     "backpack": "등산용 60리터",
-    "ammo": "철물점 사장님 찬조"
+    "ammo": "철물점 사장님 찬조",
+    "energy_drink": "세 캔째부터 손 떨림",
+    "knee_pads": "배구부 창고에서",
+    "battery": "편의점 건전지 묶음",
+    "vitamins": "엄마가 챙겨 준 거",
+    "lucky_charm": "절에서 받은 부적",
+    "research_notes": "누가 남긴 메모",
+    "duct_tape": "안 되면 감으면 됨",
+    "coffee": "탕비실 마지막 봉지",
+    "radio": "아직 지지직거림",
+    "turnout_gear": "땀 냄새는 덤",
+    "delivery_bag": "보온 보냉 겸용",
+    "stethoscope": "심장 소리가 들려"
   },
-  "heal": "편의점 구급함에서"
+  "heal": "편의점 구급함에서",
+  "evolution": "둘이 합쳐지면…",
+  "hidden_skills": {
+    "hidden_airstrike": "\"좌표 불러 줄게요\"",
+    "hidden_backdraft": "문 열지 마세요",
+    "hidden_express": "오늘 도착 보장",
+    "hidden_miracle": "아직 안 끝났어요"
+  }
 }

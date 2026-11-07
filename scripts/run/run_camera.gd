@@ -18,6 +18,7 @@ var _look_ahead: Vector2 = Vector2.ZERO
 
 
 func setup(juice_rules: Dictionary) -> void:
+	shake_strength_multiplier = 1.0 if SaveData.is_screen_shake_on() else 0.0   # 설정 '화면 흔들림'
 	_decay_per_second = float(juice_rules["trauma_decay_per_second"])
 	_max_shake_pixels = float(juice_rules["max_shake_pixels"])
 

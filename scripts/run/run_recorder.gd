@@ -15,6 +15,9 @@ var kills_by_minute: Array[int] = [0]
 var max_zombies_late_night: int = 0
 var boss_kill_seconds: Array[float] = []
 var chosen_cards: Array[String] = []
+## 진화한 무기의 진화 id 들 (진화한 차례대로) · 고른 히든 스킬 id (없으면 빈 글자)
+var evolutions: Array[String] = []
+var hidden_skill: String = ""
 var near_death_saves: int = 0
 var kills: int = 0
 var boss_kills: int = 0
@@ -60,6 +63,11 @@ func note_event() -> void:
 
 func note_card(card: Dictionary) -> void:
 	chosen_cards.append("%s:%s" % [card.get("kind", ""), card.get("id", "")])
+	match String(card.get("kind", "")):
+		"evolution":
+			evolutions.append(String(GameData.entry("weapons", String(card["id"]))["evolution"]["id"]))
+		"hidden_skill":
+			hidden_skill = String(card["id"])
 
 
 func note_boss_kill(seconds_to_kill: float) -> void:
@@ -147,8 +155,19 @@ func _balance_metrics() -> Dictionary:
 		"took_damage_while_extracting": took_damage_while_extracting,
 		"boring_gaps": _boring_gap_count(),
 		"chosen_cards": chosen_cards,
+		"weapons_final": _final_weapon_ids(),
+		"evolutions": evolutions,
+		"hidden_skill": hidden_skill,
 		"bot": String(SceneRouter.test_options.get("autoplay", "")),
 	}
+
+
+## 판 끝에 가진 무기 (진화했으면 진화 id — 어떤 빌드로 끝났나, 문서 14 §2)
+func _final_weapon_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for weapon: Weapon in _context.weapon_rack.weapons:
+		ids.append(weapon.final_id())
+	return ids
 
 
 ## 전직 뒤 30초 처치 수 ÷ 전 30초 처치 수 (1.3 이상이면 전직이 체감됨)

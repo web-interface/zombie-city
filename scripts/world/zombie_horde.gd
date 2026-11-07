@@ -91,7 +91,9 @@ func hit(zombie: Zombie, amount: float, options: Dictionary = {}) -> void:
 	var light_bonus: float = float(_context.light_rules["zombie_damage_taken_in_light"]) if in_light else 1.0
 	var final_amount: float = amount * light_bonus * _abilities.damage_multiplier(zombie, options)
 	zombie.health -= final_amount
-	zombie.flash_time_left = HIT_FLASH_SECONDS
+	var source := String(options.get("source", ""))
+	if not SILENT_SOURCES.has(source):   # 독·불은 매 프레임 들어와서 하얗게 번쩍이면 좀비가 늘 보라색 덩어리로 보인다
+		zombie.flash_time_left = HIT_FLASH_SECONDS
 	if options.has("knockback_from") and float(options.get("knockback", 0.0)) > 0.0:
 		var away: Vector2 = zombie.position - Vector2(options["knockback_from"])
 		zombie.push(away, float(options["knockback"]) * _context.survivor.stats.value("knockback_multiplier"))
@@ -100,7 +102,6 @@ func hit(zombie: Zombie, amount: float, options: Dictionary = {}) -> void:
 	var is_notable: bool = is_crit or zombie.is_boss or final_amount >= float(_context.juice_rules["damage_number_min_amount"])
 	if bool(options.get("show_number", true)) and is_notable:
 		_context.effects.show_damage_number(zombie.position, final_amount, is_crit)
-	var source := String(options.get("source", ""))
 	if not SILENT_SOURCES.has(source):
 		_context.play_sound("boss_hit" if zombie.is_boss else "zombie_hit")
 	if zombie.health <= 0.0:

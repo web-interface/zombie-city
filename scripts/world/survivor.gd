@@ -142,6 +142,14 @@ func _on_health_depleted() -> void:
 	died.emit()
 
 
+## 부활: 체력 일부로 일어나 잠깐 피해를 안 받는다 (scripts/run/run_meta_hooks.gd)
+func revive(health_ratio_after: float, guard_seconds: float) -> void:
+	is_dead = false
+	health = stats.value("max_health") * health_ratio_after
+	add_guard(guard_seconds, 0.0)
+	animator.play_revive()
+
+
 func _regenerate(delta: float) -> void:
 	var regen := stats.value("regen_per_second") * stats.value("heal_multiplier")
 	if regen > 0.0:

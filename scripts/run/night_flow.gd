@@ -50,6 +50,10 @@ func start_next_night() -> void:
 	_context.health_packs.clear()
 	_context.pickups.clear()
 	_context.projectiles.clear()
+	_context.weapon_rack.zones.clear()   # 무기가 깔아 둔 연기·불 장판
+	for weapon: Weapon in _context.weapon_rack.weapons:
+		if weapon is LobAreaWeapon:
+			(weapon as LobAreaWeapon).clear_flights()   # 날아가던 화염병·최루탄
 	_context.area_effects.clear()
 	_context.hazards.clear()
 	_context.lighting.clear_temporary_lights()

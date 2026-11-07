@@ -96,8 +96,17 @@
     "cards_per_level_up": 3,
     "rerolls_per_run": 1,
     "skip_card_heal_ratio": 0.15,
-    "heal_card_ratio": 0.3
+    "heal_card_ratio": 0.3,
+    "common_weapons": ["shotgun", "saw_drone", "molotov"],
+    "common_gear": ["vest", "sneakers", "backpack", "ammo", "energy_drink", "knee_pads", "battery", "vitamins", "lucky_charm", "research_notes", "duct_tape", "coffee"],
+    "banishes_per_run": 2,
+    "min_weapon_cards": 1,
+    "hidden_skill_min_level": 8,
+    "hidden_skill_chance": 0.02,
+    "hidden_skill_cutin_seconds": 0.75,
+    "evolution_slow_motion_seconds": 0.8
   },
+  "_build_묶음2_뜻": "문서 14 §2-1: 레벨 업 카드는 생존자 전용(survivors.json weapon_pool·gear_pool) + 공용(common_weapons·common_gear)에서만. banishes_per_run = 판마다 빼 버리기 횟수. min_weapon_cards = 레벨 업 카드에 무기 카드가 적어도 이만큼 (있으면 — 장비만 3장 뜨는 것 막기). 히든 카드는 레벨 hidden_skill_min_level 부터 레벨 업마다 hidden_skill_chance(+행운 부적), 한 판에 한 번. hidden_skill_cutin_seconds = 히든 스킬 컷인 동안 화면 멈춤, evolution_slow_motion_seconds = 진화 순간 느린 화면.",
   "promotion": {
     "first_promotion_level": 10,
     "second_promotion_level": 20
@@ -151,7 +160,10 @@
     "poison_damage_multiplier": 1.0,
     "fire_immune": 0,
     "poison_spread": 0,
-    "last_stand": 0
+    "last_stand": 0,
+    "light_radius_multiplier": 1.0,
+    "experience_multiplier": 1.0,
+    "hidden_skill_chance_bonus": 0.0
   },
   "_juice_근거": "디자인 분석가 조사(2026-11-07): 흔들림은 충격 값 제곱·최대 3점, 잠깐 멈춤은 보스 처치 150ms+0.6초 30% 느리게, 피해 숫자는 치명타·30 이상·보스만 최대 20개 (문서 13)",
   "status_effects": {

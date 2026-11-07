@@ -260,7 +260,9 @@ func _pick_card_index(cards: Array) -> int:
 
 func _card_score(card: Dictionary) -> float:
 	var kind := String(card["kind"])
-	var score := {"weapon_upgrade": 5.0, "new_weapon": 4.0, "gear_upgrade": 2.5, "new_gear": 3.0, "heal": 1.0}.get(kind, 0.0) as float
+	var score := {"hidden_skill": 10.0, "evolution": 9.0, "weapon_upgrade": 5.0, "new_weapon": 4.0, "gear_upgrade": 2.5, "new_gear": 3.0, "heal": 1.0}.get(kind, 0.0) as float
+	if not String(card.get("hint", "")).is_empty():
+		score += 2.0   # 진화 짝 카드(금색 힌트)는 챙긴다 — 사람도 진화를 노리니까
 	if skill_level == "고수":
 		# 고수는 키우던 무기를 집중해서 올리고(진화를 노리는 사람처럼), 피해·체력 장비를 챙긴다
 		var owned := _context.weapon_rack.weapon_of(String(card["id"])) if kind == "weapon_upgrade" else null

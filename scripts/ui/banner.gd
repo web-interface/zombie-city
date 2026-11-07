@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/banner.gd
-## [하는 일] 화면 위쪽 알림 띠. 종류마다 모양이 다르다: "alert" = 긴급재난문자 모양(빨간 줄 + '[새벽시청]' 같은 말투), "good" = 초록, "promotion" = 금색. 위에서 내려왔다가 2.4초 뒤 사라진다. 여러 개가 오면 차례로 보여 준다.
+## [하는 일] 화면 위쪽 알림 띠. 종류마다 모양이 다르다: "alert" = 긴급재난문자 모양(빨간 줄 + '[새벽시청]' 같은 말투), "good" = 초록, "promotion" = 금색, "evolution" = 주황빛 금색(진화), "hidden" = 금색(히든 스킬). 위에서 내려왔다가 2.4초 뒤 사라진다. 여러 개가 오면 차례로 보여 준다.
 ## [쓰는 곳] scripts/ui/hud.gd 가 만들고, run.gd 가 Hud.show_banner() 로 부른다.
 ## [근거 문서] 05 게임 화면 배치(알림), 13 국내 조사(긴급재난문자 모양 알림 — 한국적 재미)
 class_name Banner
@@ -11,6 +11,8 @@ const STYLES := {
 	"alert": {"edge": Color("ff5c5c"), "text": Color("ffe9e9"), "tag": "긴급재난문자"},
 	"good": {"edge": Color("8ff59a"), "text": Color("e9ffe9"), "tag": ""},
 	"promotion": {"edge": Color("ffd166"), "text": Color("fff4d6"), "tag": "전직"},
+	"evolution": {"edge": Color("ffb347"), "text": Color("fff4d6"), "tag": "진화"},
+	"hidden": {"edge": Color("ffd166"), "text": Color("ffffff"), "tag": "히든"},
 }
 
 var _queue: Array[Dictionary] = []

@@ -41,7 +41,7 @@ func drop_at(at_position: Vector2) -> void:
 
 
 func maybe_drop(at_position: Vector2) -> void:
-	if randf() >= float(_rules["drop_chance"]):
+	if randf() >= float(_rules["drop_chance"]) * _context.night_cycle.health_pack_chance_multiplier():   # 감염도 3 '반만'
 		return
 	if _packs.size() >= int(_rules["max_on_field"]):
 		_packs.remove_at(_farthest_index())   # 꽉 차면 멀리 두고 온 것을 치운다 (지나친 구급함이 쌓여 더 안 떨어지던 것 — 마지막 검수)

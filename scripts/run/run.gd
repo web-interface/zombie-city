@@ -16,6 +16,7 @@ var _night_flow := NightFlow.new()
 var _rewards := RunRewards.new()
 var _input := RunInput.new()
 var _chatter := SurvivorChatter.new()
+var _meta_hooks := RunMetaHooks.new()
 
 @onready var _survivor: Survivor = $World/Survivor
 @onready var _horde: ZombieHorde = $World/ZombieHorde
@@ -49,6 +50,8 @@ func _ready() -> void:
 	_hud.setup(context, _rack, _level_up, _promotion, _skill_runner, _extraction)
 	_hud.watch_bosses(_boss_director)
 	_rewards.setup(context, _hud, _level_up, _combo)
+	_rewards.watch_build(_skill_runner, _time_effects)
+	_meta_hooks.setup(context, _hud, _level_up, _boss_director)
 	add_child(_night_flow)
 	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo,
 		"night_systems": [_spawner, _events, _boss_director, _extraction]})
@@ -241,6 +244,8 @@ func _on_survivor_damaged(amount: float) -> void:
 
 
 func _on_survivor_died() -> void:
+	if _meta_hooks.try_revive():
+		return
 	_hud.show_banner("물렸어요…", "alert")
 	context.play_sound("game_over")
 	_time_effects.play(DEATH_SLOW_MOTION_SECONDS, DEATH_SLOW_MOTION_SCALE)   # 쓰러지는 순간을 느리게 보여 준다

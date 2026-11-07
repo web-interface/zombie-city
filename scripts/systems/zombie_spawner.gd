@@ -121,7 +121,8 @@ func _pick_kind(elapsed: float) -> String:
 
 func _is_kind_available(kind: Dictionary, night: int, elapsed: float) -> bool:
 	var first_night := int(kind["from_night"])
-	return night > first_night or (night == first_night and elapsed >= float(kind["from_second"]))
+	var earlier := 0.0 if kind["kind"] == "walker" else _context.night_cycle.special_zombie_earlier_seconds()   # 감염도 2
+	return night > first_night or (night == first_night and elapsed >= float(kind["from_second"]) - earlier)
 
 
 ## 생존자 둘레 화면 밖 고리. 움직이는 쪽에서 조금 더 자주 나오게 해 앞이 막히는 긴장을 만든다.

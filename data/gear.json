@@ -1,9 +1,9 @@
 {
   "_설명": {
     "파일": "data/gear.json",
-    "하는 일": "장비 4종(v0.1)의 단계마다 효과. 장비는 공격하지 않고 생존자 능력치를 바꾼다 (add = 더하기, multiply = 곱하기, 단계마다 한 번씩).",
-    "쓰는 곳": "scripts/systems/level_up.gd 가 카드로 보여 주고, scripts/world/survivor_stats.gd 가 능력치에 적용한다.",
-    "근거 문서": "03 §3 장비"
+    "하는 일": "장비 16종(공용 12 + 생존자 전용 4)의 단계마다 효과. 장비는 공격하지 않고 생존자 능력치를 바꾼다 (add = 더하기, multiply = 곱하기, 단계마다 한 번씩). 진화 짝 장비이기도 하다 (data/weapons.json 의 evolution.gear).",
+    "쓰는 곳": "scripts/systems/card_deck.gd 가 카드로 보여 주고, scripts/weapons/weapon_rack.gd 가 scripts/world/survivor_stats.gd 에 적용한다. 공용 목록은 data/run_rules.json build.common_gear, 전용은 data/survivors.json gear_pool.",
+    "근거 문서": "03 §3 장비, 14 §2-3"
   },
   "vest": {
     "name": "방탄조끼", "icon": "icon_vest", "description": "최대 체력 +20",
@@ -20,5 +20,53 @@
   "ammo": {
     "name": "강화 탄약", "icon": "icon_ammo", "description": "모든 피해 +10%",
     "per_level": { "multiply": { "damage_multiplier": 1.1 } }
+  },
+  "energy_drink": {
+    "name": "에너지 음료", "icon": "icon_energy_drink", "description": "공격 간격 -8%",
+    "per_level": { "multiply": { "attack_speed_multiplier": 1.087 } }
+  },
+  "knee_pads": {
+    "name": "무릎 보호대", "icon": "icon_knee_pads", "description": "받는 피해 -8%",
+    "per_level": { "multiply": { "damage_taken_multiplier": 0.92 } }
+  },
+  "battery": {
+    "name": "손전등 배터리", "icon": "icon_battery", "description": "손전등 빛 범위 +15%",
+    "per_level": { "multiply": { "light_radius_multiplier": 1.15 } }
+  },
+  "vitamins": {
+    "name": "비타민", "icon": "icon_vitamins", "description": "초당 체력 +0.3 회복",
+    "per_level": { "add": { "regen_per_second": 0.3 } }
+  },
+  "lucky_charm": {
+    "name": "행운 부적", "icon": "icon_lucky_charm", "description": "치명타 +5%, 히든 카드가 조금 더 잘 나옴",
+    "per_level": { "add": { "crit_chance": 0.05, "hidden_skill_chance_bonus": 0.005 } }
+  },
+  "research_notes": {
+    "name": "연구 노트", "icon": "icon_research_notes", "description": "경험치 +10%",
+    "per_level": { "multiply": { "experience_multiplier": 1.1 } }
+  },
+  "duct_tape": {
+    "name": "덕트 테이프", "icon": "icon_duct_tape", "description": "공격 범위 +10%",
+    "per_level": { "multiply": { "area_multiplier": 1.1 } }
+  },
+  "coffee": {
+    "name": "믹스커피", "icon": "icon_coffee", "description": "스킬 다시 쓰기 -10%",
+    "per_level": { "multiply": { "skill_cooldown_multiplier": 0.9 } }
+  },
+  "radio": {
+    "name": "무전기", "icon": "icon_radio", "description": "치명타 피해 +25% (경찰 전용)",
+    "per_level": { "multiply": { "crit_damage_multiplier": 1.25 } }
+  },
+  "turnout_gear": {
+    "name": "방화복", "icon": "icon_turnout_gear", "description": "받는 피해 -15% (소방관 전용)",
+    "per_level": { "multiply": { "damage_taken_multiplier": 0.85 } }
+  },
+  "delivery_bag": {
+    "name": "배달 가방", "icon": "icon_delivery_bag", "description": "백신 조각 가치 +15% (택배기사 전용)",
+    "per_level": { "add": { "shard_bonus_ratio": 0.15 } }
+  },
+  "stethoscope": {
+    "name": "청진기", "icon": "icon_stethoscope", "description": "회복 효과 +30% (간호사 전용)",
+    "per_level": { "multiply": { "heal_multiplier": 1.3 } }
   }
 }

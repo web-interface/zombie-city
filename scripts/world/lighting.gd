@@ -1,5 +1,5 @@
 ## [파일] scripts/world/lighting.gd
-## [하는 일] 빛과 어둠: 화면 전체를 밤처럼 어둡게 덮고(CanvasModulate), 생존자 손전등·가로등·스킬 빛(섬광탄 등)을 계단식 빛 그림으로 켠다. 게임 규칙용으로 "이 자리가 밝은가?"(is_in_light)에 답한다.
+## [하는 일] 빛과 어둠: 화면 전체를 밤처럼 어둡게 덮고(CanvasModulate), 생존자 손전등(손전등 배터리 장비만큼 넓게)·가로등·스킬 빛(섬광탄·조명탄 등)을 계단식 빛 그림으로 켠다. 게임 규칙용으로 "이 자리가 밝은가?"(is_in_light)에 답한다.
 ## [쓰는 곳] scenes/run.tscn 의 World/Lighting. 좀비 무리가 빠르기·피해 배율을 정할 때, 기어다니는 좀비를 보일지 정할 때 묻는다. 소품(props.gd)이 가로등 위치를, 스킬이 잠깐 빛을 넘긴다.
 ## [근거 문서] 02 §4 빛과 어둠, 03 §7, 06 밤 분위기
 class_name Lighting
@@ -19,6 +19,7 @@ var _lamp_lights: Array[PointLight2D] = []
 var _lamp_positions: Array[Vector2] = []
 var _temporary_lights: Array[Dictionary] = []
 var _darkness: CanvasModulate
+var _flashlight_radius: float = 0.0
 
 
 func setup(context: RunContext) -> void:
@@ -27,7 +28,8 @@ func setup(context: RunContext) -> void:
 	_darkness = CanvasModulate.new()
 	_darkness.color = Color(String(_rules["darkness_color"]))
 	add_child(_darkness)
-	_flashlight = _make_light(FLASHLIGHT_COLOR, float(_rules["flashlight_radius"]))
+	_flashlight_radius = float(_rules["flashlight_radius"])
+	_flashlight = _make_light(FLASHLIGHT_COLOR, _flashlight_radius)
 	_flashlight.energy = 1.1
 	for index: int in range(MAX_LAMP_LIGHTS):
 		_lamp_lights.append(_make_light(LAMP_COLOR, float(_rules["street_lamp_radius"])))
@@ -62,6 +64,8 @@ func clear_temporary_lights() -> void:
 
 
 func update(delta: float) -> void:
+	_flashlight_radius = float(_rules["flashlight_radius"]) * _context.survivor.stats.value("light_radius_multiplier")   # 손전등 배터리 장비
+	_flashlight.texture_scale = _flashlight_radius / LIGHT_TEXTURE_RADIUS
 	_flashlight.position = _context.survivor.position
 	for index: int in range(_lamp_lights.size()):
 		var light := _lamp_lights[index]
@@ -78,7 +82,7 @@ func update(delta: float) -> void:
 
 
 func is_in_light(at_position: Vector2) -> bool:
-	if at_position.distance_to(_context.survivor.position) <= float(_rules["flashlight_radius"]):
+	if at_position.distance_to(_context.survivor.position) <= _flashlight_radius:
 		return true
 	var lamp_radius := float(_rules["street_lamp_radius"])
 	for lamp_position: Vector2 in _lamp_positions:

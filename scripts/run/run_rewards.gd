@@ -1,5 +1,5 @@
 ## [파일] scripts/run/run_rewards.gd
-## [하는 일] 판 중 '받는 맛' 보상과 연출: 정예를 잡으면 금빛 폭죽 + 보물 상자 + 줍기 하나, 보스를 잡으면 보물 상자, 좀비는 아주 가끔 자석·폭탄·냉각 스프레이를 떨굼. 주운 상자는 창을 띄울 수 있을 때 슬롯 창으로 열고(1·3·5개), 받으면 강화를 적용한다. 줍기 효과(조각 끌어오기·화면 폭발·얼리기)와 연속 처치 보상(조각·소리·알림)도 여기서.
+## [하는 일] 판 중 '받는 맛' 보상과 연출: 정예를 잡으면 금빛 폭죽 + 보물 상자 + 줍기 하나, 보스를 잡으면 보물 상자, 좀비는 아주 가끔 자석·폭탄·냉각 스프레이를 떨굼. 주운 상자는 창을 띄울 수 있을 때 슬롯 창으로 열고(1·3·5개), 받으면 강화를 적용한다. 줍기 효과(조각 끌어오기·화면 폭발·얼리기), 연속 처치 보상(조각·소리·알림), 진화 순간(금색 띠·느린 화면)·히든 스킬(얻음 알림·쓸 때 컷인 멈춤)도 여기서.
 ## [쓰는 곳] scripts/run/run.gd 가 만들어 setup() 하고, 창 띄우기 차례에 open_pending_chest() 를 묻는다. 좀비 쓰러짐·줍기·연속 처치·상자 받기 신호를 스스로 잇는다.
 ## [근거 문서] 14 §1-2 정예·§2-6 보물 상자·줍기·§4 중독 설계, data/run_rules.json chest·pickups
 class_name RunRewards
@@ -13,6 +13,8 @@ var _pickup_rules: Dictionary = {}
 var _pending_chests: int = 0
 var _open_cards: Array = []
 var _open_count: int = 0
+var _skill_runner: SkillRunner
+var _time_effects: TimeEffects
 
 
 func setup(context: RunContext, hud: Hud, level_up: LevelUp, combo: KillCombo) -> void:
@@ -25,6 +27,15 @@ func setup(context: RunContext, hud: Hud, level_up: LevelUp, combo: KillCombo) -
 	context.pickups.picked.connect(_on_picked)
 	combo.milestone_reached.connect(_on_combo_milestone)
 	hud.chest_claimed.connect(_on_chest_claimed)
+
+
+## 진화·히든 스킬 연출을 붙인다 (무기·카드 쪽 신호 — LevelUp.evolved·hidden_skill_chosen, SkillRunner.hidden_skill_used)
+func watch_build(skill_runner: SkillRunner, time_effects: TimeEffects) -> void:
+	_skill_runner = skill_runner
+	_time_effects = time_effects
+	_level_up.evolved.connect(_on_weapon_evolved)
+	_level_up.hidden_skill_chosen.connect(_on_hidden_skill_chosen)
+	skill_runner.hidden_skill_used.connect(_on_hidden_skill_used)
 
 
 ## 쌓인 상자가 있으면 슬롯 창을 연다 (run.gd 가 창을 띄워도 될 때만 부름). 열었으면 true.
@@ -133,3 +144,22 @@ func _milestone_sound_step(count: int) -> int:
 	if count >= 200:
 		return 3
 	return 2 if count >= 100 else 1
+
+
+## 진화 순간: 금색 "진화!" 띠 + 느린 화면 (문서 14 §2-7)
+func _on_weapon_evolved(weapon_id: String) -> void:
+	_hud.show_banner("진화! %s" % _context.weapon_rack.weapon_of(weapon_id).display_name(), "evolution")
+	_context.play_sound("evolution")
+	_context.shake("skill")
+	_time_effects.play(float(GameData.rules("build")["evolution_slow_motion_seconds"]), float(_context.juice_rules["slow_motion_scale"]))
+
+
+func _on_hidden_skill_chosen(skill_id: String) -> void:
+	_skill_runner.set_hidden_skill(skill_id)
+	_hud.show_banner("히든 스킬! %s" % GameData.entry("skills", skill_id)["name"], "hidden")
+
+
+## 히든 스킬을 쓰면 컷인(Hud)이 지나가는 동안 화면을 멈춘다
+func _on_hidden_skill_used(_skill_id: String) -> void:
+	_context.play_sound("hidden_skill_cutin")
+	_time_effects.play(float(GameData.rules("build")["hidden_skill_cutin_seconds"]), 0.0)

@@ -69,6 +69,7 @@ func setup(context: RunContext, rack: WeaponRack, level_up: LevelUp, promotion: 
 	_skill_button.offset_top = -SkillButton.SIZE - SKILL_BUTTON_MARGIN.y
 	_skill_button.offset_right = -SKILL_BUTTON_MARGIN.x
 	_skill_button.offset_bottom = -SKILL_BUTTON_MARGIN.y
+	root.add_child(SkillCutin.create(skill_runner, context))   # 히든 스킬 컷인 (문서 14 §2-5)
 	_pause_menu = PauseMenu.new()
 	root.add_child(_pause_menu)
 	_pause_menu.setup(promotion, rack)

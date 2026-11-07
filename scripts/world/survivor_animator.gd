@@ -40,6 +40,12 @@ func play_death() -> void:
 	_animation_time = 0.0
 
 
+## 부활 (은신처 강화): 쓰러진 모습을 거둔다
+func play_revive() -> void:
+	_is_dead = false
+	_animation_time = 0.0
+
+
 ## moving_direction 이 0 이면 서 있기. facing 은 마지막으로 바라본 방향.
 func animate(delta: float, moving_direction: Vector2, facing: Vector2) -> void:
 	_animation_time += delta

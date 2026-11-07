@@ -63,7 +63,7 @@ func is_survivor_in_zone() -> bool:
 
 
 func hold_ratio() -> float:
-	return clampf(hold_progress / float(_rules["hold_seconds"]), 0.0, 1.0)
+	return clampf(hold_progress / _hold_seconds(), 0.0, 1.0)
 
 
 func _reveal_zone() -> void:
@@ -77,7 +77,7 @@ func _reveal_zone() -> void:
 func _update_hold(delta: float) -> void:
 	if is_survivor_in_zone():
 		hold_progress += delta
-	if hold_progress >= float(_rules["hold_seconds"]):
+	if hold_progress >= _hold_seconds():
 		phase = "done"
 		SoundPlayer.stop_loop("helicopter_loop")
 		_context.play_sound("extraction_success")
@@ -86,6 +86,11 @@ func _update_hold(delta: float) -> void:
 		phase = "done"
 		SoundPlayer.stop_loop("helicopter_loop")
 		helicopter_left.emit()
+
+
+## 버텨야 하는 초 (감염도 10 은 더 김)
+func _hold_seconds() -> float:
+	return float(_rules["hold_seconds"]) + _context.night_cycle.helicopter_hold_bonus_seconds()
 
 
 func _draw() -> void:
