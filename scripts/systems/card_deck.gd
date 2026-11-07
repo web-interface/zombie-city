@@ -1,7 +1,7 @@
 ## [파일] scripts/systems/card_deck.gd
-## [하는 일] 카드 뽑기 규칙: 이 생존자의 카드 풀(전용 무기 4·전용 장비 1 + 공용 무기 3·장비 12)에서 새로 얻기·단계 올리기 카드를 만든다. 진화 카드는 보물 상자에서만(레벨 업엔 없음), 고를 게 모자라면 한계 돌파 카드, 체력이 낮을 때만 구급상자, 레벨 8 이후 아주 가끔(2%) 금색 히든 스킬 카드를 한 판에 한 번. 빼 버린 카드는 그 판에서 다시 안 나온다. 보물 상자용(카드 여러 장을 미리 정함)도 여기서.
+## [하는 일] 카드 뽑기 규칙: 이 생존자의 카드 풀(전용 무기 4·전용 장비 1 + 공용 무기 3·장비 12)에서 새로 얻기·단계 올리기 카드를 만든다. 진화 카드는 보물 상자에서만(레벨 업엔 없음), 고를 게 모자라면 한계 돌파 카드, 체력이 낮을 때만 구급상자, 레벨 8 이후 아주 가끔(2%) 금색 히든 스킬 카드를 한 판에 한 번. 빼 버린 카드는 그 밤에 다시 안 나온다(밤마다 빼 버리기 다시 채움). 무기는 그 밤 최대 레벨까지(5 넘게), 장비는 5단계까지. 보물 상자용(카드 여러 장을 미리 정함)도 여기서.
 ## [쓰는 곳] scripts/systems/level_up.gd 가 만들어 쓴다 (레벨 업 창·보물 상자 API). 무기 칸(weapon_rack.gd)과 data/survivors.json·weapons.json·gear.json·skills.json·flavor_texts.json·run_rules.json build 를 읽는다.
-## [근거 문서] 15 §5-1 (진화는 상자에서만·회복만 남는 문제), 14 §2-1 카드 규칙·§2-4 진화·§2-5 히든 스킬, 02 §5 성장과 조합
+## [근거 문서] 15 §5-1 (진화는 상자에서만·회복만 남는 문제)·§5-2 (무기 레벨 5 넘게), 14 §2-1 카드 규칙·§2-4 진화·§2-5 히든 스킬, 02 §5 성장과 조합
 class_name CardDeck
 extends RefCounted
 
@@ -10,7 +10,7 @@ const HANGUL_FIRST := 0xAC00
 const HANGUL_LAST := 0xD7A3
 const HANGUL_FINALS := 28
 
-## 남은 빼 버리기 횟수 (판마다 data/run_rules.json build.banishes_per_run)
+## 남은 빼 버리기 횟수 (밤마다 data/run_rules.json build.banishes_per_run 로 다시 채움)
 var banishes_left: int = 0
 var banished_ids: Array[String] = []
 ## 히든 카드는 한 판에 한 번만 나온다 (안 고르고 넘기면 그 판엔 끝)
@@ -37,7 +37,13 @@ func _init(context: RunContext, rack: WeaponRack) -> void:
 	for gear_id: String in _rules["common_gear"]:
 		_gear_pool.append(gear_id)
 	_hidden_skill_id = String(survivor_info.get("hidden_skill", ""))
+	refill_for_new_night()
+
+
+## 밤마다: 빼 버리기 다시 채우고 빼 버린 목록도 비운다 (칸이 밤마다 비워지니 고를 거리도 처음부터 — 문서 15 §2)
+func refill_for_new_night() -> void:
 	banishes_left = RunModifiers.banishes(int(_rules["banishes_per_run"]))   # 은신처 강화 반영
+	banished_ids.clear()
 
 
 ## 레벨 업 카드 3장: 무작위 + 무기 카드 하나는 꼭. 진화는 여기엔 없다 — 보물 상자에서만 (문서 15 §5-1: 진화가 레벨 업으로 바로 와서
@@ -178,7 +184,7 @@ func _owned_upgrade_cards(planned_levels: Dictionary) -> Array[Dictionary]:
 	var max_level := int(_rules["max_item_level"])
 	for weapon: Weapon in _rack.weapons:
 		var weapon_level := weapon.level + int(planned_levels.get(weapon.weapon_id, 0))
-		if not weapon.is_evolved and weapon_level < max_level and not banished_ids.has(weapon.weapon_id):
+		if weapon_level < weapon.max_level() and not banished_ids.has(weapon.weapon_id):   # 진화한 무기도 늦은 밤엔 그 밤 최대까지 자람
 			cards.append(_item_card("weapon_upgrade", weapon.weapon_id, "%d→%d단계" % [weapon_level, weapon_level + 1]))
 	for gear_id: String in _rack.gear_levels.keys():
 		var gear_level := int(_rack.gear_levels[gear_id]) + int(planned_levels.get(gear_id, 0))
@@ -200,7 +206,8 @@ func _new_item_cards(already_picked: Array[Dictionary]) -> Array[Dictionary]:
 	if weapon_room > 0:
 		for weapon_id: String in _weapon_pool:
 			if _rack.weapon_of(weapon_id) == null and not banished_ids.has(weapon_id) and not picked_ids.has(weapon_id):
-				cards.append(_item_card("new_weapon", weapon_id, "새로 얻기"))
+				var start_level := WeaponGrowth.new_weapon_start_level(_context.night_cycle.night)
+				cards.append(_item_card("new_weapon", weapon_id, "새로 얻기" if start_level <= 1 else "새로 %d단계" % start_level))
 	if gear_room > 0:
 		for gear_id: String in _gear_pool:
 			if not _rack.has_gear(gear_id) and not banished_ids.has(gear_id) and not picked_ids.has(gear_id):

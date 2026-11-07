@@ -119,6 +119,13 @@ func _process(delta: float) -> void:
 		_capture_once("chest_panel")
 		_hud.chest_panel.press_claim()
 		return
+	if _hud.night_prep_panel.is_ready():   # 밤 준비: 가장 높은 레벨 무기 · 훈장은 무작위 (문서 15 §2)
+		_capture_once("night_prep_" + _hud.night_prep_panel.step())
+		_hud.night_prep_panel.choose(_pick_prep_index(_hud.night_prep_panel.options()))
+		return
+	if _hud.retry_panel.is_ready():   # --retry 를 주면 '이 밤 다시 하기', 아니면 그만하기 (난이도 통계가 예전과 같게)
+		_hud.retry_panel.decide(SceneRouter.test_options.has("retry"))
+		return
 	if not (_hud.level_up_panel.is_open() or _hud.promotion_panel.is_open()):
 		_decision_delay = 0.25
 		return
@@ -271,6 +278,13 @@ func _card_score(card: Dictionary) -> float:
 		if card["id"] in ["ammo", "vest"]:
 			score += 1.0
 	return score + randf() * 0.5
+
+
+func _pick_prep_index(options: Array[Dictionary]) -> int:
+	if options.is_empty() or not options[0].has("level"):
+		return randi() % maxi(options.size(), 1)
+	var levels: Array = options.map(func(option: Dictionary) -> int: return int(option["level"]))
+	return levels.find(levels.max())
 
 
 func _pick_branch_index() -> int:

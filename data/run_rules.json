@@ -93,6 +93,14 @@
     "weapon_slots": 4,
     "gear_slots": 4,
     "max_item_level": 5,
+    "weapon_growth": {
+      "night_max_level_base": 5, "night_max_level_per_night": 2, "new_weapon_start_ratio": 0.5,
+      "damage_bonus_per_level": 0.08, "damage_keys": ["damage", "damage_per_second", "impact_damage", "poison_damage_per_second"],
+      "bonus_every_levels": 5, "bonus_order": ["area", "pierce", "count"],
+      "area_bonus_ratio": 0.05, "area_keys": ["radius", "width", "trap_blast_radius"],
+      "pierce_bonus": 1, "count_bonus": 1, "count_bonus_cap": 3,
+      "count_keys": ["projectile_count", "drone_count", "chain_count", "throw_count", "beam_count"]
+    },
     "cards_per_level_up": 3,
     "rerolls_per_run": 1,
     "skip_card_heal_ratio": 0.15,
@@ -114,6 +122,12 @@
     ]
   },
   "_한계돌파_근거": "문서 15 §5-1 (2026-11-07 저녁): 칸이 다 차고 단계도 다 오르면 구급상자만 남아 레벨 40~50 부터 회복만 골랐다(가장 많이 고른 카드 = 회복 2,323번). 이제 모자란 칸은 한계 돌파 카드(작게, 끝없이 쌓임)로 채우고, 구급상자는 체력이 heal_offer_below_health_ratio(50%) 아래일 때만 한 장. 진화 카드는 레벨 업엔 없고 보물 상자에서만.",
+  "_weapon_growth_뜻": "문서 15 §5-2: 그 밤 무기 최대 레벨 = night_max_level_base + night_max_level_per_night × (밤 − 1) (30밤 63). 6레벨부터 5단계 숫자(진화했으면 진화 숫자)의 damage_keys 에 한 레벨마다 +8%(더하기), bonus_every_levels(5)레벨마다 bonus_order 차례로 범위 +5%(area_keys) → 관통 +1 → 발 수 +1(count_keys, 무기마다 count_bonus_cap 까지). 새로 얻는 무기는 그 밤 최대 레벨 × new_weapon_start_ratio(내림, 최소 1)에서 시작. 장비는 max_item_level(5) 그대로.",
+  "night_carry": {
+    "final_night": 30,
+    "retries_per_run": 2
+  },
+  "_night_carry_뜻": "문서 15 §2: 밤마다 레벨 1·무기/장비 비움(들고 가는 무기 1개만), 쓰러지면 그 밤 처음부터 다시 하기 retries_per_run 번(판마다), final_night 밤을 넘기면 판 끝(도시 탈출). 밤이 시작될 때마다 user://run_save.json 에 자동 저장.",
   "_build_묶음2_뜻": "문서 14 §2-1: 레벨 업 카드는 생존자 전용(survivors.json weapon_pool·gear_pool) + 공용(common_weapons·common_gear)에서만. banishes_per_run = 판마다 빼 버리기 횟수. min_weapon_cards = 레벨 업 카드에 무기 카드가 적어도 이만큼 (있으면 — 장비만 3장 뜨는 것 막기). 히든 카드는 레벨 hidden_skill_min_level 부터 레벨 업마다 hidden_skill_chance(+행운 부적), 한 판에 한 번. hidden_skill_cutin_seconds = 히든 스킬 컷인 동안 화면 멈춤, evolution_slow_motion_seconds = 진화 순간 느린 화면.",
   "promotion": {
     "first_promotion_level": 10,
@@ -171,7 +185,10 @@
     "last_stand": 0,
     "light_radius_multiplier": 1.0,
     "experience_multiplier": 1.0,
-    "hidden_skill_chance_bonus": 0.0
+    "hidden_skill_chance_bonus": 0.0,
+    "chest_luck": 0.0,
+    "chest_size_bonus": 0,
+    "run_scrap_bonus_ratio": 0.0
   },
   "_juice_근거": "디자인 분석가 조사(2026-11-07): 흔들림은 충격 값 제곱·최대 3점, 잠깐 멈춤은 보스 처치 150ms+0.6초 30% 느리게, 피해 숫자는 치명타·30 이상·보스만 최대 20개 (문서 13)",
   "status_effects": {

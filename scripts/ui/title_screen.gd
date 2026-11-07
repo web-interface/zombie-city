@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/title_screen.gd
-## [하는 일] 타이틀 화면: 새벽시 밤 도시 실루엣 앞 밤거리에 좀비 몇 마리가 비틀거리며 지나가고 가로등이 깜빡인다. 게임 이름 아래 버튼 — 큰 [출동!](생존자 고르기), [은신처]·[오늘의 도전], [도감]·[업적]·[설정] — 과 가진 고철·최고 기록. 강화할 고철이 있거나 오늘의 도전을 아직 안 했으면 그 버튼이 깜빡인다. 자동 플레이면 바로 판으로 넘어간다.
+## [하는 일] 타이틀 화면: 새벽시 밤 도시 실루엣 앞 밤거리에 좀비 몇 마리가 비틀거리며 지나가고 가로등이 깜빡인다. 게임 이름 아래 버튼 — 저장된 판이 있으면 [이어하기](그 밤 처음부터), 큰 [출동!](생존자 고르기), [은신처]·[오늘의 도전], [도감]·[업적]·[설정] — 과 가진 고철·최고 기록. 강화할 고철이 있거나 오늘의 도전을 아직 안 했으면 그 버튼이 깜빡인다. 자동 플레이면 바로 판으로 넘어간다.
 ## [쓰는 곳] scenes/title.tscn (게임을 켜면 처음 여는 장면). 설정 창(settings_panel.gd)·오늘의 도전 창(daily_challenge_panel.gd)을 겹쳐 띄운다.
 ## [근거 문서] 05 화면 목록(타이틀), 04 §1 설정, 06 밤 분위기, 14 §3·§4
 extends Control
@@ -23,7 +23,10 @@ func _ready() -> void:
 	SoundPlayer.play_single_music("music_title")
 	if SceneRouter.is_autoplay():
 		# 장면이 막 붙는 중(_ready)에는 장면을 바꿀 수 없어서 한 박자 뒤에 (엔진 오류 'Parent node is busy')
-		SceneRouter.start_run.call_deferred(SceneRouter.selected_survivor_id)
+		if SceneRouter.test_options.has("continue") and RunSave.exists():   # 이어하기 시험 (--continue --run-save=경로)
+			SceneRouter.continue_run.call_deferred()
+		else:
+			SceneRouter.start_run.call_deferred(SceneRouter.selected_survivor_id)
 		return
 	_build_street()
 	_build_title()
@@ -65,6 +68,10 @@ func _build_buttons() -> void:
 	menu.offset_right = MENU_WIDTH * 0.5
 	menu.offset_top = BUTTON_TOP
 	add_child(menu)
+	var saved_night := int(RunSave.read().get("night", 0))
+	if saved_night > 0:   # 이어하기 — 저장이 있을 때만 (문서 15 §2)
+		var resume := _row_button(_button_row(menu), "이어하기 · %d밤" % saved_night, PixelUi.GOLD, SceneRouter.continue_run)
+		_blinking.append(resume)
 	var start := PixelUi.button("출동!", PixelUi.GOOD)
 	start.add_theme_font_override("font", PixelUi.FONT_BOLD)
 	start.custom_minimum_size = Vector2(0, 30)

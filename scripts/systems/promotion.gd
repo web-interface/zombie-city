@@ -1,5 +1,5 @@
 ## [파일] scripts/systems/promotion.gd
-## [하는 일] 전직 담당: 레벨 10 이 되면 그 생존자의 갈래 3개를 보여 달라고 알리고, 고른 갈래의 1차(능력치·스킬 바꾸기·옷 그림)를 적용한다. 레벨 20 이 되면 같은 갈래의 2차(각성)를 자동으로 적용한다.
+## [하는 일] 전직 담당: 레벨 10 이 되면 그 생존자의 갈래 3개를 보여 달라고 알리고, 고른 갈래의 1차(능력치·스킬 바꾸기·옷 그림)를 적용한다. 레벨 20 이 되면 같은 갈래의 2차(각성)를 자동으로 적용한다. 전직은 판 끝까지 남아 밤마다 레벨 1부터 다시 10이 돼도 창이 또 뜨지 않고, 이어하기·다시 하기 때는 restore() 로 연출 없이 다시 입힌다.
 ## [쓰는 곳] scenes/run.tscn 의 Systems/Promotion. 레벨 업(level_changed 신호)을 듣고, 전직 창(scripts/ui/promotion_panel.gd)이 choose_branch() 를 부른다.
 ## [근거 문서] 02 §5 전직, 03 §1-2 전직 숫자, data/promotions.json
 class_name Promotion
@@ -53,6 +53,20 @@ func choose_branch(branch_id: String) -> void:
 	_apply_stage(branch_id, 1)
 	if _current_level >= _second_level:
 		_apply_stage(branch_id, 2)   # 고르기 전에 이미 레벨 20 이 됐으면 각성도 바로 (검수 지적)
+
+
+## 이어하기·다시 하기(scripts/run/night_carry.gd): 저장된 전직·각성을 연출·알림 없이 다시 입힌다
+func restore(branch_id: String, saved_stage: int) -> void:
+	if branch_id.is_empty() or saved_stage <= 0:
+		return
+	var branch := GameData.entry("promotions", branch_id)
+	chosen_branch_id = branch_id
+	stage = saved_stage
+	for restored_stage: int in range(1, saved_stage + 1):
+		var stage_data: Dictionary = branch["stage_%d" % restored_stage]
+		_context.survivor.stats.set_source("promotion_%d" % restored_stage, [stage_data])
+		_skill_runner.apply_changes(stage_data.get("skill_changes", []))
+	_context.survivor.set_outfit(String(branch["outfit"]))
 
 
 func branch_name() -> String:

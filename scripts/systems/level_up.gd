@@ -1,7 +1,7 @@
 ## [파일] scripts/systems/level_up.gd
-## [하는 일] 경험치와 레벨: 백신 조각을 모아 레벨을 올리고(다음 레벨까지 기본 + 레벨당 양 × 지금 레벨 — data/run_rules.json experience, 연구 노트는 경험치 더 받음), 레벨마다 카드 3장을 뽑아(CardDeck — 생존자 카드 풀·진화 먼저·가끔 금색 히든) 보여 달라고 알린다. 고른 카드를 적용한다(새 무기·강화·장비·진화·히든 스킬·구급상자·한계 돌파). 다시 뽑기·빼 버리기·건너뛰기(체력 조금 회복)·보스 보상 카드 한 번 더도 맡는다. 보물 상자가 쓰는 API(roll_upgrade_cards·apply_card·has_evolution_ready)도 여기.
+## [하는 일] 경험치와 레벨: 백신 조각을 모아 레벨을 올리고(다음 레벨까지 기본 + 레벨당 양 × 지금 레벨 — data/run_rules.json experience, 연구 노트는 경험치 더 받음), 레벨마다 카드 3장을 뽑아(CardDeck — 생존자 카드 풀·진화 먼저·가끔 금색 히든) 보여 달라고 알린다. 고른 카드를 적용한다(새 무기·강화·장비·진화·히든 스킬·구급상자·한계 돌파). 다시 뽑기·빼 버리기·건너뛰기(체력 조금 회복)·보스 보상 카드 한 번 더도 맡는다. 밤이 바뀌면 레벨 1·경험치 0·한계 돌파 비움·다시 뽑기/빼 버리기 다시 채움. 보물 상자가 쓰는 API(roll_upgrade_cards·apply_card·has_evolution_ready)도 여기.
 ## [쓰는 곳] scenes/run.tscn 의 Systems/LevelUp. 조각(vaccine_shard_field.gd)이 add_experience() 를, 레벨 업 창(scripts/ui/level_up_panel.gd)이 choose()·reroll()·banish()·skip() 을, 보물 상자가 roll_upgrade_cards()·apply_card() 를 부른다. run.gd 가 evolved·hidden_skill_chosen 을 듣는다.
-## [근거 문서] 02 §5 성장과 조합, 03 §5 레벨과 경험치, 14 §2-1·§2-4·§2-5·§2-6, data/run_rules.json build·experience
+## [근거 문서] 02 §5 성장과 조합, 03 §5 레벨과 경험치, 14 §2-1·§2-4·§2-5·§2-6, 15 §2·§5-2 (밤마다 새로 키우기), data/run_rules.json build·experience
 class_name LevelUp
 extends Node
 
@@ -34,6 +34,19 @@ func setup(context: RunContext, rack: WeaponRack) -> void:
 	_build_rules = GameData.rules("build")
 	rerolls_left = RunModifiers.rerolls(int(_build_rules["rerolls_per_run"]))   # 은신처·감염도·오늘의 도전 반영
 	deck = CardDeck.new(context, rack)
+
+
+## 다음 밤: 레벨 1·경험치 0부터 다시 키운다 (문서 15 §2). 한계 돌파는 비우고, 다시 뽑기·빼 버리기는 다시 채운다.
+## 히든 카드를 이미 봤는지(deck.is_hidden_card_used_up)는 판 끝까지 남는다.
+func reset_for_new_night() -> void:
+	level = 1
+	experience = 0.0
+	pending_choices = 0
+	is_choosing = false
+	_limit_break_modifiers.clear()
+	_context.survivor.stats.set_source("limit_break", [])
+	rerolls_left = RunModifiers.rerolls(int(_build_rules["rerolls_per_run"]))
+	deck.refill_for_new_night()
 
 
 ## 다음 레벨까지: shards_needed_base + shards_needed_per_level × 지금 레벨 (목표 레벨 10 ≈ 1:30, 레벨 20 ≈ 3:30 — 문서 13)
@@ -115,7 +128,7 @@ func _apply_effect(card: Dictionary) -> void:
 	var item_id := String(card["id"])
 	match String(card["kind"]):
 		"new_weapon":
-			_rack.add_weapon(item_id)
+			_rack.add_weapon(item_id, WeaponGrowth.new_weapon_start_level(_context.night_cycle.night))
 		"weapon_upgrade":
 			_rack.upgrade_weapon(item_id)
 		"new_gear", "gear_upgrade":

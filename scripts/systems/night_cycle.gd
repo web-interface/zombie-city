@@ -10,6 +10,8 @@ var _rules: Dictionary = {}
 var _health_growth_per_second: float = 0.0
 ## 감염도·오늘의 도전 배율 (RunModifiers.run_multipliers — 판 시작 때 한 번)
 var _run_modifiers: Dictionary = {}
+## 훈장 배율 {"multiply": {키: 배}, "add": {키: 더함}} — 위험 훈장 '좀비 +30%' 같은 것 (scripts/systems/medals.gd 가 채움)
+var medal_modifiers: Dictionary = {"multiply": {}, "add": {}}
 
 
 func _init() -> void:
@@ -66,7 +68,7 @@ func boss_health_multiplier() -> float:
 
 
 func elite_chance() -> float:
-	return float(_rules["elite_chance_first_night"]) + float(_rules["elite_chance_growth_per_night"]) * (night - 1)
+	return (float(_rules["elite_chance_first_night"]) + float(_rules["elite_chance_growth_per_night"]) * (night - 1)) * _modifier("elite_chance", 1.0)
 
 
 func heal_ratio_between_nights() -> float:
@@ -94,5 +96,7 @@ func health_pack_chance_multiplier() -> float:
 	return _modifier("health_pack_chance", 1.0)
 
 
+## 감염도·오늘의 도전 배율 × 훈장 배율 + 훈장 더하기
 func _modifier(key: String, default_value: float) -> float:
-	return float(_run_modifiers.get(key, default_value))
+	var medal_multiply := float(Dictionary(medal_modifiers["multiply"]).get(key, 1.0))
+	return float(_run_modifiers.get(key, default_value)) * medal_multiply + float(Dictionary(medal_modifiers["add"]).get(key, 0.0))

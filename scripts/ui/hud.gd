@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/hud.gd
-## [하는 일] 한 판 화면 위 UI 묶음(CanvasLayer): 맨 위 정보 줄, 조이스틱, 스킬 버튼, 알림 띠, 착륙 화살표, 레벨 업 창, 전직 창, 일시정지를 만들고 run.gd 와 이어 준다. 창을 고르면 멈춤을 푼다. 멈춘 동안에도 돌아간다.
+## [하는 일] 한 판 화면 위 UI 묶음(CanvasLayer): 맨 위 정보 줄, 조이스틱, 스킬 버튼, 알림 띠, 착륙 화살표, 레벨 업 창, 전직 창, 밤 생존 → 밤 준비(무기·훈장) 창, 다시 하기 창, 일시정지를 만들고 run.gd 와 이어 준다. 창을 고르면 멈춤을 푼다. 멈춘 동안에도 돌아간다.
 ## [쓰는 곳] scenes/run.tscn 의 Hud. run.gd 가 setup()·update_display()·show_banner() 를 부르고, 자동 플레이가 choose_card()·choose_branch() 를 부른다.
 ## [근거 문서] 05 화면 목록·게임 화면 배치, 11 §4
 class_name Hud
@@ -7,7 +7,12 @@ extends CanvasLayer
 
 ## 일시정지 창에서 '포기하기'를 눌렀다 (run.gd 가 판을 끝낸다)
 signal give_up_requested
-signal next_night_requested
+## 밤 생존 창 [다음 밤]을 눌렀다 (멈춘 채 — NightFlow 가 밤 준비 창을 연다)
+signal night_prep_requested
+## 밤 준비 창에서 다 골랐다 {"weapon_id", "weapon_level", "medal_id"}
+signal next_night_requested(choice: Dictionary)
+## 다시 하기 창: true = 이 밤 다시 하기, false = 그만하기 (NightCarry 가 받음)
+signal retry_decided(is_retry: bool)
 signal chest_claimed
 
 const SKILL_BUTTON_MARGIN := Vector2(8, 16)
@@ -27,6 +32,8 @@ const PC_RUN_HINTS: Array[Array] = [
 var level_up_panel: LevelUpPanel
 var promotion_panel: PromotionPanel
 var night_clear_panel: NightClearPanel
+var night_prep_panel: NightPrepPanel
+var retry_panel: RetryPanel
 var _boss_bar: BossHealthBar
 var chest_panel: ChestPanel
 var _top_bar: HudTopBar
@@ -101,6 +108,12 @@ func _build_windows(root: Control, rack: WeaponRack, level_up: LevelUp, promotio
 	root.add_child(chest_panel)
 	chest_panel.setup()
 	chest_panel.claimed.connect(_on_chest_claimed)
+	night_prep_panel = NightPrepPanel.new()
+	root.add_child(night_prep_panel)
+	night_prep_panel.chosen.connect(_on_night_prep_chosen)
+	retry_panel = RetryPanel.new()
+	root.add_child(retry_panel)
+	retry_panel.decided.connect(func(is_retry: bool) -> void: retry_decided.emit(is_retry))
 
 
 ## 이번에 켠 뒤 첫 판이면 처음 몇 초 동안 조작 안내를 차례로 보여 준다.
@@ -170,6 +183,17 @@ func open_chest(cards: Array, count: int) -> void:
 	chest_panel.open(cards, count)
 
 
+## 밤 준비 창: 들고 갈 무기 · 훈장 (NightFlow 가 night_prep_requested 를 받아 부름 — 멈춘 채)
+func open_night_prep(weapon_options: Array[Dictionary], medal_options: Array[Dictionary]) -> void:
+	night_prep_panel.open(weapon_options, medal_options)
+
+
+## 쓰러졌을 때 '이 밤 다시 하기' 창 (NightCarry 가 멈춘 뒤 부름)
+func open_retry(retries_left: int, end_reason: String) -> void:
+	_joystick.release()
+	retry_panel.open(retries_left, end_reason)
+
+
 ## 자동 플레이 봇용
 func continue_night() -> void:
 	night_clear_panel.press_next()
@@ -193,7 +217,7 @@ func on_run_over() -> void:
 
 
 func _is_choice_window_open() -> bool:
-	return level_up_panel.is_open() or promotion_panel.is_open() or night_clear_panel.is_open() or chest_panel.is_open()
+	return level_up_panel.is_open() or promotion_panel.is_open() or night_clear_panel.is_open() or chest_panel.is_open() 		or night_prep_panel.is_open() or retry_panel.is_open()
 
 
 func choose_card(index: int) -> void:
@@ -215,7 +239,13 @@ func _on_chest_claimed() -> void:
 	chest_claimed.emit()
 
 
+## 밤 생존 창 [다음 밤] → 멈춘 채로 밤 준비 창 (문서 15 §2)
 func _on_night_continue() -> void:
 	_joystick.release()
+	night_prep_requested.emit()
+
+
+func _on_night_prep_chosen(choice: Dictionary) -> void:
+	_joystick.release()
 	get_tree().paused = false
-	next_night_requested.emit()
+	next_night_requested.emit(choice)

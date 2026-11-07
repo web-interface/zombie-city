@@ -7,7 +7,7 @@ extends Node
 const DATA_FOLDER := "res://data/"
 const TABLE_NAMES: Array[String] = [
 	"survivors", "skills", "promotions", "weapons", "gear", "zombies", "spawn_curve", "run_rules",
-	"flavor_texts", "city_decor", "survivor_lines", "night_themes",
+	"flavor_texts", "city_decor", "survivor_lines", "night_themes", "medals",
 ]
 
 ## 판 밖 성장 표 (저장·은신처·감염도·업적·판 목표 — 문서 14 §3). 판 안 표와 따로 적어 두면 함께 고칠 때 덜 부딪힌다.

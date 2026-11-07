@@ -29,7 +29,7 @@ func setup(context: RunContext, bubble: SpeechBubble, parts: Dictionary) -> void
 	bosses.boss_enraged.connect(func(_text: String) -> void: _say("boss_rage", true))
 	bosses.boss_defeated.connect(func(_seconds: float, _name: String) -> void: _say("boss_down", false))
 	(parts["promotion"] as Promotion).promoted.connect(func(_branch: String, _stage: int) -> void: _say("promoted", true))
-	(parts["hud"] as Hud).next_night_requested.connect(func() -> void: _say("night_start", true))
+	(parts["hud"] as Hud).next_night_requested.connect(func(_choice: Dictionary) -> void: _say("night_start", true))
 	context.pickups.picked.connect(_on_picked)
 	context.survivor.damaged.connect(_on_damaged)
 

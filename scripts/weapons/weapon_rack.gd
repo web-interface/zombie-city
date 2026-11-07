@@ -1,5 +1,5 @@
 ## [파일] scripts/weapons/weapon_rack.gd
-## [하는 일] 생존자의 무기 칸(최대 4개)과 장비 칸(최대 4개)을 관리: 새로 얻기, 단계 올리기, 진화, 매 프레임 무기 돌리기, 무기가 그릴 것(드론·던진 물건·안개) 그리기. 장비 단계는 생존자 능력치(SurvivorStats)에 반영한다. 무기 연출(WeaponVisuals)·무기 장판(WeaponZones)을 자식으로 들고 있다.
+## [하는 일] 생존자의 무기 칸(최대 4개)과 장비 칸(최대 4개)을 관리: 새로 얻기(시작 레벨), 단계 올리기, 진화, 밤마다 비우기(들고 가는 무기 1개만 — 진화는 풀림), 매 프레임 무기 돌리기, 무기가 그릴 것(드론·던진 물건·안개) 그리기. 장비 단계는 생존자 능력치(SurvivorStats)에 반영한다. 무기 연출(WeaponVisuals)·무기 장판(WeaponZones)을 자식으로 들고 있다.
 ## [쓰는 곳] scenes/run.tscn 의 World/WeaponRack. 레벨 업(scripts/systems/level_up.gd)이 add_weapon()·upgrade_weapon()·add_or_upgrade_gear()·evolve_weapon() 을, run.gd 가 update() 를 부른다. HUD·멈춤 창·기록이 무기·장비 칸을 읽는다.
 ## [근거 문서] 02 §5 성장과 조합, 03 §2·§3·§4, 14 §2-2·§2-4, 11 §9
 class_name WeaponRack
@@ -52,10 +52,24 @@ func weapon_of(weapon_id: String) -> Weapon:
 	return null
 
 
-func add_weapon(weapon_id: String) -> void:
+## start_level: 새로 얻는 무기는 그 밤 최대 레벨의 절반에서 시작 (문서 15 §5-2 — WeaponGrowth)
+func add_weapon(weapon_id: String, start_level: int = 1) -> void:
 	var behavior: String = GameData.entry("weapons", weapon_id)["behavior"]
 	var weapon_script: GDScript = BEHAVIOR_SCRIPTS[behavior]
-	weapons.append(weapon_script.new(weapon_id, _context))
+	var weapon: Weapon = weapon_script.new(weapon_id, _context)
+	weapon.level = start_level
+	weapons.append(weapon)
+
+
+## 다음 밤: 무기·장비를 비우고 들고 가는 무기 하나만 그 레벨로 새로 만든다 (진화는 풀림 — 그 밤에 다시 진화하는 맛)
+func reset_for_new_night(kept_weapon_id: String, kept_level: int) -> void:
+	weapons.clear()
+	for gear_id: String in gear_levels.keys():
+		_context.survivor.stats.set_source("gear:" + gear_id, [])
+	gear_levels.clear()
+	zones.clear()
+	if not kept_weapon_id.is_empty():
+		add_weapon(kept_weapon_id, kept_level)
 
 
 func upgrade_weapon(weapon_id: String) -> void:

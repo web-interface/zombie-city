@@ -7,6 +7,7 @@ extends Control
 
 const SAFE_TOP := 4.0            # 폰 카메라 구멍을 피해 살짝 내림
 const SLOT_SIZE := 12.0
+const MAX_LEVEL_PIPS := 5        # 단계 점은 5개까지, 넘으면 숫자로
 
 var _level_up: LevelUp
 var _rack: WeaponRack
@@ -104,8 +105,10 @@ func _draw_slot(icon_name: String, level: int, top_left: Vector2) -> void:
 		_icon_cache[icon_name] = PixelUi.icon_texture(icon_name)
 	draw_rect(Rect2(top_left, Vector2.ONE * SLOT_SIZE), Color(0.09, 0.1, 0.14, 0.75))
 	draw_texture(_icon_cache[icon_name], top_left + Vector2.ONE)
-	for pip: int in range(level):
+	for pip: int in range(mini(level, MAX_LEVEL_PIPS)):
 		draw_rect(Rect2(top_left + Vector2(1 + pip * 2, SLOT_SIZE), Vector2(1, 1)), PixelUi.GOLD)
+	if level > MAX_LEVEL_PIPS:   # 늦은 밤 무기는 63레벨까지 — 점 대신 숫자 (문서 15 §5-2)
+		_draw_text(PixelUi.FONT_SMALL, str(level), top_left + Vector2(SLOT_SIZE + 1.0, SLOT_SIZE + 2.0), HORIZONTAL_ALIGNMENT_RIGHT, PixelUi.GOLD, PixelUi.SIZE_SMALL)
 
 
 ## 생존자 머리 위가 아니라 화면 아래쪽 가운데에 얇게 (손가락에 안 가리게)

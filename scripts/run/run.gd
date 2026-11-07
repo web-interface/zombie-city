@@ -1,5 +1,5 @@
 ## [파일] scripts/run/run.gd
-## [하는 일] 한 판(밤마다 3분, 헬기를 타면 다음 밤)의 지휘자: 각 부분을 준비해 RunContext 로 잇고, 한 순간(프레임)에 도는 순서를 한곳에서 정하고(문서 11 §5), 레벨 업·전직 창을 띄울 때를 고르고, 연속 처치·정예 보상·손맛 연출과 승패(밤 생존 → 다음 밤, 쓰러짐·헬기 놓침·포기 → 판 끝)를 처리한다.
+## [하는 일] 한 판(밤마다 3분, 헬기를 타면 다음 밤 — 30밤, 밤 사이 성장은 NightCarry)의 지휘자: 각 부분을 준비해 RunContext 로 잇고, 한 순간(프레임)에 도는 순서를 한곳에서 정하고(문서 11 §5), 레벨 업·전직 창을 띄울 때를 고르고, 연속 처치·정예 보상·손맛 연출과 승패(밤 생존 → 다음 밤, 쓰러짐·헬기 놓침·포기 → 판 끝)를 처리한다.
 ## [쓰는 곳] scenes/run.tscn 의 맨 위 노드. SceneRouter 가 이 장면을 열고, 판이 끝나면 SceneRouter.finish_run() 을 부른다.
 ## [근거 문서] 11 §4·§5·§6, 14 §1 끝없는 밤·§4 중독 설계, 02 §9 승패, 13 조사 반영(멈춤·숨 돌리기·앱 나가면 멈춤)
 extends Node2D
@@ -17,6 +17,7 @@ var _rewards := RunRewards.new()
 var _input := RunInput.new()
 var _chatter := SurvivorChatter.new()
 var _meta_hooks := RunMetaHooks.new()
+var _carry := NightCarry.new()
 
 @onready var _survivor: Survivor = $World/Survivor
 @onready var _horde: ZombieHorde = $World/ZombieHorde
@@ -52,11 +53,12 @@ func _ready() -> void:
 	_rewards.setup(context, _hud, _level_up, _combo)
 	_rewards.watch_build(_skill_runner, _time_effects)
 	add_child(_night_flow)
-	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo, "rewards": _rewards, "skill_runner": _skill_runner,
+	_night_flow.setup(context, {"hud": _hud, "recorder": _recorder, "level_up": _level_up, "combo": _combo, "rewards": _rewards, "skill_runner": _skill_runner, "carry": _carry,
 		"night_systems": [_spawner, _events, _boss_director, _extraction]})
 	_connect_signals()
 	_meta_hooks.setup(context, _hud, _level_up, _boss_director)   # 신호를 이은 뒤에 (시작 레벨 업도 기록·전직에 잡히게 — 검수 지적)
 	SoundPlayer.start_run_music()
+	_carry.setup(context, {"level_up": _level_up, "promotion": _promotion, "skill_runner": _skill_runner, "recorder": _recorder, "hud": _hud, "night_flow": _night_flow, "end_run": _end_run})
 	_hud.start_first_run_hints(_skill_runner)
 	var autoplay: Node = null
 	if SceneRouter.is_autoplay():
@@ -268,19 +270,21 @@ func _on_helicopter_left() -> void:
 	_end_run("helicopter_left")
 
 
-## 헬기를 탔다 → '밤 생존' 창 (시험 봇이 정한 밤 수를 채웠으면 판 끝)
+## 헬기를 탔다 → '밤 생존' 창 (마지막 밤을 넘겼거나 시험 봇이 정한 밤 수를 채웠으면 판 끝)
 func _on_night_survived() -> void:
-	if not _is_over and _night_flow.on_night_survived():
-		_end_run("test_night_limit")
+	var end_reason := "" if _is_over else _night_flow.on_night_survived()
+	if not end_reason.is_empty():
+		_end_run(end_reason)
 
 
-## end_reason: "died"(쓰러짐) · "helicopter_left"(헬기 놓침) · "gave_up"(포기) · "test_night_limit"(시험)
+## end_reason: "died"(쓰러짐) · "helicopter_left"(헬기 놓침) · "gave_up"(포기) · "escaped"(30밤 탈출) · "test_night_limit"(시험) — 앞의 둘은 먼저 '이 밤 다시 하기' 창(NightCarry)
 func _end_run(end_reason: String) -> void:
-	if _is_over:
+	if _is_over or _carry.offer_retry(end_reason):
 		return
 	_is_over = true
 	_hud.on_run_over()
 	var result := _recorder.build_result(end_reason, _level_up.level, _promotion.branch_name(), _combo.best)
+	result.merge(_carry.on_run_over())
 	var delay := 0.05 if SceneRouter.is_autoplay() else END_DELAY_SECONDS
 	await get_tree().create_timer(delay, true, false, true).timeout
 	_time_effects.clear()
