@@ -1,0 +1,57 @@
+/* [파일] web/account.css
+   [하는 일] 로그인 창(web/account.js) 모양: 게임과 같은 어두운 밤 바탕, Galmuri 픽셀 글꼴(게임과 같은 2.40.3 — 창을 열 때만 받음, 못 받으면 기본 글꼴), 각진 테두리, 빨강(제목 줄)·하늘색(누르는 버튼) 포인트. 세로 폰 기준, 입력 칸 글자는 16px(아이폰이 확대하지 않게).
+   [쓰는 곳] export_presets.cfg head_include 가 <link> 로 불러온다. tools/export_web.py 가 내보낸 폴더로 복사한다.
+   [근거 문서] 07 온라인 순위표, 05 화면 원칙(각진 테두리·AI 티 없게), 06 색 */
+@font-face { font-family: "ZcGalmuri"; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "ZcGalmuri"; font-weight: 700; src: url("https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/Galmuri11-Bold.woff2") format("woff2"); font-display: swap; }
+
+.zc-acc {
+  --ink: #e8ecf3; --muted: #9aa3b5; --panel: #171a22; --edge: #3a4152; --field: #0f1117;
+  --alert: #ff6b6b; --sky: #6cc6ff; --sky-ink: #0b1420;
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(8, 9, 13, 0.82);
+  font-family: "ZcGalmuri", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color: var(--ink); -webkit-font-smoothing: none; touch-action: auto;
+}
+.zc-acc__sheet {
+  box-sizing: border-box; width: 100%; max-width: 420px; max-height: 100%; overflow-y: auto;
+  padding: 0 18px calc(20px + env(safe-area-inset-bottom));
+  background: var(--panel); border: 2px solid var(--edge); border-bottom: 0;
+  border-top: 4px solid var(--alert);
+}
+.zc-acc__top { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; }
+.zc-acc__kicker { margin: 0; font-size: 12px; color: var(--alert); letter-spacing: 1px; }
+.zc-acc__close { padding: 8px 4px 8px 12px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; }
+.zc-acc__title { margin: 4px 0 6px; font-size: 22px; font-weight: 700; line-height: 1.3; word-break: keep-all; }
+.zc-acc__lead { margin: 0 0 14px; font-size: 13px; line-height: 1.6; color: var(--muted); word-break: keep-all; }
+.zc-acc__tabs { display: flex; margin-bottom: 14px; border-bottom: 2px solid var(--edge); }
+.zc-acc__tab {
+  flex: 1; padding: 10px 0 8px; margin-bottom: -2px; border: 0; border-bottom: 2px solid transparent;
+  background: none; color: var(--muted); font: inherit; font-size: 15px;
+}
+.zc-acc__tab.is-on { color: var(--ink); border-bottom-color: var(--sky); }
+.zc-acc__form { display: flex; flex-direction: column; gap: 12px; }
+.zc-acc__field { display: flex; flex-direction: column; gap: 5px; }
+.zc-acc__label { font-size: 12px; color: var(--muted); }
+.zc-acc__input {
+  box-sizing: border-box; width: 100%; padding: 11px 10px; border: 2px solid var(--edge); border-radius: 0;
+  background: var(--field); color: var(--ink); font: inherit; font-size: 16px; outline: none;
+}
+.zc-acc__input:focus { border-color: var(--sky); }
+.zc-acc__input::placeholder { color: #5d6578; }
+.zc-acc__error { min-height: 1.4em; margin: 0; font-size: 13px; color: var(--alert); word-break: keep-all; }
+.zc-acc__main {
+  width: 100%; margin-top: 2px; padding: 13px 0; border: 2px solid var(--sky); border-radius: 0;
+  background: var(--sky); color: var(--sky-ink); font: inherit; font-size: 16px; font-weight: 700;
+}
+.zc-acc__main:active { background: #4fa9e0; }
+.zc-acc__main:disabled { background: var(--field); color: var(--muted); border-color: var(--edge); }
+.zc-acc__link {
+  display: block; margin: 12px auto 0; padding: 8px; border: 0; background: none;
+  color: var(--muted); font: inherit; font-size: 13px; text-decoration: underline; text-underline-offset: 3px;
+}
+.zc-acc__code {
+  margin: 0 0 4px; padding: 14px 8px; border: 2px dashed var(--edge); text-align: center;
+  font-size: 18px; letter-spacing: 1px; color: var(--ink); user-select: all; -webkit-user-select: all;
+}

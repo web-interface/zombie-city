@@ -1,5 +1,5 @@
 ## [파일] scripts/ui/title_screen.gd
-## [하는 일] 타이틀 화면: 새벽시 밤 도시 실루엣 앞 밤거리에 좀비 몇 마리가 비틀거리며 지나가고 가로등이 깜빡인다. 게임 이름 아래 버튼 — 큰 [출동!](생존자 고르기), [은신처]·[오늘의 도전], [도감]·[업적]·[설정] — 과 가진 고철·최고 기록. 강화할 고철이 있거나 오늘의 도전을 아직 안 했으면 그 버튼이 깜빡인다. 자동 플레이면 바로 판으로 넘어간다.
+## [하는 일] 타이틀 화면: 새벽시 밤 도시 실루엣 앞 밤거리에 좀비 몇 마리가 비틀거리며 지나가고 가로등이 깜빡인다. 게임 이름 아래 버튼 — 큰 [출동!](생존자 고르기), [은신처]·[오늘의 도전], [순위]·[도감]·[업적]·[설정] — 과 가진 고철·최고 기록, 웹판이면 맨 아래 작은 로그인 상태(누르면 로그인 창). 강화할 고철이 있거나 오늘의 도전을 아직 안 했으면 그 버튼이 깜빡인다. 자동 플레이면 바로 판으로 넘어간다.
 ## [쓰는 곳] scenes/title.tscn (게임을 켜면 처음 여는 장면). 설정 창(settings_panel.gd)·오늘의 도전 창(daily_challenge_panel.gd)을 겹쳐 띄운다.
 ## [근거 문서] 05 화면 목록(타이틀), 04 §1 설정, 06 밤 분위기, 14 §3·§4
 extends Control
@@ -15,6 +15,7 @@ const SKYLINE_ALPHA := 0.55     # 제목 글자가 묻히지 않게 흐리게
 
 var _time: float = 0.0
 var _zombies: Array[Sprite2D] = []
+var _login_line: Button   # 맨 아래 로그인 상태 (웹판만)
 var _blinking: Array[Control] = []   # 눌러 보라고 깜빡이는 버튼 (강화 가능·오늘의 도전 안 함)
 
 
@@ -80,6 +81,7 @@ func _build_buttons() -> void:
 	if is_daily_new:
 		_blinking.append(daily)
 	var bottom_row := _button_row(menu)
+	_row_button(bottom_row, "순위", PixelUi.MUTED, SceneRouter.go_to_leaderboard)
 	_row_button(bottom_row, "도감", PixelUi.MUTED, SceneRouter.go_to_codex)
 	_row_button(bottom_row, "업적", PixelUi.MUTED, SceneRouter.go_to_achievements)
 	_row_button(bottom_row, "설정", PixelUi.MUTED, _open_settings)
@@ -112,6 +114,32 @@ func _build_footer() -> void:
 	footer.offset_top = -30.0
 	footer.offset_bottom = -18.0
 	add_child(footer)
+	_build_login_line()
+
+
+## 맨 아래 작은 로그인 상태 (웹판만) — 누르면 로그인 창. 야구 매니저에 로그인해 두면 여기도 로그인돼 있다
+func _build_login_line() -> void:
+	if not Online.is_available():
+		return
+	_login_line = Button.new()
+	var login_line := _login_line
+	login_line.flat = true
+	login_line.add_theme_font_override("font", PixelUi.FONT_SMALL)
+	login_line.add_theme_font_size_override("font_size", PixelUi.SIZE_SMALL)
+	login_line.add_theme_color_override("font_color", Color("6cc6ff"))
+	login_line.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	login_line.offset_top = -17.0
+	login_line.offset_bottom = -3.0
+	login_line.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	PixelUi.on_press(login_line, Online.open_login)
+	add_child(login_line)
+	_show_login_state(Online.state())
+	Online.watch_state(_show_login_state)
+
+
+func _show_login_state(current: Dictionary) -> void:
+	var name_text := String(current.get("username", ""))
+	_login_line.text = "로그인하면 순위에 올라가요" if name_text.is_empty() else name_text + " 님 · 순위 참가 중"
 
 
 func _open_settings() -> void:

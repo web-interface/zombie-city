@@ -73,7 +73,7 @@ def check_file(path: Path) -> str:
         return "맨 위 노드에 editor_description 머리말이 없음" if not match else missing_tags([match.group(1)], "editor_description")
     if suffix == ".json":
         return check_json(text)
-    if suffix in {".py", ".txt", ".html", ".js"}:
+    if suffix in {".py", ".txt", ".html", ".js", ".css"}:
         return missing_tags(text.splitlines()[:12], "맨 위 머리말")
     if suffix == ".md" and text.startswith("---"):
         return missing_tags(text.splitlines()[:16], "머리말(앞부분 설정 뒤 주석)")   # 에이전트 정의 파일
