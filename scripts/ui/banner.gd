@@ -8,6 +8,7 @@ extends Control
 const SHOW_SECONDS := 2.4
 const SLIDE_SECONDS := 0.18
 const MAX_LINES := 3
+const NEWLINE := "\n"
 const STYLES := {
 	"alert": {"edge": Color("ff5c5c"), "text": Color("ffe9e9"), "tag": "긴급재난문자"},
 	"good": {"edge": Color("8ff59a"), "text": Color("e9ffe9"), "tag": ""},
@@ -51,8 +52,7 @@ func _draw() -> void:
 	var slide := clampf(_time / SLIDE_SECONDS, 0.0, 1.0)
 	var fade := clampf((SHOW_SECONDS - _time) / 0.3, 0.0, 1.0)
 	var top := -8.0 * (1.0 - slide)
-	var lines := PixelUi.wrap_words(String(_current["text"]), PixelUi.FONT_REGULAR, PixelUi.SIZE_REGULAR, size.x - 20.0, MAX_LINES).split("
-")
+	var lines := PixelUi.wrap_words(String(_current["text"]), PixelUi.FONT_REGULAR, PixelUi.SIZE_REGULAR, size.x - 20.0, MAX_LINES).split(NEWLINE)
 	var box := Rect2(6, top, size.x - 12, 14 + 13 * lines.size() + (0 if String(style["tag"]).is_empty() else 8))
 	draw_rect(box, Color(0.06, 0.06, 0.09, 0.9 * fade))
 	draw_rect(Rect2(box.position, Vector2(box.size.x, 2)), Color(style["edge"], fade))
