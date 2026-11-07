@@ -69,13 +69,13 @@ func _build_buttons() -> void:
 	var start := PixelUi.button("출동!", PixelUi.GOOD)
 	start.add_theme_font_override("font", PixelUi.FONT_BOLD)
 	start.custom_minimum_size = Vector2(0, 30)
-	PixelUi.on_press(start, SceneRouter.go_to_survivor_select)
+	PixelUi.on_press(start, func() -> void: if Online.require_login(): SceneRouter.go_to_survivor_select())
 	menu.add_child(start)
 	var can_upgrade := Shelter.cheapest_next_cost() > 0 and SaveData.scrap() >= Shelter.cheapest_next_cost()
 	var is_daily_new := not DailyChallenge.is_played_today()
 	var middle_row := _button_row(menu)
 	var shelter := _row_button(middle_row, "은신처", PixelUi.GOOD if can_upgrade else PixelUi.INK, SceneRouter.go_to_shelter)
-	var daily := _row_button(middle_row, "오늘의 도전", PixelUi.GOLD if is_daily_new else PixelUi.INK, func() -> void: add_child(DailyChallengePanel.new()))
+	var daily := _row_button(middle_row, "오늘의 도전", PixelUi.GOLD if is_daily_new else PixelUi.INK, func() -> void: if Online.require_login(): add_child(DailyChallengePanel.new()))
 	if can_upgrade:
 		_blinking.append(shelter)
 	if is_daily_new:
@@ -117,7 +117,7 @@ func _build_footer() -> void:
 	_build_login_line()
 
 
-## 맨 아래 작은 로그인 상태 (웹판만) — 누르면 로그인 창. 야구 매니저에 로그인해 두면 여기도 로그인돼 있다
+## 맨 아래 작은 로그인 상태 (웹판만) — 누르면 로그인 창. 웹판은 로그인해야 시작해서, 로그아웃 상태면 켜자마자 로그인 창
 func _build_login_line() -> void:
 	if not Online.is_available():
 		return
@@ -139,7 +139,9 @@ func _build_login_line() -> void:
 
 func _show_login_state(current: Dictionary) -> void:
 	var name_text := String(current.get("username", ""))
-	_login_line.text = "로그인하면 순위에 올라가요" if name_text.is_empty() else name_text + " 님 · 순위 참가 중"
+	_login_line.text = "로그인이 필요해요" if name_text.is_empty() else name_text + " 님 · 순위 참가 중"
+	if String(current.get("state", "")) == "out":
+		Online.require_login()
 
 
 func _open_settings() -> void:

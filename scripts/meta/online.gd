@@ -1,5 +1,5 @@
 ## [파일] scripts/meta/online.gd
-## [하는 일] 온라인 순위표 입구: 웹판에서 web/account.js(야구 매니저와 같은 계정)를 JavaScriptBridge 로 불러 로그인 상태 읽기·로그인 창 열기·판 결과 올리기·순위 받아오기를 한다. 웹이 아니거나 화면 없는 실행·자동 플레이 봇·시험 옵션 판이면 아무것도 안 하고 조용히 넘어간다. 답은 콜백으로 받아 화면이 멈추지 않고, 인터넷·서버가 안 돼도 게임은 그대로.
+## [하는 일] 온라인 입구: 웹판은 로그인해야 게임을 시작한다(require_login). web/account.js 를 JavaScriptBridge 로 불러 로그인 상태 읽기·로그인 창 열기·판 결과 올리기·순위 받아오기를 한다. 웹이 아니거나 화면 없는 실행·자동 플레이 봇·시험 옵션 판이면 아무것도 안 하고 조용히 넘어간다. 답은 콜백으로 받아 화면이 멈추지 않고, 인터넷·서버가 안 돼도 게임은 그대로.
 ## [쓰는 곳] title_screen.gd(로그인 상태·창), leaderboard_screen.gd(순위), online_rank_line.gd(결과 화면에서 올리기). 서버는 야구 Worker 의 /zc/ 경로(baseball/worker/src/zc.ts).
 ## [근거 문서] 07 온라인 순위표, 05 순위 화면
 class_name Online
@@ -44,6 +44,19 @@ static func is_logged_in() -> bool:
 static func open_login() -> void:
 	if is_available():
 		_bridge().call("open")
+
+
+## 웹판은 로그인해야 시작 (사용자 요청 2026-11-07): 로그아웃 상태면 닫을 수 없는 로그인 창을 띄우고 false.
+## 자동 로그인 확인 중("checking")이면 창을 띄우지 않고 false — 끝나면 watch_state 가 다시 부른다. 웹이 아니거나 시험 판이면 늘 true.
+static func require_login() -> bool:
+	if not is_available():
+		return true
+	var current := String(state()["state"])
+	if current == STATE_IN or current == STATE_OFFLINE:
+		return true
+	if current != "checking":
+		_bridge().call("open", true)
+	return false
 
 
 ## 로그인 상태가 바뀌면 on_changed(state: Dictionary). 화면이 사라진 콜백은 알아서 빠진다
