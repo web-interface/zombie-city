@@ -1,5 +1,5 @@
 ## [파일] scripts/weapons/orbit_weapon.gd
-## [하는 일] 몸 주위를 도는 무기(톱날 드론·메스·사냥개): 드론·칼날 여러 개가 생존자 둘레를 돌며 닿는 좀비를 같은 좀비당 hit_interval_seconds 마다 한 번씩 벤다. 드론 그림(돌아가는 2장)·메스 칼날(은빛 짧은 선 + 잔상)·사냥개(달리는 방향 걷기 그림)도 직접 그린다. 진화하면 금색, 톱날 폭풍은 도는 반경이 넓어졌다 좁아졌다 한다.
+## [하는 일] 몸 주위를 도는 무기(톱날 드론·메스·사냥개·서류 폭풍): 드론·칼날 여러 개가 생존자 둘레를 돌며 닿는 좀비를 같은 좀비당 hit_interval_seconds 마다 한 번씩 벤다. 드론 그림(돌아가는 2장)·메스 칼날(은빛 짧은 선 + 잔상)·사냥개(달리는 방향 걷기 그림)도 직접 그린다. 진화하면 금색, 톱날 폭풍은 도는 반경이 넓어졌다 좁아졌다 한다.
 ## [쓰는 곳] scripts/weapons/weapon_rack.gd 가 behavior 가 "orbit" 인 무기로 만들고, 그리기 때 draw_on() 을 부른다.
 ## [근거 문서] 03 §2 무기(톱날 드론), 04 §3 (몸 주위를 도는 작은 드론), 14 §2-2 메스·§2-4 수술 칼날 폭풍·톱날 폭풍·§3-1 사냥개·늑대 무리
 class_name OrbitWeapon
@@ -10,6 +10,9 @@ const DRONE_HIT_RADIUS := 5.0
 const BLADE_COLOR := Color("e3e8f0")
 const BLADE_TRAIL_COLOR := Color("8fa3bf")
 const BLADE_LENGTH := 3.0
+const PAPER_COLOR := Color("f4f8ff")
+const PAPER_LINE_COLOR := Color("8fb8d8")
+const PAPER_FLIP_SPEED := 9.0   # 종이가 팔랑이며 세로·가로로 바뀌는 빠르기
 const RADIUS_WAVE_SPEED := 2.0   # 반경이 넓어졌다 좁아졌다 하는 빠르기 (초당 라디안)
 const DOG_TEXTURE: Texture2D = preload("res://art/sprites/hunting_dog.png")
 const DOG_FRAME_SIZE := Vector2(16, 16)
@@ -51,6 +54,9 @@ func draw_on(canvas: CanvasItem) -> void:
 	if look == "dog":
 		_draw_dogs(canvas)
 		return
+	if look == "paper":
+		_draw_papers(canvas)
+		return
 	var texture := DRONE_TEXTURES[int(_spin_time * 14.0) % 2]
 	var tint := EVOLVED_COLOR if is_evolved else Color.WHITE
 	for drone_position: Vector2 in drone_positions():
@@ -68,6 +74,19 @@ func _draw_blades(canvas: CanvasItem) -> void:
 		canvas.draw_line(tail - tangent * 2.0, tail, Color(BLADE_TRAIL_COLOR, 0.5), 1.0)
 		canvas.draw_line(tail, tip, color, 1.0)
 		canvas.draw_rect(Rect2(tip, Vector2.ONE), Color.WHITE)
+
+
+## 서류 폭풍: 하얀 종이(글줄 한 줄)가 팔랑이며 세로·가로로 바뀐다 (진화하면 금색)
+func _draw_papers(canvas: CanvasItem) -> void:
+	var color := EVOLVED_COLOR if is_evolved else PAPER_COLOR
+	var index := 0
+	for paper_position: Vector2 in drone_positions():
+		var is_upright := int(_spin_time * PAPER_FLIP_SPEED + index) % 2 == 0
+		var size := Vector2(3, 4) if is_upright else Vector2(4, 3)
+		var top_left := (paper_position - size * 0.5).round()
+		canvas.draw_rect(Rect2(top_left, size), color)
+		canvas.draw_rect(Rect2(top_left + Vector2(1, 1), Vector2(size.x - 2.0, 1)), PAPER_LINE_COLOR)
+		index += 1
 
 
 ## 사냥개: 도는 방향(원의 접선)으로 달리는 걷기 그림 (art/sprites/hunting_dog.png — 좀비와 같은 줄 배치). 진화(늑대 무리)는 금빛

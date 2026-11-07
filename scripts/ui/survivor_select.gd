@@ -145,7 +145,7 @@ func _select(survivor_id: String) -> void:
 
 func _show_survivor_info(survivor_id: String) -> void:
 	var info := GameData.entry("survivors", survivor_id)
-	_info_box.add_child(PixelUi.label("%s %s" % [info["role"], info["name"]], PixelUi.INK, false, true))
+	_info_box.add_child(PixelUi.label(String(info["role"]), PixelUi.INK, false, true))   # 사람 이름 없이 직업만 (문서 15 부록 B)
 	_info_box.add_child(PixelUi.label("★".repeat(int(info["difficulty_stars"])) + "☆".repeat(3 - int(info["difficulty_stars"])), PixelUi.GOLD, true))
 	_info_box.add_child(_wrapped(String(info["intro"]), PixelUi.MUTED))
 	var weapon := GameData.entry("weapons", String(info["start_weapon"]))

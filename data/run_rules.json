@@ -191,7 +191,11 @@
     "last_stand": 0,
     "light_radius_multiplier": 1.0,
     "experience_multiplier": 1.0,
-    "hidden_skill_chance_bonus": 0.0
+    "hidden_skill_chance_bonus": 0.0,
+    "overtime_step_seconds": 30,
+    "overtime_bonus_per_step": 0.0,
+    "overtime_max_bonus": 0.0,
+    "intern_count": 0
   },
   "_juice_근거": "디자인 분석가 조사(2026-11-07): 흔들림은 충격 값 제곱·최대 3점, 잠깐 멈춤은 보스 처치 150ms+0.6초 30% 느리게, 피해 숫자는 치명타·30 이상·보스만 최대 20개 (문서 13)",
   "status_effects": {

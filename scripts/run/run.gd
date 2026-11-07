@@ -41,6 +41,8 @@ func _ready() -> void:
 	_survivor.setup(SceneRouter.selected_survivor_id)
 	var survivor_info := GameData.entry("survivors", _survivor.survivor_id)
 	_rack.add_weapon(String(survivor_info["start_weapon"]))
+	for weapon_id: String in survivor_info.get("extra_start_weapons", []):   # 사냥꾼은 사냥개도 처음부터 (문서 16 — 설치 전엔 약해서)
+		_rack.add_weapon(weapon_id)
 	_skill_runner.setup(context, String(survivor_info["skill"]))
 	_level_up.setup(context, _rack)
 	_promotion.setup(context, _skill_runner)
